@@ -23,7 +23,7 @@ namespace RW{
                 Q_DISABLE_COPY(ConfigurationManagerPrivate)
                 Q_DECLARE_PUBLIC(ConfigurationManager)
         private:
-            ConfigurationManagerPrivate(std::shared_ptr<spdlog::logger> Logger, ConfigurationManager *Parent = nullptr);
+            ConfigurationManagerPrivate(std::shared_ptr<spdlog::logger> Logger, QObject *Parent = nullptr);
             virtual ~ConfigurationManagerPrivate();
 
             ConfigurationManager * const q_ptr;

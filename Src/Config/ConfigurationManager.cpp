@@ -97,9 +97,9 @@ namespace RW{
             return true;
         }
 
-        ConfigurationManagerPrivate::ConfigurationManagerPrivate(std::shared_ptr<spdlog::logger> Logger, ConfigurationManager *Parent) : QObject(Parent),
+        ConfigurationManagerPrivate::ConfigurationManagerPrivate(std::shared_ptr<spdlog::logger> Logger, QObject *Parent) : QObject(Parent),
             m_Logger(Logger),
-            q_ptr(Parent),
+            q_ptr((ConfigurationManager*)Parent),
             m_ConfigCollection(new ConfigCollection()),
             m_ConfigCollectionLists(new ConfigCollectionLists()),
             m_Repository(new RW::SQL::Repository(RW::SourceType::SQL,Logger,this))
@@ -313,6 +313,8 @@ namespace RW{
             }
         }
 
+
+
         void ConfigurationManagerPrivate::UpdateWorkstation(const ConfigurationName &Key, const QVariant &Val)
         {
         
@@ -355,6 +357,14 @@ namespace RW{
             }
         }
 
+        ConfigurationManager::ConfigurationManager(std::shared_ptr<spdlog::logger> Logger, QObject *Parent) : QObject(Parent),
+            d_ptr(new ConfigurationManagerPrivate(Logger, Parent))
+        {
+        }
+
+        ConfigurationManager::~ConfigurationManager()
+        {
+        }
 
 
         bool ConfigurationManager::GetConfigValue(const ConfigurationName &Key, QVariant &Val)
