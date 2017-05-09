@@ -13,6 +13,7 @@ namespace RW{
 		class Project;
         class WorkstationType;
         class Peripheral;
+        class WorkstationSetting;
         enum class WorkstationKind;
 
 		class REMOTE_DATA_CONNECT_API Workstation :
@@ -25,13 +26,9 @@ namespace RW{
 			Q_PROPERTY(QString Hostname READ Hostname WRITE SetHostname NOTIFY HostnameChanged)
 			Q_PROPERTY(QString Mac READ Mac WRITE SetMac NOTIFY MacChanged)
 			Q_PROPERTY(QString Ip READ Ip WRITE SetIp NOTIFY IpChanged)
-			Q_PROPERTY(QString PowerstripeIp READ PowerstripeIp WRITE SetPowerstripeIp NOTIFY PowerstripeIpChanged)
-			Q_PROPERTY(QString PowerstripeId READ PowerstripeId WRITE SetPowerstripeId NOTIFY PowerstripeIdChanged)
-			Q_PROPERTY(quint8 RemoteboxComPort READ RemoteboxComPort WRITE SetRemoteboxComPort NOTIFY RemoteboxComPortChanged)
-			Q_PROPERTY(QString RemoteboxHwId READ RemoteboxHwId WRITE SetRemoteboxHwId NOTIFY RemoteboxHwIdChanged)
-			Q_PROPERTY(QString RemoteboxSwVersion READ RemoteboxSwVersion WRITE SetRemoteboxSwVersion NOTIFY RemoteboxSwVersionChanged)
 			Q_PROPERTY(WorkstationState State READ State WRITE SetState NOTIFY StateChanged)
             Q_PROPERTY(WorkstationType* TypeOfWorkstation READ TypeOfWorkstation WRITE SetTypeOfWorkstation NOTIFY TypeOfWorkstationChanged)
+            Q_PROPERTY(WorkstationSetting* SettingOfWorkstation READ SettingOfWorkstation WRITE SetSettingOfWorkstation NOTIFY SettingOfWorkstationChanged)
             Q_PROPERTY(QQmlListProperty<RW::SQL::Peripheral> PeripheralListQml READ PeripheralListQml NOTIFY PeripheralListQmlChanged)
 
 			Q_CLASSINFO("Version", "0.1.1")
@@ -71,29 +68,16 @@ namespace RW{
 			QString Ip() const;
 			void SetIp(QString Ip);
 
-			QString PowerstripeIp() const;
-			void SetPowerstripeIp(QString PowerstripIp);
-
-			QString PowerstripeId() const;
-			void SetPowerstripeId(QString PowerstripId);
-
-			quint8 RemoteboxComPort() const;
-			void SetRemoteboxComPort(quint8 RemoteboxComPort);
-
-			QString RemoteboxHwId() const;
-			void SetRemoteboxHwId(QString RemoteboxHwId);
-			
-			QString RemoteboxSwVersion() const;
-			void  SetRemoteboxSwVersion(QString RemoteboxSwVersion);
-
 			WorkstationState State() const;
 			void SetState(WorkstationState State);
 
 			Project* Workstation::AssignedProject() const;
 			void Workstation::setAssignedProject(Project* Project);
 
-            WorkstationType* TypeOfWorkstation() const;
+            WorkstationSetting* SettingOfWorkstation() const;
+            void SetSettingOfWorkstation(WorkstationSetting* Setting);
 
+            WorkstationType* TypeOfWorkstation() const;
             /*
             @brief Setzt den Typ der Workstation. Dabei wird auch die Zunständigkeit für den Pointer übernommen!
             Das bedeutet Speicher wird freigegeben sobald die Instanz der Klasse zerstört wird. 
@@ -122,6 +106,7 @@ namespace RW{
 			void ProjectChanged();
             void TypeOfWorkstationChanged();
             void PeripheralListQmlChanged();
+            void SettingOfWorkstationChanged();
 
 		};
 	}

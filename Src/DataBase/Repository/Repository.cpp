@@ -210,6 +210,8 @@ namespace RW{
                 if (rwList.count() == 0)
                 {
                     m_logger->error("GetWorkstationByHostname: List of workstations is empty.");
+                    delete dm;
+                    return false;
                 }
 
                 //Jeden Eintrag in der Liste prüfen, ob er den entsprechenden Hostname enthält
@@ -225,6 +227,8 @@ namespace RW{
                 if (!found)
                 {
                     m_logger->error("GetWorkstationByHostname: No matched hostname found in workstation list.");
+                    delete dm;
+                    return false;
                 }
 
                 delete dm;
@@ -440,6 +444,13 @@ namespace RW{
                 if (dm == nullptr)
                     return false;
                 projList = dm->FindAll();
+
+                if (projList.count() == 0)
+                {
+                    m_logger->error("GetSoftwareProjectByProjectId can't find any projects with id: {}", ID);
+                    delete dm;
+                    return false;
+                }
 
                 for each (SoftwareProject var in projList)
                 {

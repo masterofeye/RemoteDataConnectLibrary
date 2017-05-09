@@ -32,6 +32,7 @@ namespace RW{
         SoftwareProject::SoftwareProject(SoftwareProject &&R) : d_ptr(R.d_ptr)
         {
             d_ptr->setParent(this);
+            SetID(R.ID());
             R.d_ptr = nullptr;
         }
 
@@ -39,6 +40,7 @@ namespace RW{
         {
             std::swap(d_ptr, R.d_ptr);
             d_ptr->setParent(this);
+            SetID(R.ID());
             delete R.d_ptr;
             R.d_ptr = nullptr;
             return *this;
@@ -63,6 +65,7 @@ namespace RW{
                 }
 
                 d_ptr->m_Name = F.d_ptr->m_Name;
+                SetID(F.ID());
             }
         }
 
@@ -84,6 +87,7 @@ namespace RW{
                 }
 
                 d_ptr->m_Name = F.d_ptr->m_Name;
+                SetID(F.ID());
             }
             return *this;
         }

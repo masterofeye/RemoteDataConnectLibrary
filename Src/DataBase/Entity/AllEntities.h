@@ -14,6 +14,7 @@
 #include "FlashHistory.h"
 #include "WorkstationType.h"
 #include "Peripheral.h"
+#include "WorkstationSetting.h"
 
 #include <QQmlEngine>
 namespace RW{

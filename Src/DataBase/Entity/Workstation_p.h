@@ -12,6 +12,7 @@ namespace RW{
 		class ElementConfiguration;
 		class User;
         class WorkstationType;
+        class WorkstationSetting;
         class Peripheral;
 		class WorkstationPrivate : public QObject
 		{
@@ -36,15 +37,8 @@ namespace RW{
 			@todo QHostAdress verwenden
 			*/
 			QString m_Ip;
-			/*
-			@todo QHostAdress verwenden
-			*/
-			QString m_powerstripeIp;
-			QString m_powerstripeId;
-			quint8  m_remoteboxComPort;
-			QString m_remoteboxHwId;
-			QString m_remoteboxSwVersion;
 
+            WorkstationSetting* m_WorkstationSetting;
 			WorkstationState m_State;
             WorkstationType* m_Type;
             QList<Peripheral*> m_PeripheralList;

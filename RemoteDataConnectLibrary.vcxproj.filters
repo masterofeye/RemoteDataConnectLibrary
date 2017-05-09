@@ -152,6 +152,12 @@
     <CustomBuild Include="Src\DataBase\Entity\Peripheral.h">
       <Filter>Entity</Filter>
     </CustomBuild>
+    <CustomBuild Include="Src\DataBase\Entity\WorkstationSetting.h">
+      <Filter>Entity</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\DataBase\Entity\WorkstationSetting_p.h">
+      <Filter>Entity</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\DataBase\Entity\AllEntities.h">
@@ -168,10 +174,10 @@
     <ClInclude Include="Src\DataBase\Repository\Repository.h">
       <Filter>Repository</Filter>
     </ClInclude>
-    <ClInclude Include="Global.h" />
     <ClInclude Include="Connection.h">
       <Filter>Generierte Dateien</Filter>
     </ClInclude>
+    <ClInclude Include="Src\DataBase\Global.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\DataBase\Entity\ElementConfiguration.cpp">
@@ -440,6 +446,21 @@
     </ClCompile>
     <ClCompile Include="Src\DataBase\Entity\Peripheral.cpp">
       <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DataBase\Entity\WorkstationSetting.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_WorkstationSetting.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_WorkstationSetting.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_WorkstationSetting_p.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_WorkstationSetting_p.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -38,6 +38,7 @@ namespace RW{
 				d_ptr->m_Password = other.d_ptr->m_Password;
 				d_ptr->m_UserName = other.d_ptr->m_UserName;
 				d_ptr->m_Role = other.d_ptr->m_Role;
+                SetID(other.ID());
 			}
 		}
 		User& User::operator=(User& other) 
@@ -53,6 +54,7 @@ namespace RW{
 				d_ptr->m_Password = other.d_ptr->m_Password;
 				d_ptr->m_UserName = other.d_ptr->m_UserName;
 				d_ptr->m_Role = other.d_ptr->m_Role;
+                SetID(other.ID());
 			}
 			return *this;
 		}
@@ -63,7 +65,9 @@ namespace RW{
 			if (&other != nullptr)
 			{
 				d_ptr->setParent(this);
+                SetID(other.ID());
 				other.d_ptr = nullptr;
+               
 			}
 		}
 
@@ -73,6 +77,7 @@ namespace RW{
 			{
 				std::swap(d_ptr, other.d_ptr);
 				d_ptr->setParent(this);
+                SetID(other.ID());
 				delete other.d_ptr;
 				other.d_ptr = nullptr;
 				

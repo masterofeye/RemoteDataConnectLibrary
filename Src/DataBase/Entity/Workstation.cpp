@@ -5,6 +5,8 @@
 #include "Project.h"
 #include "WorkstationType.h"
 #include "Peripheral.h"
+#include "WorkstationSetting.h"
+#include "WorkstationType.h"
 
 namespace RW{
 	namespace SQL{
@@ -16,15 +18,11 @@ namespace RW{
 			m_Mac(""),
 			m_Ip(""),
 			m_User(nullptr),
-			m_powerstripeIp(""),
-			m_powerstripeId(""),
-			m_remoteboxComPort(0),
-			m_remoteboxHwId(""),
-			m_remoteboxSwVersion(""),
+            m_WorkstationSetting(nullptr),
+            m_Type(nullptr),
 			m_State(RW::WorkstationState::OFF),
 			m_ElementConfiguration(),
-			m_Project(nullptr),
-            m_Type(nullptr)
+			m_Project(nullptr)
             
 		{
 		}
@@ -86,11 +84,6 @@ namespace RW{
 						*d_ptr->m_User = *R.d_ptr->m_User;
 					}
 				}
-				d_ptr->m_powerstripeIp = R.d_ptr->m_powerstripeIp;
-				d_ptr->m_powerstripeId = R.d_ptr->m_powerstripeId;
-				d_ptr->m_remoteboxComPort = R.d_ptr->m_remoteboxComPort;
-				d_ptr->m_remoteboxHwId = R.d_ptr->m_remoteboxHwId;
-				d_ptr->m_remoteboxSwVersion = R.d_ptr->m_remoteboxSwVersion;
 				d_ptr->m_State = R.d_ptr->m_State;
 				if (R.d_ptr->m_Project != nullptr)
 				{
@@ -103,6 +96,30 @@ namespace RW{
 						*d_ptr->m_Project = *R.d_ptr->m_Project;
 					}
 				}
+
+                if (R.d_ptr->m_WorkstationSetting != nullptr)
+                {
+                    if (d_ptr->m_WorkstationSetting == nullptr)
+                    {
+                        d_ptr->m_WorkstationSetting = new WorkstationSetting(*R.d_ptr->m_WorkstationSetting);
+                    }
+                    else
+                    {
+                        *d_ptr->m_WorkstationSetting = *R.d_ptr->m_WorkstationSetting;
+                    }
+                }
+
+                if (R.d_ptr->m_Type != nullptr)
+                {
+                    if (d_ptr->m_Type == nullptr)
+                    {
+                        d_ptr->m_Type = new WorkstationType(*R.d_ptr->m_Type);
+                    }
+                    else
+                    {
+                        *d_ptr->m_Type = *R.d_ptr->m_Type;
+                    }
+                }
 
 				//Deep Copy of all Elements!
 				for each (auto var in R.d_ptr->m_ElementConfiguration)
@@ -123,11 +140,9 @@ namespace RW{
 				d_ptr->m_Mac = R.d_ptr->m_Mac;
 				d_ptr->m_Ip = R.d_ptr->m_Ip;
 				d_ptr->m_User = R.d_ptr->m_User;
-				d_ptr->m_powerstripeIp = R.d_ptr->m_powerstripeIp;
-				d_ptr->m_powerstripeId = R.d_ptr->m_powerstripeId;
-				d_ptr->m_remoteboxComPort = R.d_ptr->m_remoteboxComPort;
-				d_ptr->m_remoteboxHwId = R.d_ptr->m_remoteboxHwId;
-				d_ptr->m_remoteboxSwVersion = R.d_ptr->m_remoteboxSwVersion;
+                d_ptr->m_Project = R.d_ptr->m_Project;
+                d_ptr->m_WorkstationSetting = R.d_ptr->m_WorkstationSetting;
+                d_ptr->m_Type = R.d_ptr->m_Type;
 				d_ptr->m_State = R.d_ptr->m_State;
 				//Deep Copy of all Elements!
 				for each (auto var in R.d_ptr->m_ElementConfiguration)
@@ -204,8 +219,16 @@ namespace RW{
 		void Workstation::setAssignedProject(Project* Project)
 		{
 			Q_D(Workstation);
-			d->m_Project = Project;
-			emit ProjectChanged();
+            if (Project != nullptr)
+            {
+                Project->setParent(d);
+                if (d->m_Project != nullptr)
+                    delete d->m_Project;
+
+                d->m_Project = Project;
+                emit ProjectChanged();
+            }
+
 		}
 
 		QString Workstation::Hostname() const
@@ -245,70 +268,6 @@ namespace RW{
 			Q_D(Workstation);
 			d->m_Ip = Ip;
 			emit IpChanged();
-		}
-
-		QString Workstation::PowerstripeIp() const
-		{
-			Q_D(const Workstation);
-			return d->m_powerstripeIp;
-		}
-
-		void Workstation::SetPowerstripeIp(QString PowerstripIp)
-		{
-			Q_D(Workstation);
-			d->m_powerstripeIp = PowerstripIp;
-			emit IpChanged();
-		}
-
-		QString Workstation::PowerstripeId() const
-		{
-			Q_D(const Workstation);
-			return d->m_powerstripeId;
-		}
-		void Workstation::SetPowerstripeId(QString PowerstripId)
-		{
-			Q_D(Workstation);
-			d->m_powerstripeId = PowerstripId;
-			emit PowerstripeIdChanged();
-		}
-
-		quint8 Workstation::RemoteboxComPort() const
-		{
-			Q_D(const Workstation);
-			return d->m_remoteboxComPort;
-		}
-
-		void Workstation::SetRemoteboxComPort(quint8 RemoteboxComPort)
-		{
-			Q_D(Workstation);
-			d->m_remoteboxComPort = RemoteboxComPort;
-			emit RemoteboxComPortChanged();
-		}
-
-		QString Workstation::RemoteboxHwId() const
-		{
-			Q_D(const Workstation);
-			return d->m_remoteboxHwId;
-		}
-
-		void Workstation::SetRemoteboxHwId(QString RemoteboxHwId)
-		{
-			Q_D(Workstation);
-			d->m_remoteboxHwId = RemoteboxHwId;
-			emit RemoteboxHwIdChanged();
-		}
-
-		QString Workstation::RemoteboxSwVersion() const
-		{
-			Q_D(const Workstation);
-			return d->m_remoteboxSwVersion;
-		}
-
-		void  Workstation::SetRemoteboxSwVersion(QString RemoteboxSwVersion)
-		{
-			Q_D(Workstation);
-			d->m_remoteboxSwVersion = RemoteboxSwVersion;
-			emit RemoteboxSwVersionChanged();
 		}
 
 		WorkstationState Workstation::State() const
@@ -370,6 +329,25 @@ namespace RW{
             *tempEl = P;
             d->m_PeripheralList.append(tempEl);
             emit PeripheralListQml();
+        }
+
+        WorkstationSetting* Workstation::SettingOfWorkstation() const
+        {
+            Q_D(const Workstation);
+            return d->m_WorkstationSetting;
+        }
+
+        void Workstation::SetSettingOfWorkstation(WorkstationSetting* Setting)
+        {
+            Q_D(Workstation);
+            if (Setting != nullptr)
+            {
+                if (d->m_WorkstationSetting != nullptr)
+                    delete d->m_Type;
+                Setting->setParent(d);
+                d->m_WorkstationSetting = Setting;
+                emit SettingOfWorkstationChanged();
+            }
         }
 
 	}

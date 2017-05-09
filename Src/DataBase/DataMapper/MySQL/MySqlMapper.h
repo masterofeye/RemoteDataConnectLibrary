@@ -10,7 +10,7 @@
 namespace RW{
 	namespace SQL{
 
-		const QString Insert_Workstation = "INSERT INTO Workstation (userID,hostname,mac,ip,powerstripeIp,powerstripeId,remoteboxComPort,remoteboxHwId,remoteboxSwVersion,state,projectID) VALUES (:user,:hostname,:mac,:ip,:powerstripeIp,:powerstripeId,:remoteboxComPort,:remoteboxHwId,:remoteboxSwVersion,:state,( SELECT idProject FROM project WHERE name=:name))";
+        const QString Insert_Workstation = "INSERT INTO Workstation (userID,hostname,mac,ip,state,projectID,workstationSetting,workstationType) VALUES (:user,:hostname,:mac,:ip,:state,( SELECT idProject FROM project WHERE name=:name),:workstationSetting,:workstationType)";
 		const QString Insert_User = "INSERT INTO user (username,password,mksUsername,mksPassword,initials,notifiyRemoteDesktop,notifiyDesktop,role ) VALUES (:username,:password,:mksUsername,:mksPassword,:initials,:notifiyRemoteDesktop,:notifiyDesktop, :role)";
 		const QString Insert_ElementConfiguration = "INSERT INTO elementConfiguration (WorkstationID, elementTypeID, displayName, name, groupName, function, tooltip, remoteViewRelevant, isFeature, pin) VALUES (:WorkstationID, (SELECT idElementType FROM elementType WHERE type=:type),:displayName,:name,:groupName,:function,:tooltip,:remoteViewRelevant, :isFeature, :pin)";
 		const QString Insert_ElementType = "INSERT INTO elementType (type) VALUES (:type)";
@@ -26,7 +26,7 @@ namespace RW{
         const QString Insert_PeripheralMapping = "INSERT INTO peripheralMapping (workstationID, peripheralID) VALUES (:workstationID, :peripheralID)";
         const QString Insert_Peripheral = "INSERT INTO peripheral (address, subAddress1, subAddress2, subAddress3, name, type, connectionType, serialNumber, deviceName, description, hardwareID1, hardwareID2, hardwareID3, state)";
 
-		const QString Update_Workstation = "UPDATE Workstation SET userID=( SELECT idUser FROM user WHERE user=:user),hostname=:hostname,mac=:mac,ip=:ip,powerstripeIp=:powerstripeIp,powerstripeId=:powerstripeId,remoteboxComPort=:remoteboxComPort,remoteboxHwId=:remoteboxHwId,remoteboxSwVersion=:remoteboxSwVersion, state=:state, projectID=( SELECT idProject FROM project WHERE name=:name) WHERE idWorkstation=:id";
+		const QString Update_Workstation = "UPDATE Workstation SET userID=( SELECT idUser FROM user WHERE user=:user),hostname=:hostname,mac=:mac,ip=:ip,state=:state, projectID=( SELECT idProject FROM project WHERE name=:name) WHERE idWorkstation=:id, workstationSettingID=( SELECT idWorkstationSetting FROM workstationsetting WHERE id=:id) WHERE idWorkstation=:id";
 		const QString Update_User = "UPDATE user SET username=:username,password=:password,mksUsername=:mksUsername,mksPassword=:mksPassword,initials=:intitials,notifiyRemoteDesktop=:notifiyRemoteDesktop,notifiyDesktop=:notifiyDesktop, role=:role";
 		const QString Update_ElementConfiguration = "UPDATE elementConfiguration SET WorkstationID=:WorkstationID,type=:type,displayName=:displayName,name=:name,groupName=:groupName,function=:function, tooltip=:tooltip, remoteViewRelevant=:remoteViewRelevant, isFeature=:isFeature, pin=:pin";
 		const QString Update_ElementType = "UPDATE elementType SET type=:type";
@@ -112,7 +112,7 @@ namespace RW{
 					db = QSqlDatabase::addDatabase("QMYSQL");
 					db.setHostName("192.168.50.45");
 					db.setPort(3306);
-					db.setDatabaseName("Workstation");
+					db.setDatabaseName("remoteworkstation");
 					db.setUserName("remoteUser");
 					db.setPassword("schleissheimer");
 
@@ -153,7 +153,8 @@ namespace RW{
 			bool res = query.exec();
 			if (!res)
 			{
-				qDebug() << query.lastError().text();
+                QString error = query.lastError().text();
+                qDebug() << error;
 			}
 			return res;
 		}
@@ -169,15 +170,12 @@ namespace RW{
 			if (d.CurrentUser() == nullptr)
 				query.bindValue(":user", QVariant(QVariant::UserType));
 			else
-				query.bindValue(":user", d.CurrentUser()->ID());
+			query.bindValue(":user", d.CurrentUser()->ID());
 			query.bindValue(":hostname", d.Hostname());
 			query.bindValue(":mac", d.Mac());
 			query.bindValue(":ip", d.Ip());
-			query.bindValue(":powerstripeIp", d.PowerstripeIp());
-			query.bindValue(":powerstripeId", d.PowerstripeId());
-			query.bindValue(":remoteboxComPort", d.RemoteboxComPort());
-			query.bindValue(":remoteboxHwId", d.RemoteboxHwId());
-			query.bindValue(":remoteboxSwVersion", d.RemoteboxSwVersion());
+            query.bindValue(":workstationType", d.TypeOfWorkstation()->ID());
+            query.bindValue(":workstationSetting", d.SettingOfWorkstation()->ID());
 			query.bindValue(":state",(int) d.State());
 			if (d.AssignedProject() == nullptr)
 			{
@@ -475,11 +473,8 @@ namespace RW{
 			query.bindValue(":hostname", d.Hostname());
 			query.bindValue(":mac", d.Mac());
 			query.bindValue(":ip", d.Ip());
-			query.bindValue(":powerstripeIp", d.PowerstripeId());
-			query.bindValue(":powerstripeId", d.PowerstripeId());
-			query.bindValue(":remoteboxComPort", d.RemoteboxComPort());
-			query.bindValue(":remoteboxHwId", d.RemoteboxHwId());
-			query.bindValue(":remoteboxSwVersion", d.RemoteboxSwVersion());
+            query.bindValue(":workstationType", d.TypeOfWorkstation()->ID());
+            query.bindValue(":workstationSetting", d.SettingOfWorkstation()->ID());
 			query.bindValue(":state", (int)d.State());
 			if (d.AssignedProject() == nullptr)
 			{
@@ -729,11 +724,8 @@ namespace RW{
 				d.SetIp(query.value("ip").toString());
 				d.SetMac(query.value("mac").toString());
 				d.SetHostname(query.value("hostname").toString());
-				d.SetPowerstripeId(query.value("powerstripeId").toString());
-				d.SetPowerstripeIp(query.value("powerstripeIp").toString());
-				d.SetRemoteboxComPort(query.value("remoteboxComPort").toInt());
-				d.SetRemoteboxHwId(query.value("remoteboxHwId").toString());
-				d.SetRemoteboxSwVersion(query.value("remoteboxSwVersion").toString());
+                //d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toString())));
+                //d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toString())));
 				d.SetState((RW::WorkstationState)query.value("state").toInt());
 				d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
 
@@ -744,6 +736,7 @@ namespace RW{
 				while (query.next())
 				{
 					ElementConfiguration el;
+                    el.SetID(query.value("idElementConfiguration").toInt());
 					el.SetType(new ElementType(FindByID<ElementType>(query.value("elementTypeID").toInt())));
 					el.SetDisplayName(query.value("displayName").toString());
 					el.SetName(query.value("name").toString());
@@ -777,6 +770,8 @@ namespace RW{
 			bool res = query.exec();
 			while (query.next())
 			{
+
+                d.SetID(query.value("idUser").toInt());
 				d.SetUserName(query.value("username").toString());
 				d.SetPassword(query.value("password").toString());
 				d.SetMKSUsername(query.value("mksUsername").toString());
@@ -805,6 +800,7 @@ namespace RW{
 			bool res = query.exec();
 			while (query.next())
 			{
+                d.SetID(query.value("idElementConfiguration").toInt());
 				d.SetType(new ElementType(FindByID<ElementType>(query.value("elementTypeID").toInt())));
 				d.SetDisplayName(query.value("displayName").toString());
 				d.SetName(query.value("name").toString());
@@ -832,6 +828,7 @@ namespace RW{
 			bool res = query.exec();
 			while (query.next())
 			{
+                d.SetID(query.value("idElementType").toInt());
 				// \!todo unschöne Konvertierung
 				d.SetType((TypeOfElement)query.value("type").toInt());
 			}
@@ -854,6 +851,7 @@ namespace RW{
 
 			while (query.next())
 			{
+                d.SetID(query.value("idInstruction").toInt());
 				// \!todo unschöne Konvertierung
 				d.SetStep(query.value("step").toString());
 			}
@@ -875,6 +873,7 @@ namespace RW{
 
 			while (query.next())
 			{
+                d.SetID(query.value("idRecept").toInt());
 				// \!todo unschöne Konvertierung
 				d.SetOrderNumber(query.value("orderNumber").toInt());
 				d.SetInstruction(new Instruction(FindByID<Instruction>(query.value("instructionID").toInt())));
@@ -898,6 +897,7 @@ namespace RW{
 
 			while (query.next())
 			{
+                d.SetID(query.value("idProduct").toInt());
 				// \!todo unschöne Konvertierung
 				d.SetProductName(query.value("productName").toString());
 				d.SetRecept(new Recept(FindByID<Recept>(query.value("receptID").toInt())));
@@ -921,6 +921,7 @@ namespace RW{
 
 			while (query.next())
 			{
+                d.SetID(query.value("idProject").toInt());
 				// \!todo unschöne Konvertierung
 				d.SetProjectname(query.value("name").toString());
 			}
@@ -942,6 +943,7 @@ namespace RW{
 
 			while (query.next())
 			{
+                d.SetID(query.value("idLogEntry").toInt());
 				// \!todo unschöne Konvertierung
 				d.SetComputerNameRW(query.value("computerName").toString());
 				d.SetType(query.value("type").toString());
@@ -969,6 +971,7 @@ namespace RW{
 
 			while (query.next())
 			{
+                d.SetID(query.value("idDevice").toInt());
 				// \!todo unschöne Konvertierung
 				d.SetDescription(query.value("description").toString());
 				d.SetVendorID(query.value("vendorId").toByteArray());
@@ -994,6 +997,7 @@ namespace RW{
 
             while (query.next())
             {
+                d.SetID(query.value("idSoftwareProject").toInt());
                 // \!todo unschöne Konvertierung
                 d.SetName(query.value("name").toString());
             }
@@ -1015,6 +1019,7 @@ namespace RW{
 
             while (query.next())
             {
+                d.SetID(query.value("idFlashHistory").toInt());
                 // \!todo unschöne Konvertierung
                 d.SetUserHistory(new User(FindByID<User>(query.value("userID").toInt())));
                 d.SetWorkstationHistory(new Workstation(FindByID<Workstation>(query.value("workstationID").toInt())));
@@ -1043,6 +1048,7 @@ namespace RW{
 
             while (query.next())
             {
+                d.SetID(query.value("idWorkstationType").toInt());
                 // \!todo unschöne Konvertierung
                 d.SetType((RW::WorkstationKind)query.value("type").toInt());
             }
@@ -1065,6 +1071,7 @@ namespace RW{
             while (query.next())
             {
                 // \!todo unschöne Konvertierung
+                d.SetID(query.value("idPeripheral").toInt());
                 d.SetAddress(query.value("address").toString());
                 d.SetSubAddress1(query.value("subAddress1").toString());
                 d.SetSubAddress2(query.value("subAddress2").toString());
@@ -1104,11 +1111,8 @@ namespace RW{
 				d.SetIp(query.value("ip").toString());
 				d.SetMac(query.value("mac").toString());
 				d.SetHostname(query.value("hostname").toString());
-				d.SetPowerstripeId(query.value("powerstripeId").toString());
-				d.SetPowerstripeIp(query.value("powerstripeIp").toString());
-				d.SetRemoteboxComPort(query.value("remoteboxComPort").toInt());
-				d.SetRemoteboxHwId(query.value("remoteboxHwId").toString());
-				d.SetRemoteboxSwVersion(query.value("remoteboxSwVersion").toString());
+                //d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toString())));
+                //d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toString())));
 				d.SetState((RW::WorkstationState)query.value("state").toInt());
 				d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
 
@@ -1121,6 +1125,7 @@ namespace RW{
 					ElementConfiguration el;
 					//Todo warum wird hier ein Pointer verwendet?!
 					ElementType* elType = new ElementType();
+                    elType->SetID(query.value("idElementConfiguration").toInt());
 					elType->SetType((RW::TypeOfElement)query.value("type").toInt());
 					el.SetType(elType);
 					el.SetDisplayName(query.value("displayName").toString());
@@ -1152,6 +1157,7 @@ namespace RW{
 			while (query.next())
 			{
 				User d;
+                d.SetID(query.value("idUser").toInt());
 				d.SetUserName(query.value("username").toString());
 				d.SetPassword(query.value("password").toString());
 				d.SetMKSUsername(query.value("mksUsername").toString());
@@ -1180,6 +1186,7 @@ namespace RW{
 			while (query.next())
 			{
 				ElementConfiguration d;
+                d.SetID(query.value("idElementConfiguration").toInt());
 				d.SetType(new ElementType(FindByID<ElementType>(query.value("elementTypeID").toInt())));
 				d.SetDisplayName(query.value("displayName").toString());
 				d.SetName(query.value("name").toString());
@@ -1208,6 +1215,7 @@ namespace RW{
 			while (query.next())
 			{
 				ElementType d;
+                d.SetID(query.value("idElementType").toInt());
 				// \!todo unschöne Konvertierung
 				d.SetType((TypeOfElement)query.value("type").toInt());
 				list << d;
@@ -1231,6 +1239,7 @@ namespace RW{
 			{
 				Instruction d;
 				// \!todo unschöne Konvertierung
+                d.SetID(query.value("idInstruction").toInt());
 				d.SetStep(query.value("step").toString());
 				list << d;
 			}
@@ -1252,6 +1261,7 @@ namespace RW{
 			{
 				Recept d;
 				// \!todo unschöne Konvertierung
+                d.SetID(query.value("idRecept").toInt());
 				d.SetOrderNumber(query.value("orderNumber").toInt());
 				d.SetInstruction(new Instruction(FindByID<Instruction>(query.value("instructionID").toInt())));
 				d.SetReceptName(query.value("receptName").toString());
@@ -1275,6 +1285,7 @@ namespace RW{
 			{
 				Product d;
 				// \!todo unschöne Konvertierung
+                d.SetID(query.value("idProduct").toInt());
 				d.SetProductName(query.value("productName").toString());
 				d.SetRecept(new Recept(FindByID<Recept>(query.value("receptID").toInt())));
 				d.SetPart(query.value("part").toString());
@@ -1297,7 +1308,9 @@ namespace RW{
 			while (query.next())
 			{
 				Project d;
+
 				// \!todo unschöne Konvertierung
+                d.SetID(query.value("idProject").toInt());
 				d.SetProjectname(query.value("name").toString());
 				list << d;
 			}
@@ -1320,6 +1333,7 @@ namespace RW{
 			{
 				LogEntry d;
 				// \!todo unschöne Konvertierung
+                d.SetID(query.value("idLogEntry").toInt());
 				d.SetComputerNameRW(query.value("computerName").toString());
 				d.SetType(query.value("type").toString());
 				d.SetDate(query.value("date").toDateTime());
@@ -1346,6 +1360,7 @@ namespace RW{
 			while (query.next())
 			{
 				Device d;
+
 				// \!todo unschöne Konvertierung
 				d.SetDescription(query.value("description").toString());
 				d.SetVendorID(query.value("vendorId").toByteArray());
@@ -1372,6 +1387,7 @@ namespace RW{
             while (query.next())
             {
                 SoftwareProject d;
+                d.SetID(query.value("idSoftwareProject").toInt());
                 // \!todo unschöne Konvertierung
                 d.SetName(query.value("name").toString());
                 list << d;
@@ -1395,6 +1411,7 @@ namespace RW{
             while (query.next())
             {
                 FlashHistory d;
+                d.SetID(query.value("idFlashHistory").toInt());
                 // \!todo unschöne Konvertierung
                 d.SetUserHistory(new User(FindByID<User>(query.value("userID").toInt())));
                 d.SetWorkstationHistory(new Workstation(FindByID<Workstation>(query.value("workstationID").toInt())));
@@ -1424,6 +1441,7 @@ namespace RW{
             while (query.next())
             {
                 RW::SQL::WorkstationType d;
+                d.SetID(query.value("idWorkstationType").toInt());
                 // \!todo unschöne Konvertierung
                 d.SetType((RW::WorkstationKind)query.value("type").toInt());
                 list << d;
@@ -1448,6 +1466,7 @@ namespace RW{
             {
                 Peripheral d;
                 // \!todo unschöne Konvertierung
+                d.SetID(query.value("idPeripheral").toInt());
                 d.SetAddress(query.value("address").toString());
                 d.SetSubAddress1(query.value("subAddress1").toString());
                 d.SetSubAddress2(query.value("subAddress2").toString());

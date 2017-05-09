@@ -8,7 +8,7 @@ namespace RW{
 		Connection::Connection(QObject *Parent) : QObject(Parent),
 			m_HostName("localhost"),
 			m_Port(3306),
-			m_DataBaseName("Workstation"),
+			m_DataBaseName("remoteworkstation"),
 			m_User("remoteUser"),
 			m_Password("schleissheimer")
 		{

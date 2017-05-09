@@ -22,7 +22,9 @@ namespace RW{
 			{
 				d_ptr = new ProjectPrivate(this);
 				d_ptr->m_ProjectName = other.d_ptr->m_ProjectName;
+                SetID(other.ID());
 			}
+ 
 		}
 		Project& Project::operator=(Project& other) 
 		{
@@ -30,6 +32,7 @@ namespace RW{
 			{
 				d_ptr = new ProjectPrivate(this);
 				d_ptr->m_ProjectName = other.d_ptr->m_ProjectName;
+                SetID(other.ID());
 			}
 			return *this;
 		}
@@ -39,6 +42,7 @@ namespace RW{
 		{
 
 			d_ptr->setParent(this);
+            SetID(other.ID());
 			other.d_ptr = nullptr;
 		}
 
@@ -46,6 +50,7 @@ namespace RW{
 		{
 			std::swap(d_ptr, other.d_ptr);
 			d_ptr->setParent(this);
+            SetID(other.ID());
 			delete other.d_ptr;
 			other.d_ptr = nullptr;
 			return *this;

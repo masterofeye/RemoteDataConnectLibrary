@@ -121,7 +121,7 @@ namespace RW{
         bool ConfigurationManagerPrivate::LoadWorkstation(QString HostName)
         {
             RW::SQL::Workstation rw;
-            if (!m_Repository)
+            if ((m_Repository != nullptr))
             {
                 if(!m_Repository->GetWorkstationByHostname(HostName, rw))
                     return false;
@@ -144,7 +144,7 @@ namespace RW{
         {
             RW::SQL::SoftwareProject s;
             QList<QVariant> list;
-            if (!m_Repository)
+            if ((m_Repository != nullptr))
             {
                 QList<RW::SQL::SoftwareProject> projList;
                 if (!m_Repository->GetSoftwareProjectByProjectId(ProjectId, projList))
@@ -169,7 +169,7 @@ namespace RW{
         bool ConfigurationManagerPrivate::LoadUser(QString HostName)
         {
             RW::SQL::User user;
-            if (!m_Repository)
+            if ((m_Repository != nullptr))
             {
                 if (!m_Repository->GetUserByHostName(HostName, user))
                     return false;
@@ -185,6 +185,10 @@ namespace RW{
             m_ConfigCollection->insert(ConfigurationName::MKSUsername, user.MKSUsername());
             m_ConfigCollection->insert(ConfigurationName::MKSPassword, user.MKSPassword());
             m_ConfigCollection->insert(ConfigurationName::Initials, user.Initials());
+
+            if (user.ID() == 0)
+                m_Logger->warn("LoadUser -> User id is 0");
+
             m_ConfigCollection->insert(ConfigurationName::UserId, user.ID());
         }
 
@@ -195,7 +199,7 @@ namespace RW{
             
             QList<SQL::FlashHistory> listFlashHistory;
             QList<QVariant> list;
-            if(!m_Repository)
+            if ((m_Repository != nullptr))
             {
                 if (!m_Repository->GetAllFlashHistory(listFlashHistory))
                     return false;
@@ -430,14 +434,15 @@ namespace RW{
         bool ConfigurationManager::Load()
         {
             char name[255] = {};
-            if (gethostname(name, 255) == 0)
+            DWORD size = 255;
+            if (GetComputerNameA(name, &size) == 0)
             {
                 return false;
             }
 
             QString hostName(name);
-            if (!d_ptr->LoadWorkstation(hostName));
-            return false;
+            if (!d_ptr->LoadWorkstation(hostName))
+                return false;
 
             if (!d_ptr->LoadProjectSoftware(d_ptr->m_ConfigCollection->value(ConfigurationName::ProjectId).toInt()))
                 return false;
