@@ -53,6 +53,8 @@ namespace RW{
             */
             bool LoadProjectSoftware(quint8 ProjectId);
 
+            bool LoadGlobalSetting();
+
             void UpdateUser(const ConfigurationName &Key, const QVariant &Val);
             void UpdateWorkstation(const ConfigurationName &Key, const QVariant &Val);
             void UpdateWorkstationSettings(const ConfigurationName &Key, const QVariant &Val);

@@ -34,7 +34,7 @@ namespace RW{
             /*Globalsettings*/
             GlobalSettingsStart,
             RwLogOutTimer,
-            RWShutdownTimer,
+            RwShutdownTimer,
             BeLogOutTimer, 
             BeShutdownTimer, 
             AmoundOfFlashHistory,
@@ -49,6 +49,7 @@ namespace RW{
             Hostname,
             Ip,
             Mac,
+            WorkstationType,
             WorkstationEnd,
             /*WorkstationSettings*/
             WorkstationSettingsStart,

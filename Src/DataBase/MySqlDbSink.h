@@ -3,6 +3,7 @@
 #include "Entity/LogEntry.h"
 #include <qdatetime.h>
 #include "Repository/Repository.h"
+#include "Types.h"
 
 namespace spdlog
 {
@@ -74,6 +75,7 @@ namespace spdlog
 				obj.SetThreadID((quint16)msg.thread_id);
 				obj.SetErrorID(0);
 				obj.SetComputerNameRW(qtComputerName);
+                obj.SetFilter((spdlog::sinks::FilterType) msg.filter);
 
 				//Todo hier die Magic numbers ersetzen
 				switch (msg.type)
@@ -87,6 +89,9 @@ namespace spdlog
 				case 3:
 					obj.SetType("RemoteView");
 					break;
+                case 4:
+                    obj.SetType("RemoteHiddenHelper");
+                    break;
 				default:
 					break;
 				}

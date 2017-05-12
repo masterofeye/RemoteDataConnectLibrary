@@ -98,12 +98,6 @@
     <CustomBuild Include="Src\DataBase\Factory\DataFactory.h">
       <Filter>Factory</Filter>
     </CustomBuild>
-    <CustomBuild Include="Src\DataBase\Entity\GeneralSettings.h">
-      <Filter>Entity</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Src\DataBase\Entity\GeneralSettings_p.h">
-      <Filter>Entity</Filter>
-    </CustomBuild>
     <CustomBuild Include="Src\DataBase\Entity\Project.h">
       <Filter>Entity</Filter>
     </CustomBuild>
@@ -156,6 +150,12 @@
       <Filter>Entity</Filter>
     </CustomBuild>
     <CustomBuild Include="Src\DataBase\Entity\WorkstationSetting_p.h">
+      <Filter>Entity</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\DataBase\Entity\GlobalSetting_p.h">
+      <Filter>Entity</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\DataBase\Entity\GlobalSetting.h">
       <Filter>Entity</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -309,21 +309,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_DataFactory.cpp">
       <Filter>Generierte Dateien\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DataBase\Entity\GeneralSettings.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_GeneralSettings.cpp">
-      <Filter>Generierte Dateien\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_GeneralSettings.cpp">
-      <Filter>Generierte Dateien\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_GeneralSettings_p.cpp">
-      <Filter>Generierte Dateien\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_GeneralSettings_p.cpp">
-      <Filter>Generierte Dateien\Release</Filter>
-    </ClCompile>
     <ClCompile Include="Connection.cpp">
       <Filter>Generierte Dateien</Filter>
     </ClCompile>
@@ -461,6 +446,21 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_WorkstationSetting_p.cpp">
       <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_GlobalSetting_p.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_GlobalSetting_p.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_GlobalSetting.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_GlobalSetting.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DataBase\Entity\GlobalSetting.cpp">
+      <Filter>Entity</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

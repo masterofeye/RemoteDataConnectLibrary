@@ -2,10 +2,16 @@
 #include <qobject.h>
 #include <qdatetime.h>
 
+namespace spdlog{
+    namespace sinks{
+        enum class FilterType;
+    }
+}
 namespace RW{
 	namespace SQL{
 
 		class LogEntry;
+  
 		class LogEntryPrivate : public QObject
 		{
 			Q_OBJECT
@@ -21,6 +27,7 @@ namespace RW{
 			quint64 m_ErrorID;
 			QString m_Type;
 			QString m_ComputerName;
+            spdlog::sinks::FilterType m_Filter;
 
 		public:
 			LogEntryPrivate(LogEntry *Parent);

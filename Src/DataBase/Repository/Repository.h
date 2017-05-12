@@ -21,6 +21,7 @@ namespace RW{
         class FlashHistory;
         class SoftwareProject;
         class WorkstationType;
+        class GlobalSetting;
 
 		/*
 		@brief Schnittstelle zwischen dem Datenzugriff von Clienten und externen Datenquellen. Jeder Zugriff auf externe Datenquellen
@@ -120,6 +121,7 @@ namespace RW{
             bool GetSoftwareProjectByID(quint64 ID, SoftwareProject& P);
             bool GetSoftwareProjectByProjectId(quint64 ID, QList<SoftwareProject>& P);
             bool GetWorkstationTypeByID(quint64 ID, QList<WorkstationType>& P);
+            bool GetGlobalSettingByID(quint64 ID, GlobalSetting& P);
 
 			bool GetAllWorkstation(QList<Workstation> & AllR);
 			bool GetAllUser(QList<User> & AllR);

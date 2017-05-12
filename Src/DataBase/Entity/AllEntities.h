@@ -7,7 +7,7 @@
 #include "Product.h"
 #include "Instruction.h"
 #include "LogEntry.h"
-#include "GeneralSettings.h"
+#include "GlobalSetting.h"
 #include "Project.h"
 #include "Device.h"
 #include "SoftwareProject.h"

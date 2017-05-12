@@ -496,6 +496,25 @@ namespace RW{
             return true;
         }
 
+        bool Repository::GetGlobalSettingByID(quint64 ID, GlobalSetting& P)
+        {
+            try{
+                DataFactory d(m_logger);
+                DataMapper<GlobalSetting> *dm = d.GetMapper<GlobalSetting>(m_Source);
+                if (dm == nullptr)
+                    return false;
+                P = dm->FindByID(ID, false);
+
+                delete dm;
+            }
+            catch (...)
+            {
+                m_logger->error("GetGlobalSettingByID throwed a exception");
+                return false;
+            }
+            return true;
+        }
+
 		bool Repository::GetAllWorkstation(QList<Workstation> &AllR)
 		{
 			try{

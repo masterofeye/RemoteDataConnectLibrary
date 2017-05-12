@@ -132,6 +132,7 @@ namespace RW{
                 m_ConfigCollection->insert(ConfigurationName::Hostname, rw.Hostname());
                 m_ConfigCollection->insert(ConfigurationName::ProjectName, rw.AssignedProject()->Projectname());
                 m_ConfigCollection->insert(ConfigurationName::ProjectId, rw.AssignedProject()->ID());
+                m_ConfigCollection->insert(ConfigurationName::WorkstationType, QVariant::fromValue(rw.TypeOfWorkstation()->Type()));
                 return true;
             }
             else
@@ -219,6 +220,25 @@ namespace RW{
             return true;
         }
 
+        bool ConfigurationManagerPrivate::LoadGlobalSetting()
+        {
+            RW::SQL::GlobalSetting setting;
+            if ((m_Repository != nullptr))
+            {
+                if (!m_Repository->GetGlobalSettingByID(1, setting))
+                    return false;
+            }
+            else
+            {
+                return false;
+            }
+
+            m_ConfigCollection->insert(ConfigurationName::RwLogOutTimer, setting.RwLogOutTimer());
+            m_ConfigCollection->insert(ConfigurationName::RwShutdownTimer, setting.RwShutdownTimer());
+            m_ConfigCollection->insert(ConfigurationName::BeLogOutTimer, setting.BeLogOutTimer());
+            m_ConfigCollection->insert(ConfigurationName::BeShutdownTimer, setting.BeShutdownTimer());
+            return true;
+        }
 
         void ConfigurationManagerPrivate::UpdateUser()
         {
@@ -448,6 +468,9 @@ namespace RW{
                 return false;
 
             if (!d_ptr->LoadUser(hostName))
+                return false;
+
+            if (!d_ptr->LoadGlobalSetting())
                 return false;
             return true;
         }

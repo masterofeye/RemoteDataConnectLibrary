@@ -2,11 +2,18 @@
 #include "Entity.h"
 #include <qdatetime.h>
 
+namespace spdlog{
+    namespace sinks{
+        enum class FilterType;
+    }
+}
+
 namespace RW
 {
 	namespace SQL
 	{
 		class LogEntryPrivate;
+
 		class REMOTE_DATA_CONNECT_API LogEntry :
 			public Entity
 		{
@@ -18,6 +25,7 @@ namespace RW
 			Q_PROPERTY(quint64 ErrorID READ ErrorID WRITE SetErrorID NOTIFY ErrorIDChanged)
 			Q_PROPERTY(QString Type READ Type WRITE SetType NOTIFY TypeChanged)
 			Q_PROPERTY(QString ComputerNameRW READ ComputerNameRW WRITE SetComputerNameRW NOTIFY ComputerNameRWChanged)
+            Q_PROPERTY(spdlog::sinks::FilterType Filter READ Filter WRITE SetFilter NOTIFY FilterChanged)
 			Q_CLASSINFO("Version", "0.0.1")
 
 		private:
@@ -60,6 +68,9 @@ namespace RW
 			*/
 			void SetComputerNameRW(QString ComputerName);
 
+            spdlog::sinks::FilterType Filter();
+            void SetFilter(spdlog::sinks::FilterType Type);
+
 		signals: 
 			void DateChanged();
 			void MessageChanged();
@@ -68,6 +79,7 @@ namespace RW
 			void ErrorIDChanged();
 			void TypeChanged();
 			void ComputerNameRWChanged();
+            void FilterChanged();
 		};
 
 	}

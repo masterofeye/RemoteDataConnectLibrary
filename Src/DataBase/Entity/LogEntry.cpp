@@ -1,6 +1,7 @@
 #include "LogEntry.h"
 #include "LogEntry_p.h"
 #include "qdebug.h"
+#include "../Src/DataBase/MySqlDbSink.h"
 
 namespace RW{
 	namespace SQL{
@@ -14,7 +15,8 @@ namespace RW{
 			m_LogLevel(""),
 			m_Message(""),
 			m_ThreadID(0),
-			m_Type("")
+			m_Type(""),
+            m_Filter(spdlog::sinks::FilterType::NON)
 		{
 
 		}
@@ -45,6 +47,8 @@ namespace RW{
 				d_ptr->m_ComputerName = other.d_ptr->m_ComputerName;
 				d_ptr->m_Message = other.d_ptr->m_Message;
 				d_ptr->m_Type = other.d_ptr->m_Type;
+                d_ptr->m_Filter = other.d_ptr->m_Filter;
+                SetID(other.ID());
 			}
 		}
 
@@ -60,6 +64,8 @@ namespace RW{
 				d_ptr->m_ComputerName = other.d_ptr->m_ComputerName;
 				d_ptr->m_Message = other.d_ptr->m_Message;
 				d_ptr->m_Type = other.d_ptr->m_Type;
+                d_ptr->m_Filter = other.d_ptr->m_Filter;
+                SetID(other.ID());
 			}
 			return *this;
 		}
@@ -68,6 +74,7 @@ namespace RW{
 		LogEntry::LogEntry(LogEntry&& other) : d_ptr(other.d_ptr)
 		{
 			d_ptr->setParent(this);
+            SetID(other.ID());
 			other.d_ptr = nullptr;
 		}
 
@@ -75,6 +82,7 @@ namespace RW{
 		{
 			std::swap(d_ptr, other.d_ptr);
 			d_ptr->setParent(this);
+            SetID(other.ID());
 			delete other.d_ptr;
 			other.d_ptr = nullptr;
 			return *this;
@@ -170,5 +178,19 @@ namespace RW{
 			d->m_ComputerName = ComputerName;
 			emit ComputerNameRWChanged();
 		}
+
+        spdlog::sinks::FilterType LogEntry::Filter()
+        {
+            Q_D(LogEntry);
+            return d->m_Filter;
+        }
+
+
+        void LogEntry::SetFilter(spdlog::sinks::FilterType ComputerName)
+        {
+            Q_D(LogEntry);
+            d->m_Filter = ComputerName;
+            emit FilterChanged();
+        }
 	}
 }

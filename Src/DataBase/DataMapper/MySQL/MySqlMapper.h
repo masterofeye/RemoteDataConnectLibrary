@@ -17,7 +17,7 @@ namespace RW{
 		const QString Insert_Instruction = "INSERT INTO instruction (step) VALUES (:step)";
 		const QString Insert_Recept = "INSERT INTO recept (receptName,orderNumber,instructionID) VALUES (:receptName,:orderNumber,:instructionID)";
 		const QString Insert_Product = "INSERT INTO product (productName,part,receptID) VALUES (:productName,:part,:receptID)";
-		const QString Insert_LogEntry = "INSERT INTO log (date,message,loglevel,threadId,errorId,type,computerName) VALUES (:datetime,:message,:loglevel,:threadId,:errorId,:type,:computerName)";
+		const QString Insert_LogEntry = "INSERT INTO log (date,message,loglevel,threadId,errorId,type,computerName, filter) VALUES (:datetime,:message,:loglevel,:threadId,:errorId,:type,:computerName,:filter)";
 		const QString Insert_Project = "INSERT INTO project (name) VALUES (:name)";
 		const QString Insert_Device = "INSERT INTO device( description, vendorId, productId, serial, deviceName) VALUES (:description, :vendorId, :productId, :serial, :deviceName)";
         const QString Insert_SoftwareProject = "INSERT INTO softwareProject (name) VALUES (:name)";
@@ -25,6 +25,7 @@ namespace RW{
         const QString Insert_WorkstationType = "INSERT INTO workstationType (type) VALUES (type)";
         const QString Insert_PeripheralMapping = "INSERT INTO peripheralMapping (workstationID, peripheralID) VALUES (:workstationID, :peripheralID)";
         const QString Insert_Peripheral = "INSERT INTO peripheral (address, subAddress1, subAddress2, subAddress3, name, type, connectionType, serialNumber, deviceName, description, hardwareID1, hardwareID2, hardwareID3, state)";
+        const QString Insert_GlobalSetting = "INSERT INTO globalsetting ( rwShutdownTime, rwLogoutTime, beShutdownTime, beLogoutTime) VALUES ( :rwShutdownTime, :rwLogoutTime, :beShutdownTime, :beLogoutTime)";
 
 		const QString Update_Workstation = "UPDATE Workstation SET userID=( SELECT idUser FROM user WHERE user=:user),hostname=:hostname,mac=:mac,ip=:ip,state=:state, projectID=( SELECT idProject FROM project WHERE name=:name) WHERE idWorkstation=:id, workstationSettingID=( SELECT idWorkstationSetting FROM workstationsetting WHERE id=:id) WHERE idWorkstation=:id";
 		const QString Update_User = "UPDATE user SET username=:username,password=:password,mksUsername=:mksUsername,mksPassword=:mksPassword,initials=:intitials,notifiyRemoteDesktop=:notifiyRemoteDesktop,notifiyDesktop=:notifiyDesktop, role=:role";
@@ -33,7 +34,7 @@ namespace RW{
 		const QString Update_Instruction = "UPDATE instruction SET step=:step";
 		const QString Update_Recept = "UPDATE recept SET receptName=:receptName,orderNumber=:orderNumber,instructionID=:instructionID";
 		const QString Update_Product = "UPDATE product SET productName=:productName,part=:part,receptID=:receptID";
-		const QString Update_LogEntry = "UPDATE log SET datetime=:datetime,message=:message,loglevel=:loglevel,threadId=:threadId,errorId=:errorId,type=:type,computerName=:computerName";
+		const QString Update_LogEntry = "UPDATE log SET datetime=:datetime,message=:message,loglevel=:loglevel,threadId=:threadId,errorId=:errorId,type=:type,computerName=:computerName, filter=:filter";
 		const QString Update_Project = "UPDATE project SET name=:name";
 		const QString Update_Device = "UPDATE device SET description=:description, vendorId=vendorId, productId=productId, serial=serial, deviceName=deviceName";
         const QString Update_SoftwareProject = "UPDATE softwareProject SET name=:name";
@@ -41,6 +42,7 @@ namespace RW{
         const QString Update_WorkstationType = "UPDATE workstationType SET workstationTypeID=:workstationTypeID, type=:type";
         const QString Update_PeripheralMapping = "UPDATE peripheralMapping SET workstationID=:workstationID, peripheralID=:peripheralID";
         const QString Update_Peripheral = "Update peripheral SET address=:adress, subAddress1=:subAddress1, subAddress2=:subAddress2, subAddress3=:subAddress3, Name=:Name, Type=:Type, ConnectionType=:ConnectionType, SerialNumber=:SerialNumber, DeviceName=:DeviceName, Description=:Description, HardwareID1=:HardwareID1, HardwareID2=:HardwareID2, HardwareID3=:HardwareID3, State=:State)";
+        const QString Update_GlobalSetting = "UPDATE globalsetting rwShutdownTime=:rwShutdownTime, rwLogoutTime=:rwLogoutTime, beShutdownTime=:beShutdownTime, beLogoutTime=:beLogoutTime";
 
 		const QString Delete_RemoteWorkstattion = "DELETE FROM Workstation WHERE idWorkstation=:idWorkstation";
 		const QString Delete_User = "DELETE FROM user WHERE idUser=:idUser";
@@ -57,6 +59,7 @@ namespace RW{
         const QString Delete_WorkstationType = "DELETE FROM workstationType WHERE idWorkstationType=:idWorkstationType";
         const QString Delete_PeripheralMapping = "DELETE FROM peripheralMapping WHERE idPeripheralMapping=:idPeripheralMapping";
         const QString Delete_Peripheral = "DELETE FROM peripheral WHERE idPeripheral=:idPeripheral";
+        const QString Delete_GlobalSetting= "DELETE FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
 
 		const QString SelectById_Workstation = "SELECT * FROM Workstation WHERE idWorkstation = :idWorkstation";
 		const QString SelectById_User = "SELECT * FROM user WHERE idUser = :idUser";
@@ -73,6 +76,7 @@ namespace RW{
         const QString SelectById_WorkstationType = "SELECT * FROM workstationType WHERE idWorkstationType=:idWorkstationType";
         const QString SelectById_PeripheralMapping = "SELECT * FROM peripheralMapping WHERE idPeripheralMapping=:idPeripheralMapping";
         const QString SelectById_Peripheral = "SELECT * FROM peripheral WHERE idPeripheral=:idPeripheral";
+        const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
 
 		const QString SelectAll_Workstation = "SELECT * FROM Workstation";
 		const QString SelectAll_User = "SELECT * FROM user";
@@ -89,6 +93,7 @@ namespace RW{
         const QString SelectAll_WorkstationType = "SELECT * FROM workstationType";
         const QString SelectAll_PeripheralMapping = "SELECT * FROM peripheralMapping";
         const QString SelectAll_Peripheral = "SELECT * FROM peripheral";
+        const QString SelectAll_GlobalSetting = "SELECT * FROM globalsetting";
 
 		const QString Select_ElementConfigurationByWorkstationID = "SELECT el.WorkstationID, t.type = type ,el.displayName,el.name,el.groupName, el.function, el.tooltip, el.pin, el.isFeature FROM elementConfiguration el join elementType t on el.elementTypeID = t.idElementType WHERE el.WorkstationID = :WorkstationID";
 		const QString SelectLastID = "SELECT idWorkstation from Workstation ORDER BY idWorkstation DESC LIMIT 1;";
@@ -149,6 +154,7 @@ namespace RW{
 			query.bindValue(":errorId", d.ErrorID());
 			query.bindValue(":type", d.Type());
 			query.bindValue(":computerName", d.ComputerNameRW());
+            query.bindValue(":filter",(int) d.Filter());
 
 			bool res = query.exec();
 			if (!res)
@@ -462,6 +468,25 @@ namespace RW{
             return res;
         }
 
+        template<> bool MySqlMapper<GlobalSetting>::Insert(const GlobalSetting &Data)
+        {
+            GlobalSetting d = Data;
+
+            QSqlQuery query;
+            query.prepare(Insert_GlobalSetting);
+            query.bindValue(":beLogOutTimer", d.BeLogOutTimer());
+            query.bindValue(":beShutdownTimer", d.BeShutdownTimer());
+            query.bindValue(":rwLogOutTimerChanged", d.RwLogOutTimer());
+            query.bindValue(":rwShutdownTimerChanged", d.RwShutdownTimer());
+
+            bool res = query.exec();
+            if (!res)
+            {
+                m_logger->error("Tbl GlobalSetting insert failed. Error: {}", query.lastError().text().toUtf8().constData());
+            }
+            return res;
+        }
+
 
 		template<> bool MySqlMapper<Workstation>::Update(const Workstation &Data)
 		{
@@ -706,6 +731,25 @@ namespace RW{
             return res;
         }
 
+        template<> bool MySqlMapper<GlobalSetting>::Update(const GlobalSetting &Data)
+        {
+            GlobalSetting d = Data;
+
+            QSqlQuery query;
+            query.prepare(Update_GlobalSetting);
+            query.bindValue(":beLogOutTimer", d.BeLogOutTimer());
+            query.bindValue(":beShutdownTimer", d.BeShutdownTimer());
+            query.bindValue(":rwLogOutTimerChanged", d.RwLogOutTimer());
+            query.bindValue(":rwShutdownTimerChanged", d.RwShutdownTimer());
+
+            bool res = query.exec();
+            if (!res)
+            {
+                m_logger->error("Tbl GlobalSetting update failed. Error: {}", query.lastError().text().toUtf8().constData());
+            }
+            return res;
+        }
+
 
 		template<> Workstation MySqlMapper<Workstation>::FindByID(const quint64 ID, bool Flag)
 		{
@@ -724,8 +768,8 @@ namespace RW{
 				d.SetIp(query.value("ip").toString());
 				d.SetMac(query.value("mac").toString());
 				d.SetHostname(query.value("hostname").toString());
-                //d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toString())));
-                //d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toString())));
+                //d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toInt())));
+                d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toInt())));
 				d.SetState((RW::WorkstationState)query.value("state").toInt());
 				d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
 
@@ -952,6 +996,7 @@ namespace RW{
 				d.SetMessage(query.value("message").toString());
 				d.SetLogLevel(query.value("logLevel").toString());
 				d.SetErrorID(query.value("threadId").toInt());
+                d.SetFilter((spdlog::sinks::FilterType)query.value("filter").toInt());
 			}
 
 			if (!res)
@@ -1043,7 +1088,7 @@ namespace RW{
             WorkstationType d;
             QSqlQuery query;
             query.prepare(SelectById_WorkstationType);
-            query.bindValue(":idSoftwareProject", ID);
+            query.bindValue(":idWorkstationType", ID);
             bool res = query.exec();
 
             while (query.next())
@@ -1096,6 +1141,31 @@ namespace RW{
             return d;
         }
 
+        template<> GlobalSetting MySqlMapper<GlobalSetting>::FindByID(const quint64 ID, bool Flag)
+        {
+            GlobalSetting d;
+            QSqlQuery query;
+            query.prepare(SelectById_GlobalSetting);
+            query.bindValue(":idGlobalSetting", ID);
+            bool res = query.exec();
+
+            while (query.next())
+            {
+                d.SetID(query.value("idGlobalSetting").toInt());
+                d.SetRwLogOutTimer(query.value("rwLogOutTime").toInt());
+                d.SetRwShutdownTimer(query.value("rwShutdownTime").toInt());
+                d.SetBeLogOutTimer(query.value("beLogOutTime").toInt());
+                d.SetBeShutdownTimer(query.value("beShutdownTime").toInt());
+
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl GlobalSetting FindByID failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return d;
+        }
+
 
 		template<> QList<Workstation> MySqlMapper<Workstation>::FindAll()
 		{
@@ -1111,8 +1181,8 @@ namespace RW{
 				d.SetIp(query.value("ip").toString());
 				d.SetMac(query.value("mac").toString());
 				d.SetHostname(query.value("hostname").toString());
-                //d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toString())));
-                //d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toString())));
+                //d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toInt())));
+                d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toInt())));
 				d.SetState((RW::WorkstationState)query.value("state").toInt());
 				d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
 
@@ -1341,6 +1411,7 @@ namespace RW{
 				d.SetMessage(query.value("message").toString());
 				d.SetLogLevel(query.value("logLevel").toString());
 				d.SetErrorID(query.value("threadId").toInt());
+                d.SetFilter((spdlog::sinks::FilterType)query.value("filter").toInt());
 				list << d;
 			}
 
@@ -1483,6 +1554,38 @@ namespace RW{
                 d.SetState((PeripheralState)query.value("state").toInt());
                 list << d;
             }
+
+            if (!res)
+            {
+                m_logger->error("Tbl Peripheral FindAll failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
         }
+
+        template<> QList<GlobalSetting> MySqlMapper<GlobalSetting>::FindAll()
+        {
+            QList<GlobalSetting> list;
+            
+            QSqlQuery query;
+            query.prepare(SelectAll_GlobalSetting);
+            bool res = query.exec();
+
+            while (query.next())
+            {
+                GlobalSetting d;
+                d.SetID(query.value("idGlobalSetting").toInt());
+                d.SetRwLogOutTimer(query.value("rwLogOutTimer").toInt());
+                d.SetRwShutdownTimer(query.value("rwShutdownTimer").toInt());
+                d.SetBeLogOutTimer(query.value("beLogOutTimer").toInt());
+                d.SetBeShutdownTimer(query.value("beShutdownTimer").toInt());
+                list << d;
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl GlobalSetting FindAll failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return list;
+        }
+
 	}
 }
