@@ -363,7 +363,7 @@ namespace RW{
 
         void ConfigurationManagerPrivate::OnSaveConfiguration(ConfigurationName Key, ChangeReason Reason)
         {
-            if (Key > ConfigurationName::UserStart && Key > ConfigurationName::UserEnd)
+            if (Key > ConfigurationName::UserStart && Key < ConfigurationName::UserEnd)
             {
                 switch (Reason)
                 {

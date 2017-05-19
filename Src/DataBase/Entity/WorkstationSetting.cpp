@@ -2,6 +2,7 @@
 #include "WorkstationSetting_p.h"
 #include "SQLGlobal.h"
 #include "qdebug.h"
+#include "PermanentLoginReason.h"
 
 namespace RW{
 	namespace SQL{
@@ -41,6 +42,7 @@ namespace RW{
 		WorkstationSetting::WorkstationSetting(WorkstationSetting&& other) : d_ptr(other.d_ptr)
 		{
 			d_ptr->setParent(this);
+            SetID(other.ID());
 			other.d_ptr = nullptr;
 
 		}
@@ -49,6 +51,7 @@ namespace RW{
 		{
 			std::swap(d_ptr, other.d_ptr);
 			d_ptr->setParent(this);
+            SetID(other.ID());
 			delete other.d_ptr;
 			other.d_ptr = nullptr;
 			return *this;
@@ -67,5 +70,18 @@ namespace RW{
             d_ptr->m_PermanentLogin = PermanentLogin;
 			emit d_ptr->PermanentLoginChanged();
 		}
+
+        PermanentLoginReason* WorkstationSetting::Reason()
+        {
+            Q_D(WorkstationSetting);
+            return d_ptr->m_Reason;
+        }
+
+        void WorkstationSetting::SetReason(PermanentLoginReason* Reason)
+        {
+            Q_D(WorkstationSetting);
+            d_ptr->m_Reason = Reason;
+            emit ReasonChanged();
+        }
 	}
 }

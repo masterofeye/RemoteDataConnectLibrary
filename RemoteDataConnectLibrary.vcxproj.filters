@@ -158,6 +158,12 @@
     <CustomBuild Include="Src\DataBase\Entity\GlobalSetting.h">
       <Filter>Entity</Filter>
     </CustomBuild>
+    <CustomBuild Include="Src\DataBase\Entity\PermanentLoginReason.h">
+      <Filter>Entity</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\DataBase\Entity\PermanentLoginReason_p.h">
+      <Filter>Entity</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\DataBase\Entity\AllEntities.h">
@@ -461,6 +467,21 @@
     </ClCompile>
     <ClCompile Include="Src\DataBase\Entity\GlobalSetting.cpp">
       <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DataBase\Entity\PermanentLoginReason.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PermanentLoginReason.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PermanentLoginReason.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PermanentLoginReason_p.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PermanentLoginReason_p.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

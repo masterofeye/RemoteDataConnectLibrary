@@ -26,8 +26,11 @@ namespace RW{
         const QString Insert_PeripheralMapping = "INSERT INTO peripheralMapping (workstationID, peripheralID) VALUES (:workstationID, :peripheralID)";
         const QString Insert_Peripheral = "INSERT INTO peripheral (address, subAddress1, subAddress2, subAddress3, name, type, connectionType, serialNumber, deviceName, description, hardwareID1, hardwareID2, hardwareID3, state)";
         const QString Insert_GlobalSetting = "INSERT INTO globalsetting ( rwShutdownTime, rwLogoutTime, beShutdownTime, beLogoutTime) VALUES ( :rwShutdownTime, :rwLogoutTime, :beShutdownTime, :beLogoutTime)";
+        const QString Insert_WorkstationSetting = "INSERT INTO workstationsetting(permanentLogin, permamentLoginReasonID) VALUES (:permanentLogin,:permamentLoginReasonID)";
+        const QString Insert_PermanentLoginReason = "INSERT INTO permanentloginreason(reason, description) VALUES (:reason,:description)";
 
-		const QString Update_Workstation = "UPDATE Workstation SET userID=( SELECT idUser FROM user WHERE user=:user),hostname=:hostname,mac=:mac,ip=:ip,state=:state, projectID=( SELECT idProject FROM project WHERE name=:name) WHERE idWorkstation=:id, workstationSettingID=( SELECT idWorkstationSetting FROM workstationsetting WHERE id=:id) WHERE idWorkstation=:id";
+
+		const QString Update_Workstation = "UPDATE workstation SET userID=:userID,hostname=:hostname,mac=:mac,ip=:ip,state=:state, projectID=:projectID, workstationSettingID=:workstationSettingID, workstationTypeID=:workstationTypeID WHERE idWorkstation=:idWorkstation";
 		const QString Update_User = "UPDATE user SET username=:username,password=:password,mksUsername=:mksUsername,mksPassword=:mksPassword,initials=:intitials,notifiyRemoteDesktop=:notifiyRemoteDesktop,notifiyDesktop=:notifiyDesktop, role=:role";
 		const QString Update_ElementConfiguration = "UPDATE elementConfiguration SET WorkstationID=:WorkstationID,type=:type,displayName=:displayName,name=:name,groupName=:groupName,function=:function, tooltip=:tooltip, remoteViewRelevant=:remoteViewRelevant, isFeature=:isFeature, pin=:pin";
 		const QString Update_ElementType = "UPDATE elementType SET type=:type";
@@ -41,8 +44,10 @@ namespace RW{
         const QString Update_FlashHistory = "UPDATE flashHistory SET userID=:userID, softwareProjectID=:softwareProjectID, remoteWorkstationID=:remoteWorkstationID, major=:major, minor=:minor, patchlevel=:patchlevel, buildnumber=:buildnumber, data=:data";
         const QString Update_WorkstationType = "UPDATE workstationType SET workstationTypeID=:workstationTypeID, type=:type";
         const QString Update_PeripheralMapping = "UPDATE peripheralMapping SET workstationID=:workstationID, peripheralID=:peripheralID";
-        const QString Update_Peripheral = "Update peripheral SET address=:adress, subAddress1=:subAddress1, subAddress2=:subAddress2, subAddress3=:subAddress3, Name=:Name, Type=:Type, ConnectionType=:ConnectionType, SerialNumber=:SerialNumber, DeviceName=:DeviceName, Description=:Description, HardwareID1=:HardwareID1, HardwareID2=:HardwareID2, HardwareID3=:HardwareID3, State=:State)";
+        const QString Update_Peripheral = "Update peripheral SET address=:adress, subAddress1=:subAddress1, subAddress2=:subAddress2, subAddress3=:subAddress3, name=:name, type=:type, connectionType=:connectionType, serialNumber=:serialNumber, deviceName=:deviceName, description=:description, hardwareID1=:hardwareID1, hardwareID2=:hardwareID2, hardwareID3=:hardwareID3, state=:state)";
         const QString Update_GlobalSetting = "UPDATE globalsetting rwShutdownTime=:rwShutdownTime, rwLogoutTime=:rwLogoutTime, beShutdownTime=:beShutdownTime, beLogoutTime=:beLogoutTime";
+        const QString Update_WorkstationSetting = "UPDATE workstationsetting permanentLogin=:permanentLogin,permamentLoginReasonID=:permamentLoginReasonID";
+        const QString Update_PermanentLoginReason = "UPDATE permanentloginreason reason=:reason,description=:description";
 
 		const QString Delete_RemoteWorkstattion = "DELETE FROM Workstation WHERE idWorkstation=:idWorkstation";
 		const QString Delete_User = "DELETE FROM user WHERE idUser=:idUser";
@@ -60,6 +65,8 @@ namespace RW{
         const QString Delete_PeripheralMapping = "DELETE FROM peripheralMapping WHERE idPeripheralMapping=:idPeripheralMapping";
         const QString Delete_Peripheral = "DELETE FROM peripheral WHERE idPeripheral=:idPeripheral";
         const QString Delete_GlobalSetting= "DELETE FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
+        const QString Delete_WorkstationSetting = "DELETE FROM workstationsetting WHERE idWorkstationSetting=:idWorkstationSetting";
+        const QString Delete_PermanentLoginReason = "DELETE FROM permanentloginreason WHERE idPermanentLoginReason=:idPermanentLoginReason";
 
 		const QString SelectById_Workstation = "SELECT * FROM Workstation WHERE idWorkstation = :idWorkstation";
 		const QString SelectById_User = "SELECT * FROM user WHERE idUser = :idUser";
@@ -77,6 +84,8 @@ namespace RW{
         const QString SelectById_PeripheralMapping = "SELECT * FROM peripheralMapping WHERE idPeripheralMapping=:idPeripheralMapping";
         const QString SelectById_Peripheral = "SELECT * FROM peripheral WHERE idPeripheral=:idPeripheral";
         const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
+        const QString SelectById_WorkstationSetting = "SELECT * FROM workstationsetting WHERE idWorkstationSetting=:idWorkstationSetting";
+        const QString SelectById_PermanentLoginReason= "SELECT * FROM permanentloginreason WHERE idPermanentLoginReason=:idPermanentLoginReason";
 
 		const QString SelectAll_Workstation = "SELECT * FROM Workstation";
 		const QString SelectAll_User = "SELECT * FROM user";
@@ -94,6 +103,8 @@ namespace RW{
         const QString SelectAll_PeripheralMapping = "SELECT * FROM peripheralMapping";
         const QString SelectAll_Peripheral = "SELECT * FROM peripheral";
         const QString SelectAll_GlobalSetting = "SELECT * FROM globalsetting";
+        const QString SelectALL_WorkstationSetting = "SELECT * FROM workstationsetting";
+        const QString SelectALL_PermanentLoginReason = "SELECT * FROM permanentloginreason";
 
 		const QString Select_ElementConfigurationByWorkstationID = "SELECT el.WorkstationID, t.type = type ,el.displayName,el.name,el.groupName, el.function, el.tooltip, el.pin, el.isFeature FROM elementConfiguration el join elementType t on el.elementTypeID = t.idElementType WHERE el.WorkstationID = :WorkstationID";
 		const QString SelectLastID = "SELECT idWorkstation from Workstation ORDER BY idWorkstation DESC LIMIT 1;";
@@ -487,27 +498,56 @@ namespace RW{
             return res;
         }
 
+        template<> bool MySqlMapper<WorkstationSetting>::Insert(const WorkstationSetting &Data)
+        {
+            WorkstationSetting d = Data;
+
+            QSqlQuery query;
+            query.prepare(Insert_WorkstationSetting);
+            query.bindValue(":permanentLogin", d.PermanentLogin());
+            query.bindValue(":permanentLoginReason", d.Reason()->ID());
+
+            bool res = query.exec();
+            if (!res)
+            {
+                m_logger->error("Tbl WorkstationSetting insert failed. Error: {}", query.lastError().text().toUtf8().constData());
+            }
+            return res;
+        }
+
+        template<> bool MySqlMapper<PermanentLoginReason>::Insert(const PermanentLoginReason &Data)
+        {
+            PermanentLoginReason d = Data;
+
+            QSqlQuery query;
+            query.prepare(Insert_PermanentLoginReason);
+            query.bindValue(":reason", d.Reason());
+            query.bindValue(":description", d.Description());
+
+            bool res = query.exec();
+            if (!res)
+            {
+                m_logger->error("Tbl PermanentLoginReason insert failed. Error: {}", query.lastError().text().toUtf8().constData());
+            }
+            return res;
+        }
+
 
 		template<> bool MySqlMapper<Workstation>::Update(const Workstation &Data)
 		{
 			Workstation d = Data;
 			QSqlQuery query;
 			query.prepare(Update_Workstation);
+            query.bindValue(":idWorkstation", d.ID());
 			//query.bindValue(":elementConfiguration", d.ElementCfg()->ID());
-			query.bindValue(":user", d.CurrentUser()->ID());
+			query.bindValue(":userID", d.CurrentUser()->ID());
+            query.bindValue(":projectID", d.AssignedProject()->ID());
 			query.bindValue(":hostname", d.Hostname());
 			query.bindValue(":mac", d.Mac());
 			query.bindValue(":ip", d.Ip());
-            query.bindValue(":workstationType", d.TypeOfWorkstation()->ID());
-            query.bindValue(":workstationSetting", d.SettingOfWorkstation()->ID());
+            query.bindValue(":workstationTypeID", d.TypeOfWorkstation()->ID());
+            query.bindValue(":workstationSettingID", d.SettingOfWorkstation()->ID());
 			query.bindValue(":state", (int)d.State());
-			if (d.AssignedProject() == nullptr)
-			{
-				m_logger->error("Project entry can't be NULL!");
-				return false;
-			}
-			else
-				query.bindValue(":name", d.AssignedProject()->Projectname());
 
 			bool res = query.exec();
 			if (!res)
@@ -750,6 +790,40 @@ namespace RW{
             return res;
         }
 
+        template<> bool MySqlMapper<WorkstationSetting>::Update(const WorkstationSetting &Data)
+        {
+            WorkstationSetting d = Data;
+
+            QSqlQuery query;
+            query.prepare(Update_WorkstationSetting);
+            query.bindValue(":permanentLogin", d.PermanentLogin());
+            query.bindValue(":permanentLoginReason", d.Reason()->ID());
+
+            bool res = query.exec();
+            if (!res)
+            {
+                m_logger->error("Tbl WorkstationSetting update failed. Error: {}", query.lastError().text().toUtf8().constData());
+            }
+            return res;
+        }
+
+        template<> bool MySqlMapper<PermanentLoginReason>::Update(const PermanentLoginReason &Data)
+        {
+            PermanentLoginReason d = Data;
+
+            QSqlQuery query;
+            query.prepare(Update_PermanentLoginReason);
+            query.bindValue(":reason", d.Reason());
+            query.bindValue(":description", d.Description());
+
+            bool res = query.exec();
+            if (!res)
+            {
+                m_logger->error("Tbl PermanentLoginReason Update failed. Error: {}", query.lastError().text().toUtf8().constData());
+            }
+            return res;
+        }
+
 
 		template<> Workstation MySqlMapper<Workstation>::FindByID(const quint64 ID, bool Flag)
 		{
@@ -768,7 +842,7 @@ namespace RW{
 				d.SetIp(query.value("ip").toString());
 				d.SetMac(query.value("mac").toString());
 				d.SetHostname(query.value("hostname").toString());
-                //d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toInt())));
+                d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toInt())));
                 d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toInt())));
 				d.SetState((RW::WorkstationState)query.value("state").toInt());
 				d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
@@ -1166,6 +1240,49 @@ namespace RW{
             return d;
         }
 
+        template<> WorkstationSetting MySqlMapper<WorkstationSetting>::FindByID(const quint64 ID, bool Flag)
+        {
+            WorkstationSetting d;
+            QSqlQuery query;
+            query.prepare(SelectById_WorkstationSetting);
+            query.bindValue(":idWorkstationSetting", ID);
+            bool res = query.exec();
+
+            while (query.next())
+            {
+                d.SetID(query.value("idWorkstationSetting").toInt());
+                d.SetPermanentLogin(query.value("permanentLogin").toBool());
+                d.SetReason(new PermanentLoginReason(FindByID<PermanentLoginReason>(query.value("permanentLoginReason").toInt())));
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl WorkstationSetting FindByID failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return d;
+        }
+
+        template<> PermanentLoginReason MySqlMapper<PermanentLoginReason>::FindByID(const quint64 ID, bool Flag)
+        {
+            PermanentLoginReason d;
+            QSqlQuery query;
+            query.prepare(SelectById_PermanentLoginReason);
+            query.bindValue(":idPermanentLoginReason", ID);
+            bool res = query.exec();
+
+            while (query.next())
+            {
+                d.SetID(query.value("idPermanentLoginReason").toInt());
+                d.SetDescription(query.value("description").toString());
+                d.SetReason(query.value("reason").toString());
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl PermanentLoginReason FindByID failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return d;
+        }
 
 		template<> QList<Workstation> MySqlMapper<Workstation>::FindAll()
 		{
@@ -1181,7 +1298,7 @@ namespace RW{
 				d.SetIp(query.value("ip").toString());
 				d.SetMac(query.value("mac").toString());
 				d.SetHostname(query.value("hostname").toString());
-                //d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toInt())));
+                d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toInt())));
                 d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toInt())));
 				d.SetState((RW::WorkstationState)query.value("state").toInt());
 				d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
@@ -1583,6 +1700,54 @@ namespace RW{
             if (!res)
             {
                 m_logger->error("Tbl GlobalSetting FindAll failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return list;
+        }
+
+        template<>  QList<WorkstationSetting> MySqlMapper<WorkstationSetting>::FindAll()
+        {
+            QList<WorkstationSetting> list;
+            
+            QSqlQuery query;
+            query.prepare(SelectALL_WorkstationSetting);
+            bool res = query.exec();
+
+            while (query.next())
+            {
+                WorkstationSetting d;
+                d.SetID(query.value("idWorkstationSetting").toInt());
+                d.SetPermanentLogin(query.value("permanentLogin").toInt());
+                d.SetReason(new PermanentLoginReason(FindByID<PermanentLoginReason>(query.value("permanentLoginReason").toInt())));
+                list << d;
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl WorkstationSetting FindAll failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return list;
+        }
+
+        template<> QList<PermanentLoginReason>  MySqlMapper<PermanentLoginReason>::FindAll()
+        {
+            QList<PermanentLoginReason> list;
+           
+            QSqlQuery query;
+            query.prepare(SelectALL_PermanentLoginReason);
+            bool res = query.exec();
+
+            while (query.next())
+            {
+                PermanentLoginReason d;
+                d.SetID(query.value("idPermanentLoginReason").toInt());
+                d.SetDescription(query.value("description").toString());
+                d.SetReason(query.value("reason").toString());
+                list << d;
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl PermanentLoginReason FindAll failed. Error:{}", query.lastError().text().toUtf8().constData());
             }
             return list;
         }

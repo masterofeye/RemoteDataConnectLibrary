@@ -6,6 +6,7 @@ namespace RW{
 	namespace SQL{
 
         class WorkstationSetting;
+        class PermanentLoginReason;
         class WorkstationSettingPrivate : public QObject
 		{
 			Q_OBJECT
@@ -16,6 +17,7 @@ namespace RW{
             WorkstationSetting * const q_ptr;
 		public:
             bool m_PermanentLogin;
+            PermanentLoginReason* m_Reason;
 		public:
             WorkstationSettingPrivate(WorkstationSetting *Parent);
             ~WorkstationSettingPrivate();

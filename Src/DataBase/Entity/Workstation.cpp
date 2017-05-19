@@ -52,6 +52,7 @@ namespace RW{
 		Workstation::Workstation(Workstation &&R) : d_ptr(R.d_ptr)
 		{
 			d_ptr->setParent(this);
+            SetID(R.ID());
 			R.d_ptr = nullptr;
 		}
 
@@ -59,6 +60,7 @@ namespace RW{
 		{
 			std::swap(d_ptr, R.d_ptr);
 			d_ptr->setParent(this);
+            SetID(R.ID());
 			delete R.d_ptr;
 			R.d_ptr = nullptr;
 			return *this;
@@ -128,6 +130,7 @@ namespace RW{
 					*el = *var;
 					d_ptr->m_ElementConfiguration.append(el);
 				}
+                SetID(R.ID());
 			}
 		}
 
@@ -151,6 +154,7 @@ namespace RW{
 					*el = *var;
 					d_ptr->m_ElementConfiguration.append(el);
 				}
+                SetID(R.ID());
 			}
 			return *this;
 		}
