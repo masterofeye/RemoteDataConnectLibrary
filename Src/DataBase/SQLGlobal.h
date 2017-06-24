@@ -33,7 +33,9 @@ namespace RW{
 		ON,
 		OFF,
 		RESERVE,
-		DEFECT
+		DEFECT,
+        FREE,
+        OCCUPY
 	};
 
 	enum class UserRole
@@ -63,6 +65,7 @@ namespace RW{
         RPILvdsBox,
         SPIGray,
         SPIRed,
+        RemoteBox,
 
     };
 

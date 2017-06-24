@@ -341,7 +341,9 @@ namespace RW{
 
         void ConfigurationManagerPrivate::UpdateWorkstation(const ConfigurationName &Key, const QVariant &Val)
         {
-        
+            m_ConfigCollection->insert(Key, Val);
+            if (Key == ConfigurationName::WorkstationState)
+                emit SaveConfiguration(Key, ChangeReason::WorkstationStatusUpdate);
         }
         
         void ConfigurationManagerPrivate::UpdateWorkstationSettings(const ConfigurationName &Key, const QVariant &Val)
@@ -373,8 +375,18 @@ namespace RW{
                         m_ConfigCollection->value(ConfigurationName::UserName).toString());
                     //Ladet den User und seinen Einstellungen nach der Aktualisierung
                     LoadUser(m_ConfigCollection->value(ConfigurationName::Hostname).toString());
+                    break;
                 case ChangeReason::UserSave:
                     UpdateUser();
+                    break;
+                case ChangeReason::WorkstationStatusUpdate:
+                {
+                    RW::WorkstationState state = m_ConfigCollection->value(ConfigurationName::WorkstationState).value<RW::WorkstationState>();
+                    m_Repository->UpdateWorkstationState(m_ConfigCollection->value(ConfigurationName::WorkstationId).toInt(), state);
+                    break;
+                }
+                default:
+                    m_Logger->warn("OnSaveConfiguration: invalid change reason");  
                     break;
                 }
 
@@ -430,6 +442,10 @@ namespace RW{
             else if (Key > ConfigurationName::HistoryStart && Key < ConfigurationName::HistoryEnd)
             {
 
+            }
+            else if (Key > ConfigurationName::WorkstationStart && Key < ConfigurationName::WorkstationEnd)
+            {
+                d_ptr->UpdateWorkstation(Key, Val);
             }
 
             return true;

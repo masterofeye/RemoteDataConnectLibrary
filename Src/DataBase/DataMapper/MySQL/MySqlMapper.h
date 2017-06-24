@@ -106,7 +106,7 @@ namespace RW{
         const QString SelectALL_WorkstationSetting = "SELECT * FROM workstationsetting";
         const QString SelectALL_PermanentLoginReason = "SELECT * FROM permanentloginreason";
 
-		const QString Select_ElementConfigurationByWorkstationID = "SELECT el.WorkstationID, t.type = type ,el.displayName,el.name,el.groupName, el.function, el.tooltip, el.pin, el.isFeature FROM elementConfiguration el join elementType t on el.elementTypeID = t.idElementType WHERE el.WorkstationID = :WorkstationID";
+		const QString Select_ElementConfigurationByWorkstationID = "SELECT el.remoteWorkstationID, t.type = type ,el.displayName,el.name,el.groupName, el.function, el.tooltip, el.pin, el.isFeature FROM elementConfiguration el join elementType t on el.elementTypeID = t.idElementType WHERE el.remoteWorkstationID = :WorkstationID";
 		const QString SelectLastID = "SELECT idWorkstation from Workstation ORDER BY idWorkstation DESC LIMIT 1;";
 		class Entity;
 		template<class T>
@@ -126,11 +126,11 @@ namespace RW{
 				{
 
 					db = QSqlDatabase::addDatabase("QMYSQL");
-					db.setHostName("192.168.50.45");
+					db.setHostName("elektrik");
 					db.setPort(3306);
 					db.setDatabaseName("remoteworkstation");
-					db.setUserName("remoteUser");
-					db.setPassword("schleissheimer");
+					db.setUserName("rwsUser");
+					db.setPassword("rwsUser!5%2017$");
 
 					//Please see the link for QT5: http://seppemagiels.com/blog/create-mysql-driver-qt5-windows => qsqlmysql.dll and libmysql.dll
 					//(and libmysql.lib, if your installation of MySQL has it) are needed
@@ -532,7 +532,6 @@ namespace RW{
             return res;
         }
 
-
 		template<> bool MySqlMapper<Workstation>::Update(const Workstation &Data)
 		{
 			Workstation d = Data;
@@ -548,8 +547,7 @@ namespace RW{
             query.bindValue(":workstationTypeID", d.TypeOfWorkstation()->ID());
             query.bindValue(":workstationSettingID", d.SettingOfWorkstation()->ID());
 			query.bindValue(":state", (int)d.State());
-
-			bool res = query.exec();
+            bool res = query.exec();
 			if (!res)
 			{
 				m_logger->error("Tbl Workstation update failed. Error: {}", query.lastError().text().toUtf8().constData());

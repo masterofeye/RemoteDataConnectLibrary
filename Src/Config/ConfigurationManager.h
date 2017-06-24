@@ -51,6 +51,7 @@ namespace RW{
             Mac,
             WorkstationType,
             WorkstationEnd,
+            WorkstationState,
             /*WorkstationSettings*/
             WorkstationSettingsStart,
             PermanentLogin,

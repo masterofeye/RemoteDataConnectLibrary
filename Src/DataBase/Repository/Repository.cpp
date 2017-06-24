@@ -849,6 +849,43 @@ namespace RW{
             return true;
         }
 
+        bool Repository::UpdateWorkstationState(quint16 WorkstationId, WorkstationState& State)
+        {
+            try{
+                Workstation rw;
+                User user;
+                DataFactory d(m_logger);
+                DataMapper<Workstation> *dmRw = d.GetMapper<Workstation>(m_Source);
+                if (dmRw == nullptr)
+                    return false;
+
+                rw = dmRw->FindByID(WorkstationId, false);
+
+                if (rw.Hostname().isEmpty())
+                {
+                    m_logger->error("UpdateWorkstationState failed durring update, couldn't find Workstation with id {}.", WorkstationId);
+                    delete dmRw;
+                    return false;
+                }
+
+                rw.SetState(State);
+
+                if (!dmRw->Update(rw))
+                {
+                    m_logger->error("UpdateWorkstationState failed durring update.");
+                    delete dmRw;
+                    return false;
+                }
+                delete dmRw;
+            }
+            catch (...)
+            {
+                m_logger->error("UpdateWorkstationState throwed a exception.");
+                return false;
+            }
+            return true;
+        }
+
         bool Repository::UpdateWorkstationUser(quint16 WorkstationId, QString& Name)
         {
             try{

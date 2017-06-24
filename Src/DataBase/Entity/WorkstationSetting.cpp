@@ -30,12 +30,14 @@ namespace RW{
 		WorkstationSetting::WorkstationSetting(const WorkstationSetting& other) : d_ptr(new WorkstationSettingPrivate(this))
 		{
             d_ptr->m_PermanentLogin = other.d_ptr->m_PermanentLogin;
+            SetID(other.ID());
 
 		}
 
 		WorkstationSetting& WorkstationSetting::operator=(WorkstationSetting& other)
 		{
 			std::swap(d_ptr, const_cast<WorkstationSettingPrivate*>(other.d_ptr));
+            SetID(other.ID());
 			return *this;
 		}
 

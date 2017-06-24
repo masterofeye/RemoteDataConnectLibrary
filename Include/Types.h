@@ -21,6 +21,7 @@ namespace spdlog
             RemoteServiceConsoleDisconnect,
             ProcessObserver,
             InactivityWatcher,
+            ShutdownHandler,
             CommunicatonServer,
             GlobalCommunicationClient,
             GlobalCommunicationServer,

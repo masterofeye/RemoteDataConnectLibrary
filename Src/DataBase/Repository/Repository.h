@@ -144,6 +144,7 @@ namespace RW{
 
             bool UpdateWorkstation(Workstation& R);
             bool UpdateWorkstationUser(quint16 WorkstationId, QString& Name);
+            bool UpdateWorkstationState(quint16 WorkstationId, WorkstationState& State);
 		};
 	}
 }

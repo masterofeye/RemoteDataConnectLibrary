@@ -22,6 +22,7 @@ namespace RW{
 			{
                 d_ptr = new WorkstationTypePrivate(this);
                 d_ptr->m_Type = other.d_ptr->m_Type;
+                SetID(other.ID());
 			}
 		}
         WorkstationType&  WorkstationType::operator=(WorkstationType& other)
@@ -30,6 +31,7 @@ namespace RW{
 			{
                 d_ptr = new WorkstationTypePrivate(this);
                 d_ptr->m_Type = other.d_ptr->m_Type;
+                SetID(other.ID());
 			}
 			return *this;
 		}
@@ -39,6 +41,7 @@ namespace RW{
 		{
 
 			d_ptr->setParent(this);
+            SetID(other.ID());
 			other.d_ptr = nullptr;
 		}
 
@@ -46,6 +49,7 @@ namespace RW{
 		{
 			std::swap(d_ptr, other.d_ptr);
 			d_ptr->setParent(this);
+            SetID(other.ID());
 			delete other.d_ptr;
 			other.d_ptr = nullptr;
 			return *this;
