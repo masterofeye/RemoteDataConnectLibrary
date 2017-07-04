@@ -124,7 +124,6 @@ namespace RW{
 				QSqlDatabase db = QSqlDatabase::database();
 				if (!db.isOpen())
 				{
-
 					db = QSqlDatabase::addDatabase("QMYSQL");
 					db.setHostName("elektrik");
 					db.setPort(3306);
