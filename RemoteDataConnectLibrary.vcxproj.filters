@@ -181,6 +181,9 @@
       <Filter>Repository</Filter>
     </ClInclude>
     <ClInclude Include="Src\DataBase\Global.h" />
+    <ClInclude Include="resource.h">
+      <Filter>Generierte Dateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\DataBase\Entity\ElementConfiguration.cpp">
@@ -477,5 +480,10 @@
     <ClCompile Include="GeneratedFiles\Release\moc_PermanentLoginReason_p.cpp">
       <Filter>Generierte Dateien\Release</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RemoteDataConnectLibrary.rc">
+      <Filter>Resource Dateien</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

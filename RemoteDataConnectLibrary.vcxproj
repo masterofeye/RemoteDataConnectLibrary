@@ -31,6 +31,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  "-IC:\Program Files (x86)\Visual Leak Detector\include"</Command>
     </CustomBuild>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Src\DataBase\DataMapper\DataMapper.h" />
     <ClInclude Include="Src\DataBase\DataMapper\MySQL\MySqlMapper.h" />
     <ClInclude Include="Src\DataBase\Entity\AllEntities.h" />
@@ -664,6 +665,9 @@
     <ClCompile Include="Src\DataBase\Entity\WorkstationSetting.cpp" />
     <ClCompile Include="Src\DataBase\Entity\WorkstationType.cpp" />
     <ClCompile Include="Src\DataBase\Repository\Repository.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RemoteDataConnectLibrary.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2601BAD8-9401-4B3B-A089-11F4F69E1BE4}</ProjectGuid>
