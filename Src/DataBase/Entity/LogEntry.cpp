@@ -1,7 +1,7 @@
 #include "LogEntry.h"
 #include "LogEntry_p.h"
 #include "qdebug.h"
-#include "../Src/DataBase/MySqlDbSink.h"
+#include "MySqlDbSink.h"
 
 namespace RW{
 	namespace SQL{

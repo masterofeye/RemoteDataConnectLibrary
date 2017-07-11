@@ -180,6 +180,13 @@ namespace RW{
                 return false;
             }
             
+            if (user.ID() == 0)
+            {
+                //Der User darf nicht 0 sein, sonst kommt es zu Problemen bei der Nachverarbeitung.
+                m_Logger->critical("LoadUser -> User id is 0");
+                return false;
+            }
+
             m_ConfigCollection->insert(ConfigurationName::UserName, user.UserName());
             m_ConfigCollection->insert(ConfigurationName::UserPassword, user.Password());
             m_ConfigCollection->insert(ConfigurationName::UserRole, QVariant::fromValue(user.Role()));
@@ -187,10 +194,8 @@ namespace RW{
             m_ConfigCollection->insert(ConfigurationName::MKSPassword, user.MKSPassword());
             m_ConfigCollection->insert(ConfigurationName::Initials, user.Initials());
 
-            if (user.ID() == 0)
-                m_Logger->warn("LoadUser -> User id is 0");
-
             m_ConfigCollection->insert(ConfigurationName::UserId, user.ID());
+            return true;
         }
 
         bool ConfigurationManagerPrivate::LoadHistory(quint8 WorkstationID)

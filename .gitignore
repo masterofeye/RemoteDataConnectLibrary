@@ -259,3 +259,4 @@ paket-files/
 __pycache__/
 *.pyc
 *.lib
+UnitTestRemoteDataConnectLibrary/gen/moc_TestSuite.cpp
