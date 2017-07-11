@@ -32,7 +32,10 @@ namespace RW{
 			Q_D(Entity);
 			if (this != &obj)
 			{
-				d->m_ID = obj.ID();
+                if (obj.ID().isNull())
+                    d->m_ID = 0;
+                else
+                    d->m_ID = obj.ID().toInt();
 			}
 		}
 		
@@ -41,7 +44,10 @@ namespace RW{
 			Q_D(Entity);
 			if (this != &obj)
 			{
-				d->m_ID = obj.ID();
+                if (obj.ID().isNull())
+                    d->m_ID = 0;
+                else
+                    d->m_ID = obj.ID().toInt();
 			}
 			return *this;
 		}
@@ -59,14 +65,29 @@ namespace RW{
 			return *this;
 		}
 
-		quint64 Entity::ID() const {
+		QVariant Entity::ID() const {
 			Q_D(const Entity);
-			return d->m_ID; 
+			return d->m_ID == 0 ? QVariant(QVariant::Int) : d->m_ID; 
 		};
+
 		void Entity::SetID(quint64 ID)
 		{ 
 			Q_D(Entity);
 			d->m_ID = ID; 
-			emit IDChanged(d->m_ID); };
+			emit IDChanged(d->m_ID); 
+        };
+
+        void Entity::SetID(QVariant ID)
+        {
+            Q_D(Entity);
+            if (ID.isNull())
+                d->m_ID = 0;
+            else
+            {
+                d->m_ID = ID.toInt();
+            }
+
+            emit IDChanged(d->m_ID);
+        };
 	}
 }
