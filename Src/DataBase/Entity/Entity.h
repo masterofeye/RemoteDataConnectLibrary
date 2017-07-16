@@ -2,6 +2,7 @@
 
 #include "qobject.h"
 #include "..\Global.h"
+#include <qvariant.h>
 
 namespace RW{
 	namespace SQL{
@@ -10,7 +11,7 @@ namespace RW{
 			public QObject
 		{
 			Q_OBJECT
-			Q_PROPERTY(quint64 ID READ ID WRITE SetID NOTIFY IDChanged)
+			Q_PROPERTY(QVariant ID READ ID WRITE SetID NOTIFY IDChanged)
 		private:
 			EntityPrivate* d_ptr;
 			Q_DECLARE_PRIVATE(Entity);
@@ -23,8 +24,9 @@ namespace RW{
 			Entity(Entity &&rvalue);
 			Entity& Entity::operator=(Entity&& other);
 
-			quint64 ID() const;
+			QVariant ID() const;
 			void SetID(quint64 ID);
+            void SetID(QVariant ID);
 		signals:
 			void IDChanged(quint64);
 

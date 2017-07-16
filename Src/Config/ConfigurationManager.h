@@ -50,8 +50,8 @@ namespace RW{
             Ip,
             Mac,
             WorkstationType,
-            WorkstationEnd,
             WorkstationState,
+            WorkstationEnd,
             /*WorkstationSettings*/
             WorkstationSettingsStart,
             PermanentLogin,

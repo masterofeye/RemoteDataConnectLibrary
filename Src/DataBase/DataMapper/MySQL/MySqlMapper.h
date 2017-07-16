@@ -124,7 +124,6 @@ namespace RW{
 				QSqlDatabase db = QSqlDatabase::database();
 				if (!db.isOpen())
 				{
-
 					db = QSqlDatabase::addDatabase("QMYSQL");
 					db.setHostName("elektrik");
 					db.setPort(3306);
@@ -149,6 +148,24 @@ namespace RW{
 				return temp.FindByID(ID, true);
 			}
 			QList<T> FindAll(){ QList<T> m; return std::move(m); }
+
+            QVariant IDWrapper(quint64 ID)
+            {
+                try{
+                    if (ID == 0)
+                    {
+                        return QVariant(QVariant::Int);
+                    }
+                    else
+                    {
+                        return ID;
+                    }
+                }
+                catch (...)
+                {
+                    return 0;
+                }
+            }
 
 		};
 
@@ -180,14 +197,13 @@ namespace RW{
 		template<> bool MySqlMapper<Workstation>::Insert(const Workstation &Data)
 		{
 			Workstation d(Data);
-
 			QSqlQuery query;
 			quint64 id;
 			query.prepare(Insert_Workstation);
 			if (d.CurrentUser() == nullptr)
 				query.bindValue(":user", QVariant(QVariant::UserType));
 			else
-			query.bindValue(":user", d.CurrentUser()->ID());
+            query.bindValue(":user", d.CurrentUser()->ID());
 			query.bindValue(":hostname", d.Hostname());
 			query.bindValue(":mac", d.Mac());
 			query.bindValue(":ip", d.Ip());
@@ -329,7 +345,7 @@ namespace RW{
 			query.prepare(Insert_Recept);
 			query.bindValue(":receptName", d.ReceptName());
 			query.bindValue(":orderNumber", d.OrderNumber());
-			query.bindValue(":instructionID", d.Instruction()->ID());
+            query.bindValue(":instructionID", d.Instruction()->ID());
 
 			bool res = query.exec();
 			if (!res)
@@ -347,7 +363,7 @@ namespace RW{
 			query.prepare(Insert_Product);
 			query.bindValue(":productName", d.ProductName());
 			query.bindValue(":part", d.Part());
-			query.bindValue(":receptID", d.Recept()->ID());
+            query.bindValue(":receptID", d.Recept()->ID());
 
 			bool res = query.exec();
 			if (!res)
@@ -539,7 +555,7 @@ namespace RW{
 			query.prepare(Update_Workstation);
             query.bindValue(":idWorkstation", d.ID());
 			//query.bindValue(":elementConfiguration", d.ElementCfg()->ID());
-			query.bindValue(":userID", d.CurrentUser()->ID());
+            query.bindValue(":userID", d.CurrentUser()->ID());
             query.bindValue(":projectID", d.AssignedProject()->ID());
 			query.bindValue(":hostname", d.Hostname());
 			query.bindValue(":mac", d.Mac());
@@ -560,8 +576,8 @@ namespace RW{
 			ElementConfiguration d = Data;
 			QSqlQuery query;
 			query.prepare(Update_ElementConfiguration);
-			query.bindValue(":WorkstationID", d.WorkstationID());
-			query.bindValue(":type", d.Type()->ID());
+            query.bindValue(":WorkstationID", IDWrapper(d.WorkstationID()));
+            query.bindValue(":type", d.Type()->ID());
 			query.bindValue(":displayName", d.DisplayName());
 			query.bindValue(":name", d.Name());
 			query.bindValue(":groupName", d.GroupName());
@@ -631,7 +647,7 @@ namespace RW{
 			query.prepare(Update_Recept);
 			query.bindValue(":orderNumber", d.OrderNumber());
 			query.bindValue(":receptName", d.ReceptName());
-			query.bindValue(":instructionID", d.Instruction()->ID());
+            query.bindValue(":instructionID", d.Instruction()->ID());
 
 			bool res = query.exec();
 			if (!res)
