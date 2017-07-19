@@ -230,8 +230,14 @@ namespace RW{
             RW::SQL::GlobalSetting setting;
             if ((m_Repository != nullptr))
             {
+#ifdef DEBUG
                 if (!m_Repository->GetGlobalSettingByID(1, setting))
                     return false;
+                
+#else
+                if (!m_Repository->GetGlobalSettingByID(2, setting))
+                    return false;
+#endif
             }
             else
             {
