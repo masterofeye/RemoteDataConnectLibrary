@@ -26,7 +26,7 @@ namespace RW{
         const QString Insert_PeripheralMapping = "INSERT INTO peripheralMapping (workstationID, peripheralID) VALUES (:workstationID, :peripheralID)";
         const QString Insert_Peripheral = "INSERT INTO peripheral (address, subAddress1, subAddress2, subAddress3, name, type, connectionType, serialNumber, deviceName, description, hardwareID1, hardwareID2, hardwareID3, state)";
         const QString Insert_GlobalSetting = "INSERT INTO globalsetting ( rwShutdownTime, rwLogoutTime, beShutdownTime, beLogoutTime) VALUES ( :rwShutdownTime, :rwLogoutTime, :beShutdownTime, :beLogoutTime)";
-        const QString Insert_WorkstationSetting = "INSERT INTO workstationsetting(permanentLogin, permamentLoginReasonID) VALUES (:permanentLogin,:permamentLoginReasonID)";
+        const QString Insert_WorkstationSetting = "INSERT INTO workstationsetting(permanentLogin, permanentLoginReasonID) VALUES (:permanentLogin,:permanentLoginReasonID)";
         const QString Insert_PermanentLoginReason = "INSERT INTO permanentloginreason(reason, description) VALUES (:reason,:description)";
 
 
@@ -46,7 +46,7 @@ namespace RW{
         const QString Update_PeripheralMapping = "UPDATE peripheralMapping SET workstationID=:workstationID, peripheralID=:peripheralID";
         const QString Update_Peripheral = "Update peripheral SET address=:adress, subAddress1=:subAddress1, subAddress2=:subAddress2, subAddress3=:subAddress3, name=:name, type=:type, connectionType=:connectionType, serialNumber=:serialNumber, deviceName=:deviceName, description=:description, hardwareID1=:hardwareID1, hardwareID2=:hardwareID2, hardwareID3=:hardwareID3, state=:state)";
         const QString Update_GlobalSetting = "UPDATE globalsetting rwShutdownTime=:rwShutdownTime, rwLogoutTime=:rwLogoutTime, beShutdownTime=:beShutdownTime, beLogoutTime=:beLogoutTime";
-        const QString Update_WorkstationSetting = "UPDATE workstationsetting permanentLogin=:permanentLogin,permamentLoginReasonID=:permamentLoginReasonID";
+        const QString Update_WorkstationSetting = "UPDATE workstationsetting permanentLogin=:permanentLogin,permamentLoginReasonID=:permanentLoginReasonID";
         const QString Update_PermanentLoginReason = "UPDATE permanentloginreason reason=:reason,description=:description";
 
 		const QString Delete_RemoteWorkstattion = "DELETE FROM Workstation WHERE idWorkstation=:idWorkstation";
@@ -521,7 +521,7 @@ namespace RW{
             QSqlQuery query;
             query.prepare(Insert_WorkstationSetting);
             query.bindValue(":permanentLogin", d.PermanentLogin());
-            query.bindValue(":permanentLoginReason", d.Reason()->ID());
+            query.bindValue(":permanentLoginReasonID", d.Reason()->ID());
 
             bool res = query.exec();
             if (!res)
@@ -811,7 +811,7 @@ namespace RW{
             QSqlQuery query;
             query.prepare(Update_WorkstationSetting);
             query.bindValue(":permanentLogin", d.PermanentLogin());
-            query.bindValue(":permanentLoginReason", d.Reason()->ID());
+            query.bindValue(":permanentLoginReasonID", d.Reason()->ID());
 
             bool res = query.exec();
             if (!res)
@@ -1266,7 +1266,7 @@ namespace RW{
             {
                 d.SetID(query.value("idWorkstationSetting").toInt());
                 d.SetPermanentLogin(query.value("permanentLogin").toBool());
-                d.SetReason(new PermanentLoginReason(FindByID<PermanentLoginReason>(query.value("permanentLoginReason").toInt())));
+                d.SetReason(new PermanentLoginReason(FindByID<PermanentLoginReason>(query.value("permanentLoginReasonID").toInt())));
             }
 
             if (!res)
@@ -1731,7 +1731,7 @@ namespace RW{
                 WorkstationSetting d;
                 d.SetID(query.value("idWorkstationSetting").toInt());
                 d.SetPermanentLogin(query.value("permanentLogin").toInt());
-                d.SetReason(new PermanentLoginReason(FindByID<PermanentLoginReason>(query.value("permanentLoginReason").toInt())));
+                d.SetReason(new PermanentLoginReason(FindByID<PermanentLoginReason>(query.value("permanentLoginReasonID").toInt())));
                 list << d;
             }
 
