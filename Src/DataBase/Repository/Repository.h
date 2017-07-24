@@ -108,6 +108,8 @@ namespace RW{
 			bool GetWorkstationByID(quint64 ID, Workstation& R);
             bool GetWorkstationByHostname(QString Hostname, Workstation& R);
 
+            bool GetLogEntryByHostName(QString HostName, QList<LogEntry> & AllR);
+
 			bool GetUserByID(quint64 ID, User& U);
 			bool GetElementConfigurationByID(quint64 ID, ElementConfiguration& E);
 			bool GetElementTypeByID(quint64 ID, ElementType& E);

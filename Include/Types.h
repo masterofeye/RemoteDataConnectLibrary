@@ -7,6 +7,7 @@ namespace spdlog
 
         enum class FilterType
         {
+            RemoteServiceUnspecific,
             RemoteServiceStart,
             RemoteServiceStop,
             RemoteServiceDisconnect,
