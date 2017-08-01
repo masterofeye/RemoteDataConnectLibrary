@@ -2,17 +2,18 @@
 #include "DataMapper.h"
 #include "AllEntities.h"
 #include "qsqlquery.h"
-#include "qvariant.h"
+#include <QVariant>
 #include "qdatetime.h"
 #include "qdebug.h"
 #include "qsqlerror.h"
 #include "spdlog/spdlog.h"
+#include "..\..\Entity\Nothing.h"
 namespace RW{
 	namespace SQL{
 
         const QString Insert_Workstation = "INSERT INTO Workstation (userID,hostname,mac,ip,state,projectID,workstationSetting,workstationType) VALUES (:user,:hostname,:mac,:ip,:state,( SELECT idProject FROM project WHERE name=:name),:workstationSetting,:workstationType)";
 		const QString Insert_User = "INSERT INTO user (username,password,mksUsername,mksPassword,initials,notifiyRemoteDesktop,notifiyDesktop,role ) VALUES (:username,:password,:mksUsername,:mksPassword,:initials,:notifiyRemoteDesktop,:notifiyDesktop, :role)";
-		const QString Insert_ElementConfiguration = "INSERT INTO elementConfiguration (WorkstationID, elementTypeID, displayName, name, groupName, function, tooltip, remoteViewRelevant, isFeature, pin) VALUES (:WorkstationID, (SELECT idElementType FROM elementType WHERE type=:type),:displayName,:name,:groupName,:function,:tooltip,:remoteViewRelevant, :isFeature, :pin)";
+		const QString Insert_ElementConfiguration = "INSERT INTO elementconfiguration (remoteWorkstationID, elementTypeID, displayName, name, groupName, function, tooltip, remoteViewRelevant, isFeature, pin) VALUES (:remoteWorkstationID, (SELECT idElementType FROM elementType WHERE type=:type),:displayName,:name,:groupName,:function,:tooltip,:remoteViewRelevant, :isFeature, :pin)";
 		const QString Insert_ElementType = "INSERT INTO elementType (type) VALUES (:type)";
 		const QString Insert_Instruction = "INSERT INTO instruction (step) VALUES (:step)";
 		const QString Insert_Recept = "INSERT INTO recept (receptName,orderNumber,instructionID) VALUES (:receptName,:orderNumber,:instructionID)";
@@ -20,10 +21,10 @@ namespace RW{
 		const QString Insert_LogEntry = "INSERT INTO log (date,message,loglevel,threadId,errorId,type,computerName, filter) VALUES (:datetime,:message,:loglevel,:threadId,:errorId,:type,:computerName,:filter)";
 		const QString Insert_Project = "INSERT INTO project (name) VALUES (:name)";
 		const QString Insert_Device = "INSERT INTO device( description, vendorId, productId, serial, deviceName) VALUES (:description, :vendorId, :productId, :serial, :deviceName)";
-        const QString Insert_SoftwareProject = "INSERT INTO softwareProject (name) VALUES (:name)";
-        const QString Insert_FlashHistory = "INSERT INTO flashHistory (userID, softwareProjectID, remoteWorkstationID, major, minor, patchlevel, buildnumber, data) VALUES (:userID, :softwareProjectID, :remoteWorkstationID,:major, :minor, :patchlevel, :buildnumber, :data)";
-        const QString Insert_WorkstationType = "INSERT INTO workstationType (type) VALUES (type)";
-        const QString Insert_PeripheralMapping = "INSERT INTO peripheralMapping (workstationID, peripheralID) VALUES (:workstationID, :peripheralID)";
+        const QString Insert_SoftwareProject = "INSERT INTO softwareproject (name,naturalName) VALUES (:name,:naturalName)";
+        const QString Insert_FlashHistory = "INSERT INTO flashhistory (userID, softwareProjectID, workstationID, major, minor, patchlevel, buildnumber, data) VALUES (:userID, :softwareProjectID, :workstationID,:major, :minor, :patchlevel, :buildnumber, :data)";
+        const QString Insert_WorkstationType = "INSERT INTO workstationtype (type) VALUES (type)";
+        const QString Insert_PeripheralMapping = "INSERT INTO peripheralmapping (workstationID, peripheralID) VALUES (:workstationID, :peripheralID)";
         const QString Insert_Peripheral = "INSERT INTO peripheral (address, subAddress1, subAddress2, subAddress3, name, type, connectionType, serialNumber, deviceName, description, hardwareID1, hardwareID2, hardwareID3, state)";
         const QString Insert_GlobalSetting = "INSERT INTO globalsetting ( rwShutdownTime, rwLogoutTime, beShutdownTime, beLogoutTime) VALUES ( :rwShutdownTime, :rwLogoutTime, :beShutdownTime, :beLogoutTime)";
         const QString Insert_WorkstationSetting = "INSERT INTO workstationsetting(permanentLogin, permanentLoginReasonID) VALUES (:permanentLogin,:permanentLoginReasonID)";
@@ -32,7 +33,7 @@ namespace RW{
 
 		const QString Update_Workstation = "UPDATE workstation SET userID=:userID,hostname=:hostname,mac=:mac,ip=:ip,state=:state, projectID=:projectID, workstationSettingID=:workstationSettingID, workstationTypeID=:workstationTypeID WHERE idWorkstation=:idWorkstation";
 		const QString Update_User = "UPDATE user SET username=:username,password=:password,mksUsername=:mksUsername,mksPassword=:mksPassword,initials=:intitials,notifiyRemoteDesktop=:notifiyRemoteDesktop,notifiyDesktop=:notifiyDesktop, role=:role";
-		const QString Update_ElementConfiguration = "UPDATE elementConfiguration SET WorkstationID=:WorkstationID,type=:type,displayName=:displayName,name=:name,groupName=:groupName,function=:function, tooltip=:tooltip, remoteViewRelevant=:remoteViewRelevant, isFeature=:isFeature, pin=:pin";
+		const QString Update_ElementConfiguration = "UPDATE elementconfiguration SET WorkstationID=:WorkstationID,type=:type,displayName=:displayName,name=:name,groupName=:groupName,function=:function, tooltip=:tooltip, remoteViewRelevant=:remoteViewRelevant, isFeature=:isFeature, pin=:pin";
 		const QString Update_ElementType = "UPDATE elementType SET type=:type";
 		const QString Update_Instruction = "UPDATE instruction SET step=:step";
 		const QString Update_Recept = "UPDATE recept SET receptName=:receptName,orderNumber=:orderNumber,instructionID=:instructionID";
@@ -40,10 +41,10 @@ namespace RW{
 		const QString Update_LogEntry = "UPDATE log SET datetime=:datetime,message=:message,loglevel=:loglevel,threadId=:threadId,errorId=:errorId,type=:type,computerName=:computerName, filter=:filter";
 		const QString Update_Project = "UPDATE project SET name=:name";
 		const QString Update_Device = "UPDATE device SET description=:description, vendorId=vendorId, productId=productId, serial=serial, deviceName=deviceName";
-        const QString Update_SoftwareProject = "UPDATE softwareProject SET name=:name";
-        const QString Update_FlashHistory = "UPDATE flashHistory SET userID=:userID, softwareProjectID=:softwareProjectID, remoteWorkstationID=:remoteWorkstationID, major=:major, minor=:minor, patchlevel=:patchlevel, buildnumber=:buildnumber, data=:data";
-        const QString Update_WorkstationType = "UPDATE workstationType SET workstationTypeID=:workstationTypeID, type=:type";
-        const QString Update_PeripheralMapping = "UPDATE peripheralMapping SET workstationID=:workstationID, peripheralID=:peripheralID";
+        const QString Update_SoftwareProject = "UPDATE softwareproject SET name=:name";
+        const QString Update_FlashHistory = "UPDATE flashhistory SET userID=:userID, softwareProjectID=:softwareProjectID, workstationID=:workstationID, major=:major, minor=:minor, patchlevel=:patchlevel, buildnumber=:buildnumber, data=:data";
+        const QString Update_WorkstationType = "UPDATE workstationtype SET workstationTypeID=:workstationTypeID, type=:type";
+        const QString Update_PeripheralMapping = "UPDATE peripheralmapping SET workstationID=:workstationID, peripheralID=:peripheralID";
         const QString Update_Peripheral = "Update peripheral SET address=:adress, subAddress1=:subAddress1, subAddress2=:subAddress2, subAddress3=:subAddress3, name=:name, type=:type, connectionType=:connectionType, serialNumber=:serialNumber, deviceName=:deviceName, description=:description, hardwareID1=:hardwareID1, hardwareID2=:hardwareID2, hardwareID3=:hardwareID3, state=:state)";
         const QString Update_GlobalSetting = "UPDATE globalsetting rwShutdownTime=:rwShutdownTime, rwLogoutTime=:rwLogoutTime, beShutdownTime=:beShutdownTime, beLogoutTime=:beLogoutTime";
         const QString Update_WorkstationSetting = "UPDATE workstationsetting permanentLogin=:permanentLogin,permamentLoginReasonID=:permanentLoginReasonID";
@@ -51,7 +52,7 @@ namespace RW{
 
 		const QString Delete_RemoteWorkstattion = "DELETE FROM Workstation WHERE idWorkstation=:idWorkstation";
 		const QString Delete_User = "DELETE FROM user WHERE idUser=:idUser";
-		const QString Delete_ElementConfiguration = "DELETE FROM elementConfiguration WHERE idElementConfiguration=:idElementConfiguration";
+		const QString Delete_ElementConfiguration = "DELETE FROM elementconfiguration WHERE idElementConfiguration=:idElementConfiguration";
 		const QString Delete_ElementType = "DELETE FROM elementType WHERE idElementType=:idElementType";
 		const QString Delete_Instruction = "DELETE FROM instruction WHERE idIntruction=:idIntruction";
 		const QString Delete_Recept = "DELETE FROM recept WHERE idRecept=:idRecept";
@@ -59,10 +60,10 @@ namespace RW{
 		const QString Delele_LogEntry = "DELETE FROM log WHERE idLogEntry=:idLogEntry";
 		const QString Delele_Project = "DELETE FROM project WHERE idProject=:idProject";
 		const QString Delele_Device = "DELETE FROM device WHERE idDevice=:idDevice";
-        const QString Delete_SoftwareProject = "DELETE FROM softwareProject WHERE idSoftwareProject=:idSoftwareProject";
-        const QString Delete_FlashHistory = "DELETE FROM flashHistory WHERE idFlashHistory=:idFlashHistory";
-        const QString Delete_WorkstationType = "DELETE FROM workstationType WHERE idWorkstationType=:idWorkstationType";
-        const QString Delete_PeripheralMapping = "DELETE FROM peripheralMapping WHERE idPeripheralMapping=:idPeripheralMapping";
+        const QString Delete_SoftwareProject = "DELETE FROM softwareproject WHERE idSoftwareProject=:idSoftwareProject";
+        const QString Delete_FlashHistory = "DELETE FROM flashhistory WHERE idFlashHistory=:idFlashHistory";
+        const QString Delete_WorkstationType = "DELETE FROM workstationtype WHERE idWorkstationType=:idWorkstationType";
+        const QString Delete_PeripheralMapping = "DELETE FROM peripheralmapping WHERE idPeripheralMapping=:idPeripheralMapping";
         const QString Delete_Peripheral = "DELETE FROM peripheral WHERE idPeripheral=:idPeripheral";
         const QString Delete_GlobalSetting= "DELETE FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
         const QString Delete_WorkstationSetting = "DELETE FROM workstationsetting WHERE idWorkstationSetting=:idWorkstationSetting";
@@ -70,7 +71,7 @@ namespace RW{
 
 		const QString SelectById_Workstation = "SELECT * FROM Workstation WHERE idWorkstation = :idWorkstation";
 		const QString SelectById_User = "SELECT * FROM user WHERE idUser = :idUser";
-		const QString SelectById_ElementConfiguration = "SELECT * FROM elementConfiguration WHERE idElementConfiguration = :idElementConfiguration";
+		const QString SelectById_ElementConfiguration = "SELECT * FROM elementconfiguration WHERE idElementConfiguration = :idElementConfiguration";
 		const QString SelectById_ElementType = "SELECT * FROM elementType WHERE idElementType = :idElementType";
 		const QString SelectById_Instruction = "SELECT * FROM Instruction WHERE idInstruction = :idInstruction";
 		const QString SelectById_Recept = "SELECT * FROM recept WHERE idRecept = :idRecept";
@@ -78,40 +79,45 @@ namespace RW{
 		const QString SelectById_LogEntry = "SELECT * FROM log WHERE idLogEntry=:idLogEntry";
 		const QString SelectById_Project = "SELECT * FROM project WHERE idProject=:idProject";
 		const QString SelectById_Device = "SELECT * FROM device WHERE idDevice=:idDevice";
-        const QString SelectById_SoftwareProject = "SELECT * FROM softwareProject WHERE idSoftwareProject=:idSoftwareProject";
-        const QString SelectById_FlashHistory = "SELECT * FROM flashHistory WHERE idFlashHistory=:idFlashHistory";
-        const QString SelectById_WorkstationType = "SELECT * FROM workstationType WHERE idWorkstationType=:idWorkstationType";
-        const QString SelectById_PeripheralMapping = "SELECT * FROM peripheralMapping WHERE idPeripheralMapping=:idPeripheralMapping";
+        const QString SelectById_SoftwareProject = "SELECT * FROM softwareproject WHERE idSoftwareProject=:idSoftwareProject";
+		const QString SelectByProjectID_SoftwareProject = "SELECT * FROM softwareproject WHERE projectID=:projectID";
+
+        const QString SelectById_FlashHistory = "SELECT * FROM flashhistory WHERE idFlashHistory=:idFlashHistory";
+		const QString SelectByWorkstationId_FlashHistory = "SELECT * FROM flashhistory WHERE workstationID=:workstationID";
+		const QString SelectByWorkstationIdAndSoftwareProject_FlastHistory = "SELECT * FROM flashhistory WHERE workstationID=:workstationID AND softwareProjectID=:softwareProjectID AND date IN (SELECT max(date) FROM flashHistory) ";
+        const QString SelectById_WorkstationType = "SELECT * FROM workstationtype WHERE idWorkstationType=:idWorkstationType";
+        const QString SelectById_PeripheralMapping = "SELECT * FROM peripheralmapping WHERE idPeripheralMapping=:idPeripheralMapping";
         const QString SelectById_Peripheral = "SELECT * FROM peripheral WHERE idPeripheral=:idPeripheral";
         const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
         const QString SelectById_WorkstationSetting = "SELECT * FROM workstationsetting WHERE idWorkstationSetting=:idWorkstationSetting";
         const QString SelectById_PermanentLoginReason= "SELECT * FROM permanentloginreason WHERE idPermanentLoginReason=:idPermanentLoginReason";
 
-		const QString SelectAll_Workstation = "SELECT * FROM Workstation";
+		const QString SelectAll_Workstation = "SELECT * FROM workstation";
 		const QString SelectAll_User = "SELECT * FROM user";
-		const QString SelectAll_ElementConfiguration = "SELECT * FROM elementConfiguration";
-		const QString SelectAll_ElementType = "SELECT * FROM elementType";
-		const QString SelectAll_Instruction = "SELECT * FROM Instructio";
+		const QString SelectAll_ElementConfiguration = "SELECT * FROM elementconfiguration";
+		const QString SelectAll_ElementType = "SELECT * FROM elementtype";
+		const QString SelectAll_Instruction = "SELECT * FROM instruction";
 		const QString SelectAll_Recept = "SELECT * FROM recept";
 		const QString SelectAll_Product = "SELECT * FROM product";
 		const QString SelectAll_LogEntry = "SELECT * FROM log";
 		const QString SelectAll_Project = "SELECT * FROM project";
 		const QString SelectAll_Device = "SELECT * FROM device";
-        const QString SelectAll_SoftwareProject = "SELECT * FROM softwareProject";
-        const QString SelectAll_FlashHistory = "SELECT * FROM flashHistory";
-        const QString SelectAll_WorkstationType = "SELECT * FROM workstationType";
-        const QString SelectAll_PeripheralMapping = "SELECT * FROM peripheralMapping";
+        const QString SelectAll_SoftwareProject = "SELECT * FROM softwareproject";
+        const QString SelectAll_FlashHistory = "SELECT * FROM flashhistory";
+        const QString SelectAll_WorkstationType = "SELECT * FROM workstationtype";
+        const QString SelectAll_PeripheralMapping = "SELECT * FROM peripheralmapping";
         const QString SelectAll_Peripheral = "SELECT * FROM peripheral";
         const QString SelectAll_GlobalSetting = "SELECT * FROM globalsetting";
         const QString SelectALL_WorkstationSetting = "SELECT * FROM workstationsetting";
         const QString SelectALL_PermanentLoginReason = "SELECT * FROM permanentloginreason";
 
-		const QString Select_ElementConfigurationByWorkstationID = "SELECT el.remoteWorkstationID, t.type = type ,el.displayName,el.name,el.groupName, el.function, el.tooltip, el.pin, el.isFeature FROM elementConfiguration el join elementType t on el.elementTypeID = t.idElementType WHERE el.remoteWorkstationID = :WorkstationID";
-		const QString SelectLastID = "SELECT idWorkstation from Workstation ORDER BY idWorkstation DESC LIMIT 1;";
+		const QString Select_ElementConfigurationByWorkstationID = "SELECT el.remoteWorkstationID, t.type = type ,el.displayName,el.name,el.groupName, el.function, el.tooltip, el.pin, el.isFeature FROM elementconfiguration el join elementType t on el.elementTypeID = t.idElementType WHERE el.remoteWorkstationID = :WorkstationID";
+		const QString SelectLastID = "SELECT idWorkstation from workstation ORDER BY idWorkstation DESC LIMIT 1;";
 		class Entity;
-		template<class T>
+
+		template<class T, class T2 = Nothing>
 		class MySqlMapper :
-			public DataMapper<T>
+			public DataMapper<T,T2>
 		{
 		private:
 			std::shared_ptr<spdlog::logger> m_logger;
@@ -133,7 +139,15 @@ namespace RW{
 
 					//Please see the link for QT5: http://seppemagiels.com/blog/create-mysql-driver-qt5-windows => qsqlmysql.dll and libmysql.dll
 					//(and libmysql.lib, if your installation of MySQL has it) are needed
-					db.open();
+					if (!db.open())
+					{
+						db.setHostName("localhost");
+						db.setPort(3306);
+						db.setDatabaseName("remoteworkstation");
+						db.setUserName("rwsUser");
+						db.setPassword("rwsUser!5%2017$");
+						db.open();
+					}
 				}
 
 			}
@@ -166,7 +180,8 @@ namespace RW{
                     return 0;
                 }
             }
-
+			QList<T> FindBySpecifier(const Specifier Value, const QVariantList Parameter){ QList<T> m; return std::move(m); }
+			//QList<T> FindBySpecifier(const Specifier Value, const T2 Parameter){ QList<T> m; return std::move(m); }
 		};
 
 		template<> bool MySqlMapper<LogEntry>::Insert(const LogEntry &Data)
@@ -230,27 +245,27 @@ namespace RW{
 					id = query.value(0).toInt();
 				}
 
-				for each (auto var in d.ElementCfg())
-				{
-					QSqlQuery query;
-					query.prepare(Insert_ElementConfiguration);
-					query.bindValue(":WorkstationID", id);
-					query.bindValue(":type", (int)var->Type()->Type());
-					query.bindValue(":displayName", var->DisplayName());
-					query.bindValue(":name", var->Name());
-					query.bindValue(":groupName", var->GroupName());
-					query.bindValue(":function", var->Function());
-					query.bindValue(":tooltip", var->ToolTip());
-					query.bindValue(":remoteViewRelevant", var->RemoteViewRelevant());
-					query.bindValue(":isFeature", var->IsFeature());
-					query.bindValue(":pin", var->Pin());
+				//for each (auto var in d.ElementCfg())
+				//{
+				//	QSqlQuery query;
+				//	query.prepare(Insert_ElementConfiguration);
+				//	query.bindValue(":remoteWorkstationID", id);
+				//	query.bindValue(":type", (int)var->Type()->Type());
+				//	query.bindValue(":displayName", var->DisplayName());
+				//	query.bindValue(":name", var->Name());
+				//	query.bindValue(":groupName", var->GroupName());
+				//	query.bindValue(":function", var->Function());
+				//	query.bindValue(":tooltip", var->ToolTip());
+				//	query.bindValue(":remoteViewRelevant", var->RemoteViewRelevant());
+				//	query.bindValue(":isFeature", var->IsFeature());
+				//	query.bindValue(":pin", var->Pin());
 
-					res = query.exec();
-					if (!res)
-					{
-						m_logger->error("Tbl elementConfiguration insert failed. Error: {}", query.lastError().text().toStdString());
-					}
-				}
+				//	res = query.exec();
+				//	if (!res)
+				//	{
+				//		m_logger->error("Tbl elementConfiguration insert failed. Error: {}", query.lastError().text().toStdString());
+				//	}
+				//}
 			}
 			return res;
 		}
@@ -417,6 +432,7 @@ namespace RW{
             QSqlQuery query;
             query.prepare(Insert_SoftwareProject);
             query.bindValue(":name", d.Name());
+			query.bindValue(":naturalName", d.NaturalName());
 
             bool res = query.exec();
             if (!res)
@@ -707,6 +723,7 @@ namespace RW{
             QSqlQuery query;
             query.prepare(Update_SoftwareProject);
             query.bindValue(":name", d.Name());
+			query.bindValue(":naturalName", d.NaturalName());
 
             bool res = query.exec();
             if (!res)
@@ -868,16 +885,16 @@ namespace RW{
 				while (query.next())
 				{
 					ElementConfiguration el;
-                    el.SetID(query.value("idElementConfiguration").toInt());
-					el.SetType(new ElementType(FindByID<ElementType>(query.value("elementTypeID").toInt())));
-					el.SetDisplayName(query.value("displayName").toString());
-					el.SetName(query.value("name").toString());
-					el.SetGroupName(query.value("groupName").toString());
-					el.SetFunction(query.value("function").toString());
-					el.SetToolTip(query.value("tooltip").toString());
-					el.SetRemoteViewRelevant(query.value("remoteViewRelevant").toBool());
-					el.SetIsFeature(query.value("isFeature").toBool());
-					el.SetPin(query.value("pin").toInt());
+                    //el.SetID(query.value("idElementConfiguration").toInt());
+					//el.SetType(new ElementType(FindByID<ElementType>(query.value("elementTypeID").toInt())));
+					//el.SetDisplayName(query.value("displayName").toString());
+					//el.SetName(query.value("name").toString());
+					//el.SetGroupName(query.value("groupName").toString());
+					//el.SetFunction(query.value("function").toString());
+					//el.SetToolTip(query.value("tooltip").toString());
+					//el.SetRemoteViewRelevant(query.value("remoteViewRelevant").toBool());
+					//el.SetIsFeature(query.value("isFeature").toBool());
+					//el.SetPin(query.value("pin").toInt());
 					d.AddElementCfg(el);
 				}
 				if (!res)
@@ -1131,8 +1148,11 @@ namespace RW{
             while (query.next())
             {
                 d.SetID(query.value("idSoftwareProject").toInt());
+				d.SetProjectSw(new Project(FindByID<Project>(query.value("projectID").toInt())));
                 // \!todo unschöne Konvertierung
                 d.SetName(query.value("name").toString());
+				d.SetNaturalName(query.value("naturalName").toString());
+				
             }
 
             if (!res)
@@ -1317,28 +1337,28 @@ namespace RW{
 				d.SetState((RW::WorkstationState)query.value("state").toInt());
 				d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
 
-				QSqlQuery query;
-				query.prepare(Select_ElementConfigurationByWorkstationID);
-				query.bindValue(":WorkstationID", d.ID());
-				bool res = query.exec();
-				while (query.next())
-				{
-					ElementConfiguration el;
-					//Todo warum wird hier ein Pointer verwendet?!
-					ElementType* elType = new ElementType();
-                    elType->SetID(query.value("idElementConfiguration").toInt());
-					elType->SetType((RW::TypeOfElement)query.value("type").toInt());
-					el.SetType(elType);
-					el.SetDisplayName(query.value("displayName").toString());
-					el.SetName(query.value("name").toString());
-					el.SetGroupName(query.value("groupName").toString());
-					el.SetFunction(query.value("function").toString());
-					el.SetToolTip(query.value("tooltip").toString());
-					el.SetRemoteViewRelevant(query.value("remoteViewRelevant").toBool());
-					el.SetIsFeature(query.value("isFeature").toBool());
-					el.SetPin(query.value("pin").toInt());
-					d.AddElementCfg(el);
-				}
+				//QSqlQuery query;
+				//query.prepare(Select_ElementConfigurationByWorkstationID);
+				//query.bindValue(":WorkstationID", d.ID());
+				//bool res = query.exec();
+				//while (query.next())
+				//{
+				//	ElementConfiguration el;
+				//	//Todo warum wird hier ein Pointer verwendet?!
+				//	ElementType* elType = new ElementType();
+    //                elType->SetID(query.value("idElementConfiguration").toInt());
+				//	elType->SetType((RW::TypeOfElement)query.value("type").toInt());
+				//	el.SetType(elType);
+				//	el.SetDisplayName(query.value("displayName").toString());
+				//	el.SetName(query.value("name").toString());
+				//	el.SetGroupName(query.value("groupName").toString());
+				//	el.SetFunction(query.value("function").toString());
+				//	el.SetToolTip(query.value("tooltip").toString());
+				//	el.SetRemoteViewRelevant(query.value("remoteViewRelevant").toBool());
+				//	el.SetIsFeature(query.value("isFeature").toBool());
+				//	el.SetPin(query.value("pin").toInt());
+				//	d.AddElementCfg(el);
+				//}
 				list << d;
 			}
 
@@ -1590,8 +1610,10 @@ namespace RW{
             {
                 SoftwareProject d;
                 d.SetID(query.value("idSoftwareProject").toInt());
+				d.SetProjectSw(new Project(FindByID<Project>(query.value("projectID").toInt())));
                 // \!todo unschöne Konvertierung
                 d.SetName(query.value("name").toString());
+				d.SetNaturalName(query.value("naturalName").toString());
                 list << d;
             }
 
@@ -1766,5 +1788,83 @@ namespace RW{
             return list;
         }
 
+		template<> QList<FlashHistory> MySqlMapper<FlashHistory>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
+		{
+			QList<FlashHistory> list;
+			QSqlQuery query;
+			bool res = false;
+			if (Value == Specifier::GetHistoryByWorkstationID)
+			{
+				quint64 workstationId = Parameter.first().toInt();
+				query.prepare(SelectByWorkstationId_FlashHistory);
+				query.bindValue(":workstationID", workstationId);
+				res = query.exec();
+			}
+			else if (Value == Specifier::GetLastestFlasHistoryEntryByWorkstationIDAndSoftwareProjectID)
+			{
+				quint64 workstationId = Parameter.first().toInt();
+				quint64 softwareProjectsId = Parameter.last().toInt();
+				query.prepare(SelectByWorkstationIdAndSoftwareProject_FlastHistory);
+				query.bindValue(":workstationID", workstationId);
+				query.bindValue(":softwareProjectID", softwareProjectsId);
+				res = query.exec();
+			}
+
+
+			while (query.next())
+			{
+				FlashHistory d;
+				d.SetID(query.value("idFlashHistory").toInt());
+				// \!todo unschöne Konvertierung
+				d.SetUserHistory(new User(FindByID<User>(query.value("userID").toInt())));
+				d.SetWorkstationHistory(new Workstation(FindByID<Workstation>(query.value("workstationID").toInt())));
+				d.SetSoftwareProjectHistory(new SoftwareProject(FindByID<SoftwareProject>(query.value("softwareProjectID").toInt())));
+				d.SetMajor(query.value("major"));
+				d.SetMinor(query.value("minor"));
+				d.SetPatchLevel(query.value("patchlevel"));
+				d.SetBuildnumber(query.value("buildnumber"));
+				d.SetDate(query.value("date").toDateTime());
+				list << d;
+			}
+
+			if (!res)
+			{
+				m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
+			}
+			return list;
+
+		}
+
+		template<> QList<SoftwareProject> MySqlMapper<SoftwareProject>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
+		{
+			QList<SoftwareProject> list;
+			QSqlQuery query;
+			bool res = false;
+			if (Value == Specifier::GetSoftwareProjectsByProjectID)
+			{
+				quint64 projectId = Parameter.first().toInt();
+				query.prepare(SelectByProjectID_SoftwareProject);
+				query.bindValue(":projectID", projectId);
+				res = query.exec();
+			}
+			
+			while (query.next())
+			{
+				SoftwareProject d;
+				d.SetID(query.value("idSoftwareProject").toInt());
+				d.SetProjectSw(new Project(FindByID<Project>(query.value("projectID").toInt())));
+				// \!todo unschöne Konvertierung
+				d.SetName(query.value("name").toString());
+				d.SetNaturalName(query.value("naturalName").toString());
+				list << d;
+			}
+
+			if (!res)
+			{
+				m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
+			}
+			return list;
+
+		}
 	}
 }

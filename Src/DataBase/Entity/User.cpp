@@ -21,7 +21,6 @@ namespace RW{
 
 		UserPrivate::~UserPrivate()
 		{
-			qDebug() << "Delete " << this;
 		}
 
 

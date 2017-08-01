@@ -184,6 +184,9 @@
     <ClInclude Include="resource.h">
       <Filter>Generierte Dateien</Filter>
     </ClInclude>
+    <ClInclude Include="Src\DataBase\Entity\Nothing.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\DataBase\Entity\ElementConfiguration.cpp">
@@ -306,9 +309,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_User_p.cpp">
       <Filter>Generierte Dateien\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DataBase\Repository\Repository.cpp">
-      <Filter>Repository</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_DataFactory.cpp">
       <Filter>Generierte Dateien\Debug</Filter>
     </ClCompile>
@@ -380,9 +380,6 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_SoftwareProject_p.cpp">
       <Filter>Generierte Dateien\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\DataBase\Entity\SoftwareProject.cpp">
-      <Filter>Entity</Filter>
     </ClCompile>
     <ClCompile Include="Src\DataBase\Entity\Workstation.cpp">
       <Filter>Entity</Filter>
@@ -480,10 +477,14 @@
     <ClCompile Include="GeneratedFiles\Release\moc_PermanentLoginReason_p.cpp">
       <Filter>Generierte Dateien\Release</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="RemoteDataConnectLibrary.rc">
-      <Filter>Resource Dateien</Filter>
-    </ResourceCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SQLGlobal.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DataBase\Entity\SoftwareProject.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DataBase\Repository\Repository.cpp">
+      <Filter>Repository</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

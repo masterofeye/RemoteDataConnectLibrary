@@ -27,6 +27,7 @@ namespace RW{
 		@brief Schnittstelle zwischen dem Datenzugriff von Clienten und externen Datenquellen. Jeder Zugriff auf externe Datenquellen
 		(File, Datenbank) muss über ein Repository erfolgen.
 		*/
+
 		class REMOTE_DATA_CONNECT_API Repository :
 			public QObject
 		{
@@ -107,6 +108,12 @@ namespace RW{
 			*/
 			bool GetWorkstationByID(quint64 ID, Workstation& R);
             bool GetWorkstationByHostname(QString Hostname, Workstation& R);
+			bool GetFlashHistoryByWorkstationID(quint64 ID, QList<FlashHistory>& P);
+			bool GetLastestFlasHistoryEntryByWorkstationIDAndSoftwareProjectID(quint64 WorkstationID,
+				quint64 SoftwareProjectID,
+				QList<FlashHistory>& P);
+			bool GetSoftwareProjectsByProjectID(quint64 ID, QList<SoftwareProject>& P);
+
 
 			bool GetUserByID(quint64 ID, User& U);
 			bool GetElementConfigurationByID(quint64 ID, ElementConfiguration& E);

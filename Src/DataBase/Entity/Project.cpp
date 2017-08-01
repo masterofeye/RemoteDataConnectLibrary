@@ -64,7 +64,6 @@ namespace RW{
 
 		Project::~Project()
 		{
-			qDebug() << "Delete " << this;
 		}
 
 

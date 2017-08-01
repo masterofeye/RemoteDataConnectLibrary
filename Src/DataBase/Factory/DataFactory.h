@@ -5,7 +5,8 @@
 #include "spdlog/spdlog.h"
 namespace RW{
 	namespace SQL{
-		template<class T> class DataMapper;
+		class Nothing;
+		template<class T, class T2 = Nothing> class DataMapper;
 
 		/*Abstrahiert die Erzeugung der Datenquelle durch eine Factory Klasse. Sobald eine neue Datenquelle 
 		inzugefügt wird, muss diese Schnittelle um den Type der Datenquelle erweitert werden.*/
@@ -27,15 +28,15 @@ namespace RW{
 			der Aufrufer verantwortlich.
 			@oaram Source Type der Quelle z.b. Datenbank oder File
 			*/
-			template<class T> DataMapper<T>* GetMapper(SourceType Source);
+			template<class T, class T2 = Nothing> DataMapper<T, T2>* GetMapper(SourceType Source);
 		};
 
-		template<class T> DataMapper<T>* DataFactory::GetMapper(SourceType Source)
+		template<class T, class T2 = Nothing> DataMapper<T, T2>* DataFactory::GetMapper(SourceType Source)
 		{
 			switch (Source)
 			{
 			case SourceType::SQL:
-				return new MySqlMapper<T>(m_logger);
+				return new MySqlMapper<T, T2>(m_logger);
 				break;
 			case SourceType::XML:
 				return nullptr;

@@ -10,7 +10,8 @@ namespace RW{
             QObject(Parent),
             q_ptr(Parent),
             m_Project(nullptr),
-            m_Name("")
+            m_Name(""),
+			m_NaturalName("")
         {
         }
 
@@ -65,6 +66,8 @@ namespace RW{
                 }
 
                 d_ptr->m_Name = F.d_ptr->m_Name;
+				d_ptr->m_NaturalName = F.d_ptr->m_NaturalName;
+
                 SetID(F.ID());
             }
         }
@@ -87,6 +90,7 @@ namespace RW{
                 }
 
                 d_ptr->m_Name = F.d_ptr->m_Name;
+				d_ptr->m_NaturalName = F.d_ptr->m_NaturalName;
                 SetID(F.ID());
             }
             return *this;
@@ -127,5 +131,18 @@ namespace RW{
             d->m_Name = Name;
             emit NameChanged();
         }
+
+		QString SoftwareProject::NaturalName() const
+		{
+			Q_D(const SoftwareProject);
+			return d->m_NaturalName;
+		}
+
+		void SoftwareProject::SetNaturalName(QString NaturalName)
+		{
+			Q_D(SoftwareProject);
+			d->m_NaturalName = NaturalName;
+			emit NaturalNameChanged();
+		}
 	}
 }
