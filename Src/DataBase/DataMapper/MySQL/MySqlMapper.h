@@ -57,7 +57,7 @@ namespace RW{
 		const QString Delete_Instruction = "DELETE FROM instruction WHERE idIntruction=:idIntruction";
 		const QString Delete_Recept = "DELETE FROM recept WHERE idRecept=:idRecept";
 		const QString Delete_Product = "DELETE FROM product WHERE idProduct=:idProduct";
-		const QString Delele_LogEntry = "DELETE FROM log WHERE idLogEntry=:idLogEntry";
+		const QString Delele_LogEntry = "DELETE FROM log WHERE idLog=:idLog";
 		const QString Delele_Project = "DELETE FROM project WHERE idProject=:idProject";
 		const QString Delele_Device = "DELETE FROM device WHERE idDevice=:idDevice";
         const QString Delete_SoftwareProject = "DELETE FROM softwareproject WHERE idSoftwareProject=:idSoftwareProject";
@@ -76,7 +76,7 @@ namespace RW{
 		const QString SelectById_Instruction = "SELECT * FROM Instruction WHERE idInstruction = :idInstruction";
 		const QString SelectById_Recept = "SELECT * FROM recept WHERE idRecept = :idRecept";
 		const QString SelectById_Product = "SELECT * FROM product WHERE idProduct = :idProduct";
-		const QString SelectById_LogEntry = "SELECT * FROM log WHERE idLogEntry=:idLogEntry";
+		const QString SelectById_LogEntry = "SELECT * FROM log WHERE idLog=:idLog";
 		const QString SelectById_Project = "SELECT * FROM project WHERE idProject=:idProject";
 		const QString SelectById_Device = "SELECT * FROM device WHERE idDevice=:idDevice";
         const QString SelectById_SoftwareProject = "SELECT * FROM softwareproject WHERE idSoftwareProject=:idSoftwareProject";
@@ -1087,12 +1087,12 @@ namespace RW{
 			LogEntry d;
 			QSqlQuery query;
 			query.prepare(SelectById_LogEntry);
-			query.bindValue(":idLogEntry", ID);
+			query.bindValue(":idLog", ID);
 			bool res = query.exec();
 
 			while (query.next())
 			{
-                d.SetID(query.value("idLogEntry").toInt());
+                d.SetID(query.value("idLog").toInt());
 				// \!todo unschöne Konvertierung
 				d.SetComputerNameRW(query.value("computerName").toString());
 				d.SetType(query.value("type").toString());
@@ -1554,7 +1554,7 @@ namespace RW{
 			{
 				LogEntry d;
 				// \!todo unschöne Konvertierung
-                d.SetID(query.value("idLogEntry").toInt());
+                d.SetID(query.value("idLog").toInt());
 				d.SetComputerNameRW(query.value("computerName").toString());
 				d.SetType(query.value("type").toString());
 				d.SetDate(query.value("date").toDateTime());

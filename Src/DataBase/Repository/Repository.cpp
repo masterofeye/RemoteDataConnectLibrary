@@ -994,5 +994,33 @@ namespace RW{
 			return true;
 		}
 
+
+        bool Repository::GetLogEntryByHostName(QString HostName, QList<LogEntry> & AllR)
+        {
+            QList<LogEntry> allLogEntry;
+            try{
+                DataFactory d(m_logger);
+                DataMapper<LogEntry> *dm = d.GetMapper<LogEntry>(m_Source);
+                if (dm == nullptr)
+                    return false;
+                allLogEntry = dm->FindAll();
+                delete dm;
+
+                for each (auto var in allLogEntry)
+                {
+                    if (var.ComputerNameRW() == HostName)
+                    {
+                        AllR.append(var);
+                    }
+                }              
+            }
+            catch (...)
+            {
+                m_logger->error("GetLogEntryByHostName throwed a exception");
+                return false;
+            }
+            return true;
+        }
+
 	}
 }

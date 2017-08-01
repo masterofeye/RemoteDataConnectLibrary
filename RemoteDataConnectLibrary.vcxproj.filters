@@ -137,9 +137,6 @@
     <CustomBuild Include="Src\DataBase\Entity\WorkstationType_p.h">
       <Filter>Entity</Filter>
     </CustomBuild>
-    <CustomBuild Include="ConfigurationManager_p.h">
-      <Filter>Config</Filter>
-    </CustomBuild>
     <CustomBuild Include="Src\DataBase\Entity\Peripheral_p.h">
       <Filter>Entity</Filter>
     </CustomBuild>
@@ -163,6 +160,9 @@
     </CustomBuild>
     <CustomBuild Include="Src\DataBase\Entity\PermanentLoginReason_p.h">
       <Filter>Entity</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\Config\ConfigurationManager_p.h">
+      <Filter>Config</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -411,12 +411,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_WorkstationType_p.cpp">
       <Filter>Generierte Dateien\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_ConfigurationManager_p.cpp">
-      <Filter>Generierte Dateien\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_ConfigurationManager_p.cpp">
-      <Filter>Generierte Dateien\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_Peripheral.cpp">
       <Filter>Generierte Dateien\Debug</Filter>
     </ClCompile>
@@ -477,8 +471,11 @@
     <ClCompile Include="GeneratedFiles\Release\moc_PermanentLoginReason_p.cpp">
       <Filter>Generierte Dateien\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_SQLGlobal.cpp">
       <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ConfigurationManager_p.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
     </ClCompile>
     <ClCompile Include="Src\DataBase\Entity\SoftwareProject.cpp">
       <Filter>Entity</Filter>
