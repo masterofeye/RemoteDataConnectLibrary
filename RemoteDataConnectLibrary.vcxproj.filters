@@ -480,6 +480,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_ConfigurationManager_p.cpp">
       <Filter>Generierte Dateien\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SQLGlobal.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RemoteDataConnectLibrary.rc">

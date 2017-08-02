@@ -75,6 +75,11 @@ namespace RW{
             SoftwareProject,
             SoftwareProjectAmount,  //Anzahl der Softwarestände bzw. Firmwareversionen
             SoftwareProjectEnd,
+
+            /*Peripheral*/
+            PeripheralTable,        //Liste alle möglichen HW Geräte, die aus der Datenbank ermittelt wird
+            PeripheralCurrentActive, //Liste an HW Komponenten die Wirklich angeschlossen sind und erkannt wurden
+
         };
 
         class ConfigurationManagerPrivate;
@@ -104,10 +109,12 @@ namespace RW{
             bool GetConfigValue(const ConfigurationName &Key, QVariant &Val);
             bool GetConfigValue(const ConfigurationName &Key, QList<QVariant> &Val);
             bool GetConfigValue(const ConfigurationName &Key, QList<QVariant*> &Val);
+            bool GetConfigValue(const ConfigurationName &Key, QMap<QString, QVariant> &Val);
 
             bool InsertConfigValue(const ConfigurationName &Key, const QVariant &Val);
             bool InsertConfigValue(const ConfigurationName &Key, const QList<QVariant> &Val);
             bool InsertConfigValue(const ConfigurationName &Key, const QList<QVariant*> &Val);
+            bool InsertConfigValue(const ConfigurationName &Key, const QMap<QString, QVariant> &Val);
 
 
         };

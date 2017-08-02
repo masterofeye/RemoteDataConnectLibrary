@@ -28,6 +28,7 @@ namespace RW{
         Peripheral::Peripheral(Peripheral &&R) : d_ptr(R.d_ptr)
         {
             d_ptr->setParent(this);
+            SetID(R.ID());
             R.d_ptr = nullptr;
         }
 
@@ -35,6 +36,7 @@ namespace RW{
         {
             std::swap(d_ptr, R.d_ptr);
             d_ptr->setParent(this);
+            SetID(R.ID());
             delete R.d_ptr;
             R.d_ptr = nullptr;
             return *this;
@@ -52,10 +54,17 @@ namespace RW{
                 d_ptr->m_SubAddress1 = F.d_ptr->m_SubAddress1;
                 d_ptr->m_SubAddress2 = F.d_ptr->m_SubAddress2;
                 d_ptr->m_SubAddress3 = F.d_ptr->m_SubAddress3;
-                d_ptr->m_Name = F.d_ptr->m_Name;
-                d_ptr->m_Name = F.d_ptr->m_Name;
-                d_ptr->m_Name = F.d_ptr->m_Name;
-                d_ptr->m_Name = F.d_ptr->m_Name;
+                d_ptr->m_HardwareID1 = F.d_ptr->m_HardwareID1;
+                d_ptr->m_HardwareID2 = F.d_ptr->m_HardwareID2;
+                d_ptr->m_HardwareID3 = F.d_ptr->m_HardwareID3;
+                d_ptr->m_ConnectionType = F.d_ptr->m_ConnectionType;
+                d_ptr->m_Description = F.d_ptr->m_Description;
+                d_ptr->m_DeviceName = F.d_ptr->m_DeviceName;
+                d_ptr->m_State = F.d_ptr->m_State;
+                d_ptr->m_SerialNumber = F.d_ptr->m_SerialNumber;
+                d_ptr->m_Type = F.d_ptr->m_Type;
+
+                SetID(F.ID());
             }
         }
 
@@ -66,6 +75,22 @@ namespace RW{
                 d_ptr = new PeripheralPrivate(this);
 
                 d_ptr->m_Name = F.d_ptr->m_Name;
+                d_ptr->m_Name = F.d_ptr->m_Name;
+                d_ptr->m_Address = F.d_ptr->m_Address;
+                d_ptr->m_Name = F.d_ptr->m_Name;
+                d_ptr->m_SubAddress1 = F.d_ptr->m_SubAddress1;
+                d_ptr->m_SubAddress2 = F.d_ptr->m_SubAddress2;
+                d_ptr->m_SubAddress3 = F.d_ptr->m_SubAddress3;
+                d_ptr->m_HardwareID1 = F.d_ptr->m_HardwareID1;
+                d_ptr->m_HardwareID2 = F.d_ptr->m_HardwareID2;
+                d_ptr->m_HardwareID3 = F.d_ptr->m_HardwareID3;
+                d_ptr->m_ConnectionType = F.d_ptr->m_ConnectionType;
+                d_ptr->m_Description = F.d_ptr->m_Description;
+                d_ptr->m_DeviceName = F.d_ptr->m_DeviceName;
+                d_ptr->m_State = F.d_ptr->m_State;
+                d_ptr->m_SerialNumber = F.d_ptr->m_SerialNumber;
+                d_ptr->m_Type = F.d_ptr->m_Type;
+                SetID(F.ID());
             }
             return *this;
         }

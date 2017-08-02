@@ -8,6 +8,7 @@ namespace RW{
         class ConfigurationManager;
         typedef QMap<ConfigurationName, QVariant> ConfigCollection;
         typedef QMap<ConfigurationName, QList<QVariant>> ConfigCollectionLists;
+        typedef QMap<ConfigurationName, QMap<QString, QVariant>> ConfigCollectionMaps;
 
         enum class ChangeReason
         {
@@ -29,6 +30,7 @@ namespace RW{
             ConfigurationManager * const q_ptr;
             ConfigCollection *m_ConfigCollection;
             ConfigCollectionLists *m_ConfigCollectionLists;
+            ConfigCollectionMaps *m_ConfigCollectionMaps;
             RW::SQL::Repository *m_Repository;
             std::shared_ptr<spdlog::logger> m_Logger;
 
@@ -54,6 +56,12 @@ namespace RW{
             bool LoadProjectSoftware(quint8 ProjectId);
 
             bool LoadGlobalSetting();
+
+            /*
+            @brief Ladet die Komplette Table der möglichen Hardware die über den PC erkannt werden kann. 
+            Diese wird später genutzt um gegen die tatsächlich angeschlosse HW zu vergleichen.
+            */
+            bool LoadPeripheralTable();
 
             void UpdateUser(const ConfigurationName &Key, const QVariant &Val);
             void UpdateWorkstation(const ConfigurationName &Key, const QVariant &Val);

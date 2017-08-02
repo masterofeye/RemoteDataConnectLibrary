@@ -1,5 +1,5 @@
 #pragma once
-#include "..\Global.h"
+#include "Global.h"
 #include <QMetaType>
 namespace spdlog
 {
@@ -8,6 +8,7 @@ namespace spdlog
 
 
 namespace RW{
+    REMOTE_DATA_CONNECT_API Q_NAMESPACE
 	enum class TypeOfElement
 	{
 		USB,
@@ -18,6 +19,7 @@ namespace RW{
 		LVDS,
 		INVALID
 	};
+    Q_ENUM_NS(TypeOfElement)
 
 	enum class SourceType
 	{
@@ -25,7 +27,7 @@ namespace RW{
 		XML,
 		MOCK
 	};
-	//Q_ENUM(SourceType);
+    Q_ENUM_NS(SourceType);
 
 
 	enum class WorkstationState
@@ -37,6 +39,7 @@ namespace RW{
         FREE,
         OCCUPY
 	};
+    Q_ENUM_NS(WorkstationState)
 
 	enum class UserRole
 	{
@@ -46,6 +49,7 @@ namespace RW{
         NON
 
 	};
+    Q_ENUM_NS(UserRole)
 
     enum class WorkstationKind
     {
@@ -56,6 +60,7 @@ namespace RW{
         NON
 
     };
+    Q_ENUM_NS(WorkstationKind)
 
     enum class PeripheralType
     {
@@ -68,6 +73,7 @@ namespace RW{
         RemoteBox,
 
     };
+    Q_ENUM_NS(PeripheralType)
 
     enum class ChangeUserReason
     {
@@ -76,6 +82,7 @@ namespace RW{
         Login,
         ServiceStopped
     };
+    Q_ENUM_NS(ChangeUserReason)
 
     enum class PeripheralState
     {
@@ -83,6 +90,7 @@ namespace RW{
         Offline,
         Error,
     };
+    Q_ENUM_NS(PeripheralState)
 }	
 Q_DECLARE_METATYPE(RW::WorkstationState)
 Q_DECLARE_METATYPE(RW::UserRole)

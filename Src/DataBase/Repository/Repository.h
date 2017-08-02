@@ -22,6 +22,7 @@ namespace RW{
         class SoftwareProject;
         class WorkstationType;
         class GlobalSetting;
+        class Peripheral;
 
 		/*
 		@brief Schnittstelle zwischen dem Datenzugriff von Clienten und externen Datenquellen. Jeder Zugriff auf externe Datenquellen
@@ -107,6 +108,7 @@ namespace RW{
 			*/
 			bool GetWorkstationByID(quint64 ID, Workstation& R);
             bool GetWorkstationByHostname(QString Hostname, Workstation& R);
+            bool GetPeripheralByHardwareID(QString HardwareID, Peripheral& R);
 
             bool GetLogEntryByHostName(QString HostName, QList<LogEntry> & AllR);
 
@@ -138,6 +140,7 @@ namespace RW{
             bool GetAllSoftwareProject(QList<SoftwareProject> & AllR);
             bool GetAllFlashHistory(QList<FlashHistory> & AllR);
             bool GetAllWorkstationType(QList<WorkstationType> & AllR);
+            bool GetAllPeripheral(QList<Peripheral> & AllR);
 
 			bool GetUserByName(QString Name, User& U);
             bool GetUserByHostName(QString Hostname, User& U);

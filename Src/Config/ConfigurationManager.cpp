@@ -102,6 +102,7 @@ namespace RW{
             q_ptr((ConfigurationManager*)Parent),
             m_ConfigCollection(new ConfigCollection()),
             m_ConfigCollectionLists(new ConfigCollectionLists()),
+            m_ConfigCollectionMaps(new ConfigCollectionMaps()),
             m_Repository(new RW::SQL::Repository(RW::SourceType::SQL,Logger,this))
         {
             connect(this, &ConfigurationManagerPrivate::SaveConfiguration, this, &ConfigurationManagerPrivate::OnSaveConfiguration);
@@ -250,6 +251,31 @@ namespace RW{
             m_ConfigCollection->insert(ConfigurationName::BeShutdownTimer, setting.BeShutdownTimer());
             return true;
         }
+
+
+        bool ConfigurationManagerPrivate::LoadPeripheralTable()
+        {
+            QList<RW::SQL::Peripheral> p;
+            if ((m_Repository != nullptr))
+            {
+                if (!m_Repository->GetAllPeripheral(p))
+                    return false;
+            }
+            else
+            {
+                return false;
+            }
+
+            QMap<QString, QVariant> pMap;
+            for each (auto var in p)
+            {
+                pMap.insert(var.HardwareID1(), QVariant::fromValue(var));
+            }
+
+            m_ConfigCollectionMaps->insert(ConfigurationName::PeripheralTable, pMap);
+            return true;
+        }
+
 
         void ConfigurationManagerPrivate::UpdateUser()
         {
@@ -444,6 +470,16 @@ namespace RW{
             return true;
         }
 
+        bool ConfigurationManager::GetConfigValue(const ConfigurationName &Key, QMap<QString, QVariant> &Val)
+        {
+            if (d_ptr->m_ConfigCollectionMaps->contains(Key))
+            {
+                Val = d_ptr->m_ConfigCollectionMaps->value(Key);
+                return true;
+            }
+            return true;
+        }
+
         bool ConfigurationManager::InsertConfigValue(const ConfigurationName &Key, const QVariant &Val)
         {
             if (Key > ConfigurationName::UserStart && Key < ConfigurationName::UserEnd)
@@ -473,6 +509,11 @@ namespace RW{
             return true;
         }
 
+        bool ConfigurationManager::InsertConfigValue(const ConfigurationName &Key, const QMap<QString, QVariant> &Val)
+        {
+            return true;
+        }
+
         const QVariant ConfigurationManager::operator[](const ConfigurationName& Name)
         {
             return d_ptr->m_ConfigCollection->value(Name);
@@ -498,6 +539,9 @@ namespace RW{
                 return false;
 
             if (!d_ptr->LoadGlobalSetting())
+                return false;
+
+            if (!d_ptr->LoadPeripheralTable())
                 return false;
             return true;
         }

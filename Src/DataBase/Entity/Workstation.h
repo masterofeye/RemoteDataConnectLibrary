@@ -5,6 +5,7 @@
 
 namespace RW{
 	enum class WorkstationState;
+    enum class WorkstationKind;
 
 	namespace SQL{
 		class WorkstationPrivate;
@@ -14,7 +15,7 @@ namespace RW{
         class WorkstationType;
         class Peripheral;
         class WorkstationSetting;
-        enum class WorkstationKind;
+        
 
 		class REMOTE_DATA_CONNECT_API Workstation :
 			public Entity

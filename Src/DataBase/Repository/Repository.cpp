@@ -683,7 +683,7 @@ namespace RW{
 			try{
 				DataFactory d(m_logger);
 				DataMapper<Device> *dm = d.GetMapper<Device>(m_Source);
-				if (dm != nullptr)
+				if (dm == nullptr)
 					return false;
 				AllR = dm->FindAll();
 				delete dm;
@@ -701,7 +701,7 @@ namespace RW{
             try{
                 DataFactory d(m_logger);
                 DataMapper<SoftwareProject> *dm = d.GetMapper<SoftwareProject>(m_Source);
-                if (dm != nullptr)
+                if (dm == nullptr)
                     return false;
                 AllR = dm->FindAll();
                 delete dm;
@@ -719,7 +719,7 @@ namespace RW{
             try{
                 DataFactory d(m_logger);
                 DataMapper<FlashHistory> *dm = d.GetMapper<FlashHistory>(m_Source);
-                if (dm != nullptr)
+                if (dm == nullptr)
                     return false;
                 AllR = dm->FindAll();
                 delete dm;
@@ -737,7 +737,7 @@ namespace RW{
             try{
                 DataFactory d(m_logger);
                 DataMapper<WorkstationType> *dm = d.GetMapper<WorkstationType>(m_Source);
-                if (dm != nullptr)
+                if (dm == nullptr)
                     return false;
                 AllR = dm->FindAll();
                 delete dm;
@@ -745,6 +745,24 @@ namespace RW{
             catch (...)
             {
                 m_logger->error("GetAllWorkstationType throwed a exception");
+                return false;
+            }
+            return true;
+        }
+
+        bool Repository::GetAllPeripheral(QList<Peripheral> & AllR)
+        {
+            try{
+                DataFactory d(m_logger);
+                DataMapper<Peripheral> *dm = d.GetMapper<Peripheral>(m_Source);
+                if (dm == nullptr)
+                    return false;
+                AllR = dm->FindAll();
+                delete dm;
+            }
+            catch (...)
+            {
+                m_logger->error("GetAllPeripheral throwed a exception");
                 return false;
             }
             return true;
@@ -952,6 +970,33 @@ namespace RW{
             catch (...)
             {
                 m_logger->error("GetLogEntryByHostName throwed a exception");
+                return false;
+            }
+            return true;
+        }
+
+        bool Repository::GetPeripheralByHardwareID(QString HardwareID, Peripheral& R)
+        {
+            QList<Peripheral> allLogEntry;
+            try{
+                DataFactory d(m_logger);
+                DataMapper<Peripheral> *dm = d.GetMapper<Peripheral>(m_Source);
+                if (dm == nullptr)
+                    return false;
+                allLogEntry = dm->FindAll();
+                delete dm;
+
+                for each (auto var in allLogEntry)
+                {
+                    if (var.HardwareID1() == HardwareID)
+                    {
+                        R = var;
+                    }
+                }
+            }
+            catch (...)
+            {
+                m_logger->error("GetPeripheralByHardwareID throwed a exception");
                 return false;
             }
             return true;

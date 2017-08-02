@@ -504,6 +504,7 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_SoftwareProject_p.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SQLGlobal.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_User.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -748,7 +749,7 @@ xcopy /y $(SolutionDir)build\$(Platform)\$(Configuration)\$(TargetName).dll ..\.
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties Qt5Version_x0020_x64="msvc2013_64_5.8" />
+      <UserProperties Qt5Version_x0020_x64="msvc2013_64_5.9" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

@@ -83,6 +83,7 @@ namespace RW{
         const QString SelectById_WorkstationType = "SELECT * FROM workstationType WHERE idWorkstationType=:idWorkstationType";
         const QString SelectById_PeripheralMapping = "SELECT * FROM peripheralMapping WHERE idPeripheralMapping=:idPeripheralMapping";
         const QString SelectById_Peripheral = "SELECT * FROM peripheral WHERE idPeripheral=:idPeripheral";
+        const QString SelectByIdByHardwareID_Peripheral = "SELECT * FROM peripheral WHERE hardwareID1=:hardwareID1";
         const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
         const QString SelectById_WorkstationSetting = "SELECT * FROM workstationsetting WHERE idWorkstationSetting=:idWorkstationSetting";
         const QString SelectById_PermanentLoginReason= "SELECT * FROM permanentloginreason WHERE idPermanentLoginReason=:idPermanentLoginReason";
@@ -1690,6 +1691,7 @@ namespace RW{
             {
                 m_logger->error("Tbl Peripheral FindAll failed. Error:{}", query.lastError().text().toUtf8().constData());
             }
+            return list;
         }
 
         template<> QList<GlobalSetting> MySqlMapper<GlobalSetting>::FindAll()
@@ -1765,6 +1767,8 @@ namespace RW{
             }
             return list;
         }
+
+
 
 	}
 }
