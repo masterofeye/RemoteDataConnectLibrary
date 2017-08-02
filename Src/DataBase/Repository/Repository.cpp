@@ -9,6 +9,8 @@
 
 namespace RW{
 	namespace SQL{
+
+
 		Repository::Repository(SourceType Source, QObject* Parent) : QObject(Parent),
 			m_Source(Source)
 		{
@@ -454,7 +456,7 @@ namespace RW{
 
                 for each (SoftwareProject var in projList)
                 {
-                    if (var.ID() == ID)
+					if (var.ProjectSw()->ID() == ID)
                     {
                         P.append(var);
                     }
@@ -947,6 +949,69 @@ namespace RW{
             }
             return true;
         }
+
+		bool Repository::GetFlashHistoryByWorkstationID(quint64 ID, QList<FlashHistory>& P)
+		{
+			try{
+				DataFactory d(m_logger);
+				QVariantList list; 
+				list << ID;
+				DataMapper<FlashHistory> *dm = d.GetMapper<FlashHistory>(m_Source);
+				if (dm == nullptr)
+					return false;
+				P = dm->FindBySpecifier(DataMapper<FlashHistory>::Specifier::GetHistoryByWorkstationID, list);
+				delete dm;
+			}
+			catch (...)
+			{
+				m_logger->error("GetFlashHistoryByID throwed a exception");
+				return false;
+			}
+			return true;
+		}
+
+		bool Repository::GetLastestFlasHistoryEntryByWorkstationIDAndSoftwareProjectID(quint64 WorkstationID,
+			quint64 SoftwareProjectID,
+			QList<FlashHistory>& P)
+		{
+			try{
+				DataFactory d(m_logger);
+				DataMapper<FlashHistory> *dm = d.GetMapper<FlashHistory>(m_Source);
+				if (dm == nullptr)
+					return false;
+				QVariantList list;
+				list << WorkstationID << SoftwareProjectID;
+				P = dm->FindBySpecifier(DataMapper<FlashHistory>::Specifier::GetLastestFlasHistoryEntryByWorkstationIDAndSoftwareProjectID, list);
+				delete dm;
+			}
+			catch (...)
+			{
+				m_logger->error("GetLastestFlasHistoryEntryByWorkstationIDAndSoftwareProjectID throwed a exception");
+				return false;
+			}
+			return true;
+		}
+
+		bool Repository::GetSoftwareProjectsByProjectID(quint64 ID, QList<SoftwareProject>& P)
+		{
+			try{
+				DataFactory d(m_logger);
+				DataMapper<SoftwareProject> *dm = d.GetMapper<SoftwareProject>(m_Source);
+				if (dm == nullptr)
+					return false;
+				QVariantList list;
+				list  << ID;
+				P = dm->FindBySpecifier(DataMapper<SoftwareProject>::Specifier::GetSoftwareProjectsByProjectID, list);
+				delete dm;
+			}
+			catch (...)
+			{
+				m_logger->error("GetSoftwareProjectsByProjectID throwed a exception");
+				return false;
+			}
+			return true;
+		}
+
 
         bool Repository::GetLogEntryByHostName(QString HostName, QList<LogEntry> & AllR)
         {

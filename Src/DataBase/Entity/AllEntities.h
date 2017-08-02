@@ -51,6 +51,10 @@ namespace RW{
                                 //qRegisterMetaType<RW::SQL::ElementConfiguration>("ElementConfiguration");
 				
 				qmlRegisterType<RW::SQL::Workstation>();
+                                qmlRegisterType<RW::SQL::User>();
+                                //qmlRegisterType<RW::WorkstationState>();
+                                qmlRegisterType<RW::SQL::WorkstationType>();
+                                qmlRegisterType<RW::SQL::WorkstationSetting>();
 				qmlRegisterType<RW::SQL::Project>();
 				qmlRegisterType<RW::SQL::ElementConfiguration>();
 

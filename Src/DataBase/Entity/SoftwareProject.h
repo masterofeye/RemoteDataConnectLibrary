@@ -13,6 +13,7 @@ namespace RW{
             Q_OBJECT
             Q_PROPERTY(Project* ProjectSw READ ProjectSw WRITE SetProjectSw NOTIFY ProjectSwChanged)
             Q_PROPERTY(QString Name READ Name WRITE SetName NOTIFY NameChanged)
+			Q_PROPERTY(QString NaturalName READ NaturalName WRITE SetNaturalName NOTIFY NaturalNameChanged)
 
             Q_CLASSINFO("Version", "0.0.1")
         private:
@@ -34,10 +35,12 @@ namespace RW{
             QString Name()const;
             void SetName(QString SoftwareProject);
  
-
+			QString NaturalName()const;
+			void SetNaturalName(QString NaturalName);
         signals:
             void ProjectSwChanged();
             void NameChanged();
+			void NaturalNameChanged();
 
 		};
 	}

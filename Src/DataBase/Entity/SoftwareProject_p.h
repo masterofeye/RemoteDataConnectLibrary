@@ -21,7 +21,7 @@ namespace RW{
 			
             Project* m_Project;
 			QString m_Name;
-			
+			QString m_NaturalName;
 		};
 	}
 }

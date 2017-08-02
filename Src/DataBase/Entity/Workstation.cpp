@@ -161,7 +161,6 @@ namespace RW{
 
 		Workstation::~Workstation()
 		{
-			qDebug() << "Delete " << this;
         }
 
 		QQmlListProperty<ElementConfiguration>  Workstation::ElementCfgQml()

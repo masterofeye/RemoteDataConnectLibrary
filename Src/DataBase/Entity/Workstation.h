@@ -6,7 +6,6 @@
 namespace RW{
 	enum class WorkstationState;
     enum class WorkstationKind;
-
 	namespace SQL{
 		class WorkstationPrivate;
 		class ElementConfiguration;
@@ -21,10 +20,10 @@ namespace RW{
 			public Entity
 		{
 			Q_OBJECT
-			Q_PROPERTY(QQmlListProperty<RW::SQL::ElementConfiguration> ElementCfgQml READ ElementCfgQml NOTIFY ElementCfgChanged)
+			//Q_PROPERTY(QQmlListProperty<RW::SQL::ElementConfiguration> ElementCfgQml READ ElementCfgQml NOTIFY ElementCfgChanged)
 			Q_PROPERTY(User* CurrentUser READ CurrentUser WRITE SetCurrentUser NOTIFY CurrentUserChanged)
 			Q_PROPERTY(Project* AssignedProject READ AssignedProject WRITE setAssignedProject NOTIFY ProjectChanged)
-			Q_PROPERTY(QString Hostname READ Hostname WRITE SetHostname NOTIFY HostnameChanged)
+			Q_PROPERTY(QString hostname READ Hostname WRITE SetHostname NOTIFY HostnameChanged)
 			Q_PROPERTY(QString Mac READ Mac WRITE SetMac NOTIFY MacChanged)
 			Q_PROPERTY(QString Ip READ Ip WRITE SetIp NOTIFY IpChanged)
 			Q_PROPERTY(WorkstationState State READ State WRITE SetState NOTIFY StateChanged)
@@ -72,8 +71,8 @@ namespace RW{
 			WorkstationState State() const;
 			void SetState(WorkstationState State);
 
-			Project* Workstation::AssignedProject() const;
-			void Workstation::setAssignedProject(Project* Project);
+			Project* AssignedProject() const;
+			void setAssignedProject(Project* Project);
 
             WorkstationSetting* SettingOfWorkstation() const;
             void SetSettingOfWorkstation(WorkstationSetting* Setting);
@@ -114,4 +113,5 @@ namespace RW{
 }
 Q_DECLARE_METATYPE(RW::SQL::Workstation)
 Q_DECLARE_METATYPE(QQmlListProperty<RW::SQL::ElementConfiguration>)
+Q_DECLARE_METATYPE(QQmlListProperty<RW::SQL::Peripheral>)
 

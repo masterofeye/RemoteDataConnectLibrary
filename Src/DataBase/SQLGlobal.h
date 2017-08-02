@@ -1,6 +1,7 @@
 #pragma once
+#include <QObject>
 #include "Global.h"
-#include <QMetaType>
+
 namespace spdlog
 {
 	class logger;
@@ -50,6 +51,8 @@ namespace RW{
 
 	};
     Q_ENUM_NS(UserRole)
+
+
 
     enum class WorkstationKind
     {

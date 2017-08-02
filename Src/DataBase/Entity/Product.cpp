@@ -37,7 +37,7 @@ namespace RW{
 				d_ptr->m_Part = other.d_ptr->m_Part;
 				d_ptr->m_ProductName = other.d_ptr->m_ProductName;
 				d_ptr->m_Recept = other.d_ptr->m_Recept;
-
+				SetID(other.ID());
 			}
 		}
 
@@ -49,7 +49,7 @@ namespace RW{
 				d_ptr->m_Part = other.d_ptr->m_Part;
 				d_ptr->m_ProductName = other.d_ptr->m_ProductName;
 				d_ptr->m_Recept = other.d_ptr->m_Recept;
-
+				SetID(other.ID());
 			}
 			return *this;
 		}
@@ -58,6 +58,7 @@ namespace RW{
 		Product::Product(Product&& other) : d_ptr(other.d_ptr)
 		{
 			d_ptr->setParent(this);
+			SetID(other.ID());
 			other.d_ptr = nullptr;
 		}
 
@@ -65,6 +66,7 @@ namespace RW{
 		{
 			std::swap(d_ptr, other.d_ptr);
 			d_ptr->setParent(this);
+			SetID(other.ID());
 			delete other.d_ptr;
 			other.d_ptr = nullptr;
 			return *this;
