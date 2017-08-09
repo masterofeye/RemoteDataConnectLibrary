@@ -109,172 +109,182 @@ namespace RW{
             emit NameChanged();
         }
 
-        QString Peripheral::Address()const
+
+        /*!
+        @brief Busspezifische Adresse der Geräteinstanz.
+        */
+        quint64 Peripheral::Address()
         {
             Q_D(const Peripheral);
             return d->m_Address;
         }
-
-        void Peripheral::SetAddress(QString Address)
+        void Peripheral::SetAddress(quint64 Address)
         {
             Q_D(Peripheral);
             d->m_Address = Address;
             emit AddressChanged();
         }
-
-        QString Peripheral::SubAddress1()const
+        /*!
+        @brief Busspezifische physikalischer Ort einer Geräteinstanz.
+        */
+        QString Peripheral::LocationInformation()
         {
             Q_D(const Peripheral);
-            return d->m_SubAddress1;
+            return d->m_LocationInformation;
         }
-
-        void Peripheral::SetSubAddress1(QString SubAddress1)
+        void Peripheral::SetLocationInformation(QString Info)
         {
             Q_D(Peripheral);
-            d->m_SubAddress1 = SubAddress1;
-            emit SubAddress1Changed();
+            d->m_LocationInformation = Info;
+            emit LocationInformationChanged();
         }
-
-        QString Peripheral::SubAddress2()const
+        /*!
+        @brief Ort der Geräteinstanz innerhalb des Gerätebaums.
+        */
+        QString Peripheral::Peripheral::LocationPath()
         {
             Q_D(const Peripheral);
-            return d->m_SubAddress2;
+            return d->m_LocationPath;
         }
-
-        void Peripheral::SetSubAddress2(QString SubAddress2)
+        void Peripheral::Peripheral::SetLocationPath(QString Path)
         {
             Q_D(Peripheral);
-            d->m_SubAddress2 = SubAddress2;
-            emit SubAddress2Changed();
+            d->m_LocationPath = Path;
+            emit LocationPathChanged();
         }
-
-        QString Peripheral::SubAddress3()const
-        {
-            Q_D(const Peripheral);
-            return d->m_SubAddress3;
-        }
-
-        void Peripheral::SetSubAddress3(QString SubAddress3)
-        {
-            Q_D(Peripheral);
-            d->m_SubAddress3 = SubAddress3;
-            emit SubAddress3Changed();
-        }
-
-        PeripheralType Peripheral::Type()const
-        {
-            Q_D(const Peripheral);
-            return d->m_Type;
-        }
-
-        void Peripheral::SetType(PeripheralType Type)
-        {
-            Q_D(Peripheral);
-            d->m_Type = Type;
-            emit TypeChanged();
-        }
-
-        QString Peripheral::ConnectionType()const
-        {
-            Q_D(const Peripheral);
-            return d->m_ConnectionType;
-        }
-
-        void Peripheral::SetConnectionType(QString ConnectionType)
-        {
-            Q_D(Peripheral);
-            d->m_ConnectionType = ConnectionType;
-            emit ConnectionTypeChanged();
-        }
-
-        QString Peripheral::SerialNumber()const
-        {
-            Q_D(const Peripheral);
-            return d->m_SerialNumber;
-        }
-
-        void Peripheral::SetSerialNumber(QString SerialNumber)
-        {
-            Q_D(Peripheral);
-            d->m_SerialNumber = SerialNumber;
-            emit SerialNumberChanged();
-        }
-
-        QString Peripheral::DeviceName()const
-        {
-            Q_D(const Peripheral);
-            return d->m_DeviceName;
-        }
-
-        void Peripheral::SetDeviceName(QString DeviceName)
-        {
-            Q_D(Peripheral);
-            d->m_DeviceName = DeviceName;
-            emit DeviceNameChanged();
-        }
-
-        QString Peripheral::Description()const
+        /*!
+        @brief Beschreibung des Gerätes.
+        */
+        QString Peripheral::Description()
         {
             Q_D(const Peripheral);
             return d->m_Description;
         }
-
         void Peripheral::SetDescription(QString Description)
         {
             Q_D(Peripheral);
             d->m_Description = Description;
             emit DescriptionChanged();
         }
-
-        QString Peripheral::HardwareID1()const
+        /*!
+        @brief Sprechender Name des Gerätes.
+        */
+        QString Peripheral::DeviceName()
         {
             Q_D(const Peripheral);
-            return d->m_HardwareID1;
+            return d->m_DeviceName;
         }
-        void Peripheral::SetHardwareID1(QString ID1)
+        void Peripheral::SetDeviceName(QString Name)
         {
             Q_D(Peripheral);
-            d->m_HardwareID1 = ID1;
-            emit HardwareID1Changed();
+            d->m_DeviceName = Name;
+            emit DeviceNameChanged();
         }
-
-        QString Peripheral::HardwareID2()const
+        /*!
+        @brief HardwareID des Gerätes.
+        */
+        QStringList Peripheral::HardwareID()
         {
             Q_D(const Peripheral);
-            return d->m_HardwareID2;
+            return d->m_HardwareID;
         }
-
-        void Peripheral::SetHardwareID2(QString ID2)
+        void Peripheral::SetHardwareID(QStringList ID)
         {
             Q_D(Peripheral);
-            d->m_HardwareID2 = ID2;
-            emit HardwareID2Changed();
+            d->m_HardwareID = ID;
+            emit HardwareIDChanged();
         }
-
-        QString Peripheral::HardwareID3()const
+        /*!
+        @brief Friendly Name des Gerätes.
+        */
+        QString Peripheral::FriendlyName()
         {
             Q_D(const Peripheral);
-            return d->m_HardwareID3;
+            return d->m_FriendlyName;
         }
-
-        void Peripheral::SetHardwareID3(QString ID3)
+        void Peripheral::SetFriendyNane(QString FriendlyName)
         {
             Q_D(Peripheral);
-            d->m_HardwareID3 = ID3;
-            emit HardwareID3Changed();
+            d->m_FriendlyName = FriendlyName;
+            emit FriendlyNameChanged();
         }
-
-        PeripheralState Peripheral::State()const
+        /*!
+        @brief Busnummer des Gerätes.
+        */
+        quint64 Peripheral::Busnummer()
         {
             Q_D(const Peripheral);
-            return d->m_State;
+            return d->m_Busnummer;
         }
-
-        void Peripheral::SetState(PeripheralState State)
+        void Peripheral::SetBusnummer(quint64 Busnummer)
         {
             Q_D(Peripheral);
-            d->m_State = State;
-            emit StateChanged();
+            d->m_Busnummer = Busnummer;
+            emit FriendlyNameChanged();
         }
+        /*!
+        @brief Bus-GUID des Gerätes.
+        */
+        QString Peripheral::BusGUID();
+        void Peripheral::BusGUID(QString BusGUID);
+        /*!
+        @brief Device Setup Class des Gerätes.
+        */
+        QString Peripheral::Class();
+        void Peripheral::SetClass(QString Class);
+        /*!
+        @brief GUID des Device Setup Class des Gerätes.
+        */
+        QString Peripheral::ClassGUID();
+        void Peripheral::SetClassGUID(QString ClassGUID);
+        /*!
+        @brief Kompatible ID's für das Gerät.
+        */
+        QStringList Peripheral::CompatibleID();
+        void Peripheral::SetCompatibleID(QStringList CompatibleID);
+        /*!
+        @brief Type des Gerätes welches der Windowszuordnung entspricht.
+        Für eine Zuordnung siehe: https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/specifying-device-types
+        */
+        quint16 Peripheral::WindowsDeviceType();
+        void Peripheral::SetWindowsDeviceType(quint16 WindowsDeviceType);
+        /*!
+        @brief Beinhaltet den Namen des Geräteenumerators, dieser entspricht dem übergeordneten Elterngruppe (z.b. für USB wäre es USB)
+        */
+        QString Peripheral::EnumeratorName();
+        void Peripheral::SetEnumeratorName(QString EnumeratorName);
+        /*!
+        @brief Geräteinstallationsstatus. Für die Zuordnung siehe. https://msdn.microsoft.com/en-us/library/windows/hardware/ff543130(v=vs.85).aspx
+        */
+        quint16 Peripheral::InstallState();
+        void Peripheral::SetInstallState(quint16 InstallState);
+        /*!
+        @brief Herstellername des Gerätes.
+        */
+        QString Peripheral::Manufacturer();
+        void Peripheral::SetManufacturer(QString Manufacturer);
+        /*!
+        @brief Beinhaltet den Servicename für das Geräte.
+        */
+        QString Peripheral::ServiceName();
+        void Peripheral::SetServiceName(QString ServiceName);
+        /*!
+        @brief Der interne Gerätetyp.
+        */
+        PeripheralType Peripheral::InteralType();
+        void Peripheral::SetInteralType(PeripheralType InteralType);
+
+        /*!
+        @brief Gibt an, ob ein Gerät bereits registriert ist oder nicht.
+        */
+        bool Peripheral::IsRegistered();
+        void Peripheral::SetRegistered(bool Registered);
+
+        /*!
+        @brief Gibt an, ob ein Gerät noch aktiv, als Betriebsbereit oder vom Strom getrennt ist.
+        */
+        bool Peripheral::IsActivate();
+        void Peripheral::SetActivate(bool Activate);
+
 	}
 }
