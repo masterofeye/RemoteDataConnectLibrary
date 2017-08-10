@@ -68,12 +68,15 @@ namespace RW{
     enum class PeripheralType
     {
         MiniCube,
-        IceCube,
+        IECube,
         RenesasE1,
         RPILvdsBox,
+        LVDSContinentalBox,
         SPIGray,
         SPIRed,
         RemoteBox,
+        PowerStripe,
+        PowerSupply
 
     };
     Q_ENUM_NS(PeripheralType)

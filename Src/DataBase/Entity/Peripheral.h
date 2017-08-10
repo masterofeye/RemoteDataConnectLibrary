@@ -11,20 +11,28 @@ namespace RW{
 			public Entity
 		{
             Q_OBJECT
-            Q_PROPERTY(QString Address READ Address WRITE SetAddress NOTIFY AddressChanged)
-            Q_PROPERTY(QString SubAddress1 READ SubAddress1 WRITE SetSubAddress1 NOTIFY SubAddress1Changed)
-            Q_PROPERTY(QString SubAddress2 READ SubAddress2 WRITE SetSubAddress2 NOTIFY SubAddress2Changed)
-            Q_PROPERTY(QString SubAddress3 READ SubAddress3 WRITE SetSubAddress3 NOTIFY SubAddress3Changed)
-            Q_PROPERTY(QString Name READ Name WRITE SetName NOTIFY NameChanged)
-            Q_PROPERTY(PeripheralType Type READ Type WRITE SetType NOTIFY TypeChanged)
-            Q_PROPERTY(QString ConnectionType READ ConnectionType WRITE SetConnectionType NOTIFY ConnectionTypeChanged)
-            Q_PROPERTY(QString SerialNumber READ SerialNumber WRITE SetSerialNumber NOTIFY SerialNumberChanged)
-            Q_PROPERTY(QString DeviceName READ DeviceName WRITE SetDeviceName NOTIFY DeviceNameChanged)
+            Q_PROPERTY(quint64 Address READ Address WRITE SetAddress NOTIFY AddressChanged)
+            Q_PROPERTY(QString LocationInformation READ LocationInformation WRITE SetLocationInformation NOTIFY LocationInformationChanged)
+            Q_PROPERTY(QString LocationPath READ LocationPath WRITE SetLocationPath NOTIFY LocationPathChanged)
             Q_PROPERTY(QString Description READ Description WRITE SetDescription NOTIFY DescriptionChanged)
-            Q_PROPERTY(QString HardwareID1 READ HardwareID1 WRITE SetHardwareID1 NOTIFY HardwareID1Changed)
-            Q_PROPERTY(QString HardwareID2 READ HardwareID2 WRITE SetHardwareID2 NOTIFY HardwareID2Changed)
-            Q_PROPERTY(QString HardwareID3 READ HardwareID3 WRITE SetHardwareID3 NOTIFY HardwareID3Changed)
-            Q_PROPERTY(PeripheralState State READ State WRITE SetState NOTIFY StateChanged)
+            Q_PROPERTY(QString DeviceName READ DeviceName WRITE SetDeviceName NOTIFY DeviceNameChanged)
+            Q_PROPERTY(QStringList HardwareID READ HardwareID WRITE SetHardwareID NOTIFY HardwareIDChanged)
+            Q_PROPERTY(QString FriendlyName READ FriendlyName WRITE SetFriendlyName NOTIFY FriendlyNameChanged)
+            Q_PROPERTY(quint64 Busnummer READ Busnummer WRITE SetBusnummer NOTIFY BusnummerChanged)
+            Q_PROPERTY(QString BusGUID READ BusGUID WRITE SetBusGUID NOTIFY BusGUIDChanged)
+            Q_PROPERTY(QString Class READ Class WRITE SetClass NOTIFY ClassChanged)
+            Q_PROPERTY(QString ClassGUID READ ClassGUID WRITE SetClassGUID NOTIFY ClassGUIDChanged)
+            Q_PROPERTY(QString CompatibleID READ CompatibleID WRITE SetCompatibleID NOTIFY CompatibleIDChanged)
+            Q_PROPERTY(QString WindowsDeviceType READ WindowsDeviceType WRITE SetWindowsDeviceType NOTIFY WindowsDeviceTypeChanged)
+            Q_PROPERTY(QString EnumeratorName READ EnumeratorName WRITE SetEnumeratorName NOTIFY EnumeratorNameChanged)
+            Q_PROPERTY(QString Manufacturer READ Manufacturer WRITE SetManufacturer NOTIFY ManufacturerChanged)
+            Q_PROPERTY(QString ServiceName READ ServiceName WRITE SetServiceName NOTIFY ServiceNameChanged)
+            Q_PROPERTY(QString InstallState READ InstallState WRITE SetInstallState NOTIFY InstallStateChanged)
+            Q_PROPERTY(PeripheralType InteralType READ InteralType WRITE SetInteralType NOTIFY InteralTypeChanged)
+            Q_PROPERTY(bool IsRegistered READ IsRegistered WRITE SetRegistered NOTIFY IsRegisteredChanged)
+            Q_PROPERTY(QString IsRegistered READ IsRegistered WRITE SetRegistered NOTIFY IsRegisteredChanged)
+            Q_PROPERTY(QString IsActivate READ IsActivate WRITE SetActivate NOTIFY IsActivateChanged)
+            
 
             Q_CLASSINFO("Version", "0.0.1")
         private:
@@ -40,63 +48,131 @@ namespace RW{
             Peripheral(Peripheral &&F);
             Peripheral& operator=(Peripheral &&F);
 
-            QString Address()const;
-            void SetAddress(QString Address);
-
-            QString SubAddress1()const;
-            void SetSubAddress1(QString SubAddress1);
-
-            QString SubAddress2()const;
-            void SetSubAddress2(QString SubAddress2);
-
-            QString SubAddress3()const;
-            void SetSubAddress3(QString SubAddress3);
-
-            QString Name()const;
-            void SetName(QString Name);
-
-            PeripheralType Type()const;
-            void SetType(PeripheralType Type);
-
-            QString ConnectionType()const;
-            void SetConnectionType(QString ConnectionType);
-
-            QString SerialNumber()const;
-            void SetSerialNumber(QString SerialNumber);
-
-            QString DeviceName()const;
-            void SetDeviceName(QString DeviceName);
-
-            QString Description()const;
+            /*!
+            @brief Busspezifische Adresse der Geräteinstanz.
+            */
+            quint64 Address();
+            void SetAddress(quint64 Address);
+            /*!
+            @brief Busspezifische physikalischer Ort einer Geräteinstanz.
+            */
+            QString LocationInformation();
+            void SetLocationInformation(QString Info);
+            /*!
+            @brief Ort der Geräteinstanz innerhalb des Gerätebaums.
+            */
+            QString LocationPath();
+            void SetLocationPath(QString Path);
+            /*!
+            @brief Beschreibung des Gerätes.
+            */
+            QString Description();
             void SetDescription(QString Description);
+            /*!
+            @brief Sprechender Name des Gerätes.
+            */
+            QString DeviceName();
+            void SetDeviceName(QString Name);
+            /*!
+            @brief HardwareID des Gerätes.
+            */
+            QStringList HardwareID();
+            void SetHardwareID(QStringList ID);
+            /*!
+            @brief Friendly Name des Gerätes.
+            */
+            QString FriendlyName();
+            void SetFriendyNane(QString FriendlyName);
+            /*!
+            @brief Busnummer des Gerätes.
+            */
+            quint64 Busnummer();
+            void SetBusnummer(quint64 Busnummer);
+            /*!
+            @brief Bus-GUID des Gerätes.
+            */
+            QString BusGUID();
+            void BusGUID(QString BusGUID);
+            /*!
+            @brief Device Setup Class des Gerätes.
+            */
+            QString Class();
+            void SetClass(QString Class);
+            /*!
+            @brief GUID des Device Setup Class des Gerätes.
+            */
+            QString ClassGUID();
+            void SetClassGUID(QString ClassGUID);
+            /*!
+            @brief Kompatible ID's für das Gerät.
+            */
+            QStringList CompatibleID();
+            void SetCompatibleID(QStringList CompatibleID);
+            /*!
+            @brief Type des Gerätes welches der Windowszuordnung entspricht.
+            Für eine Zuordnung siehe: https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/specifying-device-types
+            */
+            quint16 WindowsDeviceType();
+            void SetWindowsDeviceType(quint16 WindowsDeviceType);
+            /*!
+            @brief Beinhaltet den Namen des Geräteenumerators, dieser entspricht dem übergeordneten Elterngruppe (z.b. für USB wäre es USB)
+            */
+            QString EnumeratorName();
+            void SetEnumeratorName(QString EnumeratorName);
+            /*!
+            @brief Geräteinstallationsstatus. Für die Zuordnung siehe. https://msdn.microsoft.com/en-us/library/windows/hardware/ff543130(v=vs.85).aspx
+            */
+            quint16 InstallState();
+            void SetInstallState(quint16 InstallState);
+            /*!
+            @brief Herstellername des Gerätes.
+            */
+            QString Manufacturer();
+            void SetManufacturer(QString Manufacturer);
+            /*!
+            @brief Beinhaltet den Servicename für das Geräte.
+            */
+            QString ServiceName();
+            void SetServiceName(QString ServiceName);
+            /*!
+            @brief Der interne Gerätetyp.
+            */
+            PeripheralType InteralType();
+            void SetInteralType(PeripheralType InteralType);
 
-            QString HardwareID1()const;
-            void SetHardwareID1(QString ID1);
+            /*!
+            @brief Gibt an, ob ein Gerät bereits registriert ist oder nicht.
+            */
+            bool IsRegistered();
+            void SetRegistered(bool Registered);
 
-            QString HardwareID2()const;
-            void SetHardwareID2(QString ID2);
-
-            QString HardwareID3()const;
-            void SetHardwareID3(QString ID3);
-
-            PeripheralState State()const;
-            void SetState(PeripheralState State);
+            /*!
+            @brief Gibt an, ob ein Gerät noch aktiv, als Betriebsbereit oder vom Strom getrennt ist.
+            */
+            bool IsActivate();
+            void SetActivate(bool Activate);
 
         signals:
             void AddressChanged();
-            void SubAddress1Changed();
-            void SubAddress2Changed();
-            void SubAddress3Changed();
-            void NameChanged();
-            void TypeChanged();
-            void ConnectionTypeChanged();
-            void SerialNumberChanged();
-            void DeviceNameChanged();
+            void LocationInformationChanged();
+            void LocationPathChanged();
             void DescriptionChanged();
-            void HardwareID1Changed();
-            void HardwareID2Changed();
-            void HardwareID3Changed();
-            void StateChanged();
+            void DeviceNameChanged();
+            void HardwareIDChanged();
+            void FriendlyNameChanged();
+            void BusnummerChanged();
+            void BusGUIDChanged();
+            void ClassChanged();
+            void ClassGUIDChanged();
+            void CompatibleIDChanged();
+            void WindowsDeviceTypeChanged();
+            void EnumeratorNameChanged();
+            void ManufacturerChanged();
+            void ServiceNameChanged();
+            void InstallStateChanged();
+            void InteralTypeChanged();
+            void IsRegisteredChanged();
+            void IsActivateChanged();
 
 		};
 	}
