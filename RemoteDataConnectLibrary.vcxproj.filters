@@ -477,4 +477,7 @@
       <UniqueIdentifier>{0eefa136-2f78-4a58-93fb-3a44ab5775cf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RemoteDataConnectLibrary.rc" />
+  </ItemGroup>
 </Project>
