@@ -668,6 +668,9 @@
     <ClCompile Include="Src\DataBase\Entity\WorkstationType.cpp" />
     <ClCompile Include="Src\DataBase\Repository\Repository.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RemoteDataConnectLibrary.rc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2601BAD8-9401-4B3B-A089-11F4F69E1BE4}</ProjectGuid>
     <Keyword>Qt4VS</Keyword>
