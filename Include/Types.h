@@ -29,6 +29,8 @@ namespace spdlog
             GlobalCommunicationThread,
             LocalCommunicationClient,
             LocalCommunicationServer,
+			WtsSessionMananger,
+			WtsSession,
             NON,
 
         };
