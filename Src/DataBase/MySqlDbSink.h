@@ -13,6 +13,7 @@ namespace spdlog
 		{
 		private:
 			QList<RW::SQL::LogEntry> m_Buffer;
+            QMutex m_Mutex;
 		public:
 			explicit MySqlSink()
 			{
@@ -55,6 +56,7 @@ namespace spdlog
  			*/
 			void log(const details::log_msg& msg) override
 			{
+                m_Mutex.lock();
 				RW::SQL::LogEntry obj;
 				//std::time_t t = std::chrono::system_clock::to_time_t();
 				//
@@ -97,7 +99,7 @@ namespace spdlog
 				}
 
 				m_Buffer.append(obj);
-
+                m_Mutex.unlock();
 				if (msg.level == level::err ||
 					msg.level == level::critical
 					)
@@ -106,6 +108,7 @@ namespace spdlog
 
 			void flush()
 			{
+                m_Mutex.lock();
 				// \!todo hier kann es sein das wir gerade rausschreiben und jemand anderes reinschreibt !? 
 				for each(RW::SQL::LogEntry var in m_Buffer)
 				{
@@ -114,6 +117,7 @@ namespace spdlog
 				}
 				//Buffer leeren nachdem alles wegeschrieben wurde
 				m_Buffer.clear();
+                m_Mutex.unlock();
 			}
 
 		};

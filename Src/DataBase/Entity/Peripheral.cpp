@@ -2,7 +2,7 @@
 #include "Peripheral_p.h"
 
 namespace RW{
-	namespace SQL{
+    namespace SQL{
 
         PeripheralPrivate::PeripheralPrivate(Peripheral *Parent) :
             QObject(Parent),
@@ -22,8 +22,8 @@ namespace RW{
 
 
         Peripheral::~Peripheral()
-		{
-		}
+        {
+        }
 
         Peripheral::Peripheral(Peripheral &&R) : d_ptr(R.d_ptr)
         {
@@ -225,66 +225,66 @@ namespace RW{
         /*!
         @brief Bus-GUID des Gerätes.
         */
-        QString Peripheral::BusGUID();
-        void Peripheral::BusGUID(QString BusGUID);
+        QString Peripheral::BusGUID(){}
+        void Peripheral::BusGUID(QString BusGUID){}
         /*!
         @brief Device Setup Class des Gerätes.
         */
-        QString Peripheral::Class();
-        void Peripheral::SetClass(QString Class);
+        QString Peripheral::Class(){}
+        void Peripheral::SetClass(QString Class){}
         /*!
         @brief GUID des Device Setup Class des Gerätes.
         */
-        QString Peripheral::ClassGUID();
-        void Peripheral::SetClassGUID(QString ClassGUID);
+        QString Peripheral::ClassGUID(){}
+        void Peripheral::SetClassGUID(QString ClassGUID){}
         /*!
         @brief Kompatible ID's für das Gerät.
         */
-        QStringList Peripheral::CompatibleID();
-        void Peripheral::SetCompatibleID(QStringList CompatibleID);
+        QStringList Peripheral::CompatibleID(){}
+        void Peripheral::SetCompatibleID(QStringList CompatibleID){}
         /*!
         @brief Type des Gerätes welches der Windowszuordnung entspricht.
         Für eine Zuordnung siehe: https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/specifying-device-types
         */
-        quint16 Peripheral::WindowsDeviceType();
-        void Peripheral::SetWindowsDeviceType(quint16 WindowsDeviceType);
+        quint16 Peripheral::WindowsDeviceType(){}
+        void Peripheral::SetWindowsDeviceType(quint16 WindowsDeviceType){}
         /*!
         @brief Beinhaltet den Namen des Geräteenumerators, dieser entspricht dem übergeordneten Elterngruppe (z.b. für USB wäre es USB)
         */
-        QString Peripheral::EnumeratorName();
-        void Peripheral::SetEnumeratorName(QString EnumeratorName);
+        QString Peripheral::EnumeratorName(){}
+        void Peripheral::SetEnumeratorName(QString EnumeratorName){}
         /*!
         @brief Geräteinstallationsstatus. Für die Zuordnung siehe. https://msdn.microsoft.com/en-us/library/windows/hardware/ff543130(v=vs.85).aspx
         */
-        quint16 Peripheral::InstallState();
-        void Peripheral::SetInstallState(quint16 InstallState);
+        quint16 Peripheral::InstallState(){}
+        void Peripheral::SetInstallState(quint16 InstallState){}
         /*!
         @brief Herstellername des Gerätes.
         */
-        QString Peripheral::Manufacturer();
-        void Peripheral::SetManufacturer(QString Manufacturer);
+        QString Peripheral::Manufacturer(){}
+        void Peripheral::SetManufacturer(QString Manufacturer){}
         /*!
         @brief Beinhaltet den Servicename für das Geräte.
         */
-        QString Peripheral::ServiceName();
-        void Peripheral::SetServiceName(QString ServiceName);
+        QString Peripheral::ServiceName(){}
+        void Peripheral::SetServiceName(QString ServiceName){}
         /*!
         @brief Der interne Gerätetyp.
         */
-        PeripheralType Peripheral::InteralType();
-        void Peripheral::SetInteralType(PeripheralType InteralType);
+        PeripheralType Peripheral::InteralType(){}
+        void Peripheral::SetInteralType(PeripheralType InteralType){}
 
         /*!
         @brief Gibt an, ob ein Gerät bereits registriert ist oder nicht.
         */
-        bool Peripheral::IsRegistered();
-        void Peripheral::SetRegistered(bool Registered);
+        bool Peripheral::IsRegistered(){}
+        void Peripheral::SetRegistered(bool Registered){}
 
         /*!
         @brief Gibt an, ob ein Gerät noch aktiv, als Betriebsbereit oder vom Strom getrennt ist.
         */
-        bool Peripheral::IsActivate();
-        void Peripheral::SetActivate(bool Activate);
+        bool Peripheral::IsActivate(){}
+        void Peripheral::SetActivate(bool Activate){}
 
 	}
 }
