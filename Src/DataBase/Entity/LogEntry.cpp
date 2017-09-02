@@ -40,7 +40,8 @@ namespace RW{
 			if (&other != nullptr)
 			{
 				d_ptr = new LogEntryPrivate(this);
-				d_ptr->m_Date = other.d_ptr->m_Date;
+                if (d_ptr->m_Date.isValid())
+				    d_ptr->m_Date = other.d_ptr->m_Date;
 				d_ptr->m_ThreadID = other.d_ptr->m_ThreadID;
 				d_ptr->m_ErrorID = other.d_ptr->m_ErrorID;
 				d_ptr->m_LogLevel = other.d_ptr->m_LogLevel;
@@ -57,7 +58,8 @@ namespace RW{
 			if (&other != nullptr)
 			{
 				d_ptr = new LogEntryPrivate(this);
-				d_ptr->m_Date = other.d_ptr->m_Date;
+                if (d_ptr->m_Date.isValid())
+				    d_ptr->m_Date = other.d_ptr->m_Date;
 				d_ptr->m_ThreadID = other.d_ptr->m_ThreadID;
 				d_ptr->m_ErrorID = other.d_ptr->m_ErrorID;
 				d_ptr->m_LogLevel = other.d_ptr->m_LogLevel;
