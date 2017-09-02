@@ -322,6 +322,9 @@
     <ClInclude Include="Src\DataBase\Entity\AllEntities.h">
       <Filter>Src\DataBase\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Timer.h">
+      <Filter>Config</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Src\DataBase\Entity\Device.h">

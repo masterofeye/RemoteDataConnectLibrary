@@ -8,10 +8,17 @@
 
 #include <userenv.h>
 #include <lm.h>
+#ifdef DEBUG
+#include "..\Timer.h"
+#endif
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "userenv.lib")
 #pragma comment(lib, "Netapi32.lib")
+
+#ifdef DEBUG
+RW::Stopwatch timer;
+#endif
 
 namespace RW{
     namespace CORE
@@ -121,6 +128,9 @@ namespace RW{
 
         bool ConfigurationManagerPrivate::LoadWorkstation(QString HostName)
         {
+#ifdef DEBUG
+            timer.Start();
+#endif
             RW::SQL::Workstation rw;
             if ((m_Repository != nullptr))
             {
@@ -134,20 +144,32 @@ namespace RW{
                 m_ConfigCollection->insert(ConfigurationName::ProjectName, rw.AssignedProject()->Projectname());
                 m_ConfigCollection->insert(ConfigurationName::ProjectId, rw.AssignedProject()->ID());
                 m_ConfigCollection->insert(ConfigurationName::WorkstationType, QVariant::fromValue(rw.TypeOfWorkstation()->Type()));
+#ifdef DEBUG
+                timer.Stop();
+                m_Logger->trace("LoadProjectSoftware needs : {} ms", timer.ElapsedMilliseconds());
+                timer.Reset();
+#endif
                 return true;
             }
             else
             {
+#ifdef DEBUG
+                timer.Reset();
+#endif 
                 return false;
             }
         }
 
         bool ConfigurationManagerPrivate::LoadProjectSoftware(quint8 ProjectId)
         {
+
             RW::SQL::SoftwareProject s;
             QList<QVariant> list;
             if ((m_Repository != nullptr))
             {
+#ifdef DEBUG
+                timer.Start();
+#endif
                 QList<RW::SQL::SoftwareProject> projList;
                 if (!m_Repository->GetSoftwareProjectByProjectId(ProjectId, projList))
                     return false;
@@ -159,32 +181,50 @@ namespace RW{
                 }
 
                 m_ConfigCollectionLists->insert(ConfigurationName::SoftwareProject, list);
-
+#ifdef DEBUG
+                timer.Stop();
+                m_Logger->trace("LoadProjectSoftware needs : {} ms", timer.ElapsedMilliseconds());
+                timer.Reset();
+#endif
                 return true;
             }
             else
             {
+#ifdef DEBUG
+                timer.Reset();
+#endif 
                 return false;
             }
+
         }
 
         bool ConfigurationManagerPrivate::LoadUser(QString HostName)
         {
             RW::SQL::User user;
-            if ((m_Repository != nullptr))
-            {
-                if (!m_Repository->GetUserByHostName(HostName, user))
-                    return false;
-            }
-            else
+            if ((m_Repository == nullptr))
             {
                 return false;
             }
+
+#ifdef DEBUG
+            timer.Start();
+#endif           
+            if (!m_Repository->GetUserByHostName(HostName, user))
+            {
+#ifdef DEBUG
+                timer.Reset();
+#endif   
+                return false;
+            }
+
             
             if (user.ID() == 0)
             {
                 //Der User darf nicht 0 sein, sonst kommt es zu Problemen bei der Nachverarbeitung.
                 m_Logger->critical("LoadUser -> User id is 0");
+#ifdef DEBUG
+                timer.Reset();
+#endif   
                 return false;
             }
 
@@ -196,11 +236,19 @@ namespace RW{
             m_ConfigCollection->insert(ConfigurationName::Initials, user.Initials());
 
             m_ConfigCollection->insert(ConfigurationName::UserId, user.ID());
+#ifdef DEBUG
+            timer.Stop();
+            m_Logger->trace("LoadUser needs : {} ms", timer.ElapsedMilliseconds());
+            timer.Reset();
+#endif
             return true;
         }
 
         bool ConfigurationManagerPrivate::LoadHistory(quint8 WorkstationID)
         {
+#ifdef DEBUG
+            timer.Start();
+#endif 
             //TODO von Config lesen
             quint8 maxHistory = 10;
             
@@ -218,11 +266,19 @@ namespace RW{
             }
             else
             {
+#ifdef DEBUG
+                timer.Reset();
+#endif 
                 return false;
             }
 
 
             m_ConfigCollectionLists->insert(ConfigurationName::FlashHistory, list);
+#ifdef DEBUG
+            timer.Stop();
+            m_Logger->trace("LoadPeripheralTable needs : {} ms", timer.ElapsedMilliseconds());
+            timer.Reset();
+#endif
             return true;
         }
 
@@ -255,24 +311,43 @@ namespace RW{
 
         bool ConfigurationManagerPrivate::LoadPeripheralTable()
         {
+#ifdef DEBUG
+            timer.Start();
+#endif 
             QList<RW::SQL::Peripheral> p;
             if ((m_Repository != nullptr))
             {
-                if (!m_Repository->GetAllPeripheral(p))
+                quint64 workstationId = m_ConfigCollection->value(ConfigurationName::WorkstationId).toInt();
+                if (workstationId == 0)
+                {
+                    m_Logger->critical("LoadPeripheralTable: Workstation ID is 0");
+#ifdef DEBUG
+                    timer.Reset();
+#endif 
                     return false;
+                }
+                if (!m_Repository->GetPeripheralByWorkstationID(workstationId, p))
+                {
+#ifdef DEBUG
+                    timer.Reset();
+#endif 
+                    return false;
+                }
             }
             else
             {
+#ifdef DEBUG
+                timer.Reset();
+#endif 
                 return false;
             }
 
-            QMap<QString, QVariant> pMap;
-            for each (auto var in p)
-            {
-                pMap.insert(var.HardwareID1(), QVariant::fromValue(var));
-            }
-
-            m_ConfigCollectionMaps->insert(ConfigurationName::PeripheralTable, pMap);
+            m_ConfigCollection->insert(ConfigurationName::PeripheralTable, QVariant::fromValue<QList<RW::SQL::Peripheral>>(p));
+#ifdef DEBUG
+            timer.Stop();
+            m_Logger->trace("LoadPeripheralTable needs : {} ms", timer.ElapsedMilliseconds());
+            timer.Reset();
+#endif
             return true;
         }
 
@@ -408,19 +483,36 @@ namespace RW{
                 switch (Reason)
                 {
                 case ChangeReason::UserChanged:
+                {
                     //Aktualisiert den User für diese Workstation
-                    m_Repository->UpdateWorkstationUser(m_ConfigCollection->value(ConfigurationName::WorkstationId).toInt(),
-                        m_ConfigCollection->value(ConfigurationName::UserName).toString());
-                    //Ladet den User und seinen Einstellungen nach der Aktualisierung
-                    LoadUser(m_ConfigCollection->value(ConfigurationName::Hostname).toString());
+                    QVariant userid = m_ConfigCollection->value(ConfigurationName::UserId);
+                    RW::SQL::User user;
+                    m_Repository->GetUserByName(m_ConfigCollection->value(ConfigurationName::UserName).toString(), user);
+                    if (userid.isValid() && !userid.isNull() && user.IsValid())
+                    {
+                        m_Repository->UpdateWorkstationUser(m_ConfigCollection->value(ConfigurationName::WorkstationId).toInt(),
+                            m_ConfigCollection->value(ConfigurationName::UserName).toString());
+                        //Ladet den User und seinen Einstellungen nach der Aktualisierung
+                        LoadUser(m_ConfigCollection->value(ConfigurationName::Hostname).toString());
+                    }
+                    else
+                        m_Logger->critical("OnSaveConfiguration: invalid user id.");
                     break;
+                }
                 case ChangeReason::UserSave:
                     UpdateUser();
                     break;
                 case ChangeReason::WorkstationStatusUpdate:
                 {
                     RW::WorkstationState state = m_ConfigCollection->value(ConfigurationName::WorkstationState).value<RW::WorkstationState>();
-                    m_Repository->UpdateWorkstationState(m_ConfigCollection->value(ConfigurationName::WorkstationId).toInt(), state);
+                    //Überprüft ob die UserIs wirklich Valid ist ... Dies soll verhindern, das Ungültige ID's in die Datenbank gelangen
+                    QVariant userid = m_ConfigCollection->value(ConfigurationName::UserId);
+                    RW::SQL::User user;
+                    m_Repository->GetUserByName(m_ConfigCollection->value(ConfigurationName::UserName).toString(), user);
+                    if (userid.isValid() && !userid.isNull() && user.IsValid())
+                        m_Repository->UpdateWorkstationState(m_ConfigCollection->value(ConfigurationName::WorkstationId).toInt(), state);
+                    else
+                        m_Logger->critical("OnSaveConfiguration: invalid user id.");
                     break;
                 }
                 default:

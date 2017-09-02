@@ -99,6 +99,10 @@ namespace RW{
             @brief Gibt an, ob ein Gerät noch aktiv, als Betriebsbereit oder vom Strom getrennt ist. 
             */
             bool m_IsActivate;
+            /*!
+            @brief Gibt an, ob ein Gerät der Workstation bereits schon zugeordnet ist oder nicht.
+            */
+            bool m_IsProvided;
 
 		};
 	}

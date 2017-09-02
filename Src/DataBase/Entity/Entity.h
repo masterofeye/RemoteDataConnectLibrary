@@ -27,6 +27,12 @@ namespace RW{
 			QVariant ID() const;
 			void SetID(quint64 ID);
             void SetID(QVariant ID);
+
+            /*!
+            @brief Überprüft, ob die ID gültig ist. D.h. 0 entspricht. 
+            @return true sofern ID gültig ist. 
+            */
+            bool IsValid();
 		signals:
 			void IDChanged(quint64);
 

@@ -22,16 +22,16 @@ namespace RW{
             Q_PROPERTY(QString BusGUID READ BusGUID WRITE SetBusGUID NOTIFY BusGUIDChanged)
             Q_PROPERTY(QString Class READ Class WRITE SetClass NOTIFY ClassChanged)
             Q_PROPERTY(QString ClassGUID READ ClassGUID WRITE SetClassGUID NOTIFY ClassGUIDChanged)
-            Q_PROPERTY(QString CompatibleID READ CompatibleID WRITE SetCompatibleID NOTIFY CompatibleIDChanged)
-            Q_PROPERTY(QString WindowsDeviceType READ WindowsDeviceType WRITE SetWindowsDeviceType NOTIFY WindowsDeviceTypeChanged)
+            Q_PROPERTY(QStringList CompatibleID READ CompatibleID WRITE SetCompatibleID NOTIFY CompatibleIDChanged)
+            Q_PROPERTY(quint64 WindowsDeviceType READ WindowsDeviceType WRITE SetWindowsDeviceType NOTIFY WindowsDeviceTypeChanged)
             Q_PROPERTY(QString EnumeratorName READ EnumeratorName WRITE SetEnumeratorName NOTIFY EnumeratorNameChanged)
             Q_PROPERTY(QString Manufacturer READ Manufacturer WRITE SetManufacturer NOTIFY ManufacturerChanged)
             Q_PROPERTY(QString ServiceName READ ServiceName WRITE SetServiceName NOTIFY ServiceNameChanged)
-            Q_PROPERTY(QString InstallState READ InstallState WRITE SetInstallState NOTIFY InstallStateChanged)
+            Q_PROPERTY(quint64 InstallState READ InstallState WRITE SetInstallState NOTIFY InstallStateChanged)
             Q_PROPERTY(PeripheralType InteralType READ InteralType WRITE SetInteralType NOTIFY InteralTypeChanged)
             Q_PROPERTY(bool IsRegistered READ IsRegistered WRITE SetRegistered NOTIFY IsRegisteredChanged)
-            Q_PROPERTY(QString IsRegistered READ IsRegistered WRITE SetRegistered NOTIFY IsRegisteredChanged)
-            Q_PROPERTY(QString IsActivate READ IsActivate WRITE SetActivate NOTIFY IsActivateChanged)
+            Q_PROPERTY(bool IsActivate READ IsActivate WRITE SetActivate NOTIFY IsActivateChanged)
+            Q_PROPERTY(bool IsProvided READ IsProvided WRITE SetProvided NOTIFY IsProvidedChanged)
             
 
             Q_CLASSINFO("Version", "0.0.1")
@@ -82,7 +82,7 @@ namespace RW{
             @brief Friendly Name des Gerätes.
             */
             QString FriendlyName();
-            void SetFriendyNane(QString FriendlyName);
+            void SetFriendlyName(QString FriendlyName);
             /*!
             @brief Busnummer des Gerätes.
             */
@@ -92,7 +92,7 @@ namespace RW{
             @brief Bus-GUID des Gerätes.
             */
             QString BusGUID();
-            void BusGUID(QString BusGUID);
+            void SetBusGUID(QString BusGUID);
             /*!
             @brief Device Setup Class des Gerätes.
             */
@@ -152,6 +152,12 @@ namespace RW{
             bool IsActivate();
             void SetActivate(bool Activate);
 
+            /*!
+            @brief Gibt an, ob ein Geräte der Workstation zugeordnet wurde oder nicht.
+            */
+            bool IsProvided();
+            void SetProvided(bool Provided);
+
         signals:
             void AddressChanged();
             void LocationInformationChanged();
@@ -173,6 +179,7 @@ namespace RW{
             void InteralTypeChanged();
             void IsRegisteredChanged();
             void IsActivateChanged();
+            void IsProvidedChanged();
 
 		};
 	}

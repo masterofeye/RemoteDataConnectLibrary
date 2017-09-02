@@ -24,8 +24,8 @@ namespace RW{
         const QString Insert_SoftwareProject = "INSERT INTO softwareproject (name,naturalName) VALUES (:name,:naturalName)";
         const QString Insert_FlashHistory = "INSERT INTO flashhistory (userID, softwareProjectID, workstationID, major, minor, patchlevel, buildnumber, data) VALUES (:userID, :softwareProjectID, :workstationID,:major, :minor, :patchlevel, :buildnumber, :data)";
         const QString Insert_WorkstationType = "INSERT INTO workstationtype (type) VALUES (type)";
-        const QString Insert_PeripheralMapping = "INSERT INTO peripheralmapping (workstationID, peripheralID) VALUES (:workstationID, :peripheralID)";
-        const QString Insert_Peripheral = "INSERT INTO peripheral (address, subAddress1, subAddress2, subAddress3, name, type, connectionType, serialNumber, deviceName, description, hardwareID1, hardwareID2, hardwareID3, state)";
+        const QString Insert_PeripheralMapping = "INSERT INTO peripheralmapping (workstationID, peripheralID,isActivate,isRegistered) VALUES (:workstationID, :peripheralID,:isActivate,:isRegistered)";
+        const QString Insert_Peripheral = "INSERT INTO peripheral (address, busGUID, busnummer, class, classGUID, compatibleID, description, deviceName , enumeratorName, friendlyName, hardwareID, installState, internalType,locationInformation,locationPath,manufacturer,serviceName,windowsDeviceType,provided) VALUES  (:address, :busGUID, :busnummer, :class, :classGUID, :compatibleID, :description, :deviceName , :enumeratorName, :friendlyName, :hardwareID, :installState, :internalType,:locationInformation,:locationPath,:manufacturer,:serviceName,:windowsDeviceType, :provided)";
         const QString Insert_GlobalSetting = "INSERT INTO globalsetting ( rwShutdownTime, rwLogoutTime, beShutdownTime, beLogoutTime) VALUES ( :rwShutdownTime, :rwLogoutTime, :beShutdownTime, :beLogoutTime)";
         const QString Insert_WorkstationSetting = "INSERT INTO workstationsetting(permanentLogin, permanentLoginReasonID) VALUES (:permanentLogin,:permanentLoginReasonID)";
         const QString Insert_PermanentLoginReason = "INSERT INTO permanentloginreason(reason, description) VALUES (:reason,:description)";
@@ -45,7 +45,7 @@ namespace RW{
         const QString Update_FlashHistory = "UPDATE flashhistory SET userID=:userID, softwareProjectID=:softwareProjectID, workstationID=:workstationID, major=:major, minor=:minor, patchlevel=:patchlevel, buildnumber=:buildnumber, data=:data";
         const QString Update_WorkstationType = "UPDATE workstationtype SET workstationTypeID=:workstationTypeID, type=:type";
         const QString Update_PeripheralMapping = "UPDATE peripheralmapping SET workstationID=:workstationID, peripheralID=:peripheralID";
-        const QString Update_Peripheral = "Update peripheral SET address=:adress, subAddress1=:subAddress1, subAddress2=:subAddress2, subAddress3=:subAddress3, name=:name, type=:type, connectionType=:connectionType, serialNumber=:serialNumber, deviceName=:deviceName, description=:description, hardwareID1=:hardwareID1, hardwareID2=:hardwareID2, hardwareID3=:hardwareID3, state=:state)";
+/*TODO*/const QString Update_Peripheral = "Update peripheral SET address=:adress, subAddress1=:subAddress1, subAddress2=:subAddress2, subAddress3=:subAddress3, name=:name, type=:type, connectionType=:connectionType, serialNumber=:serialNumber, deviceName=:deviceName, description=:description, hardwareID1=:hardwareID1, hardwareID2=:hardwareID2, hardwareID3=:hardwareID3, state=:state, provided=:provided)";
         const QString Update_GlobalSetting = "UPDATE globalsetting rwShutdownTime=:rwShutdownTime, rwLogoutTime=:rwLogoutTime, beShutdownTime=:beShutdownTime, beLogoutTime=:beLogoutTime";
         const QString Update_WorkstationSetting = "UPDATE workstationsetting permanentLogin=:permanentLogin,permamentLoginReasonID=:permanentLoginReasonID";
         const QString Update_PermanentLoginReason = "UPDATE permanentloginreason reason=:reason,description=:description";
@@ -81,13 +81,13 @@ namespace RW{
 		const QString SelectById_Device = "SELECT * FROM device WHERE idDevice=:idDevice";
         const QString SelectById_SoftwareProject = "SELECT * FROM softwareproject WHERE idSoftwareProject=:idSoftwareProject";
 		const QString SelectByProjectID_SoftwareProject = "SELECT * FROM softwareproject WHERE projectID=:projectID";
-
         const QString SelectById_FlashHistory = "SELECT * FROM flashhistory WHERE idFlashHistory=:idFlashHistory";
 		const QString SelectByWorkstationId_FlashHistory = "SELECT * FROM flashhistory WHERE workstationID=:workstationID";
 		const QString SelectByWorkstationIdAndSoftwareProject_FlastHistory = "SELECT * FROM flashhistory WHERE workstationID=:workstationID AND softwareProjectID=:softwareProjectID AND date IN (SELECT max(date) FROM flashHistory) ";
         const QString SelectById_WorkstationType = "SELECT * FROM workstationtype WHERE idWorkstationType=:idWorkstationType";
         const QString SelectById_PeripheralMapping = "SELECT * FROM peripheralmapping WHERE idPeripheralMapping=:idPeripheralMapping";
         const QString SelectById_Peripheral = "SELECT * FROM peripheral WHERE idPeripheral=:idPeripheral";
+        const QString SelectByWorkstationID_PeripheralMapping = "SELECT * FROM peripheralmapping A inner join peripheral B on A.peripheralID = B.idPeripheral WHERE workstationID=:workstationID AND provided=1";
         const QString SelectByIdByHardwareID_Peripheral = "SELECT * FROM peripheral WHERE hardwareID1=:hardwareID1";
         const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
         const QString SelectById_WorkstationSetting = "SELECT * FROM workstationsetting WHERE idWorkstationSetting=:idWorkstationSetting";
@@ -490,19 +490,26 @@ namespace RW{
             QSqlQuery query;
             query.prepare(Insert_Peripheral);
             query.bindValue(":address", d.Address());
-            query.bindValue(":subAddress1", d.SubAddress1());
-            query.bindValue(":subAddress2", d.SubAddress2());
-            query.bindValue(":subAddress3", d.SubAddress3());
-            query.bindValue(":name", d.Name());
-            query.bindValue(":type", (int)d.Type());
-            query.bindValue(":connectionType", d.ConnectionType());
-            query.bindValue(":serialNumber", d.SerialNumber());
-            query.bindValue(":deviceName", d.DeviceName());
+            query.bindValue(":busGUID", d.BusGUID());
+            query.bindValue(":busnummer", d.Busnummer());
+            query.bindValue(":class", d.Class());
+            query.bindValue(":classGUID", d.ClassGUID());
+            query.bindValue(":compatibleID", d.CompatibleID());
             query.bindValue(":description", d.Description());
-            query.bindValue(":hardwareID1", d.HardwareID1());
-            query.bindValue(":hardwareID2", d.HardwareID2());
-            query.bindValue(":hardwareID3", d.HardwareID3());
-            query.bindValue(":state", (int)d.State());
+            query.bindValue(":deviceName", d.DeviceName());
+            query.bindValue(":enumeratorName", d.EnumeratorName());
+            query.bindValue(":friendlyName", d.FriendlyName());
+            query.bindValue(":hardwareID", d.HardwareID());
+            query.bindValue(":installState", d.InstallState());
+            query.bindValue(":internalType", QVariant::fromValue(d.InteralType()));
+            query.bindValue(":locationInformation", d.LocationInformation());
+            query.bindValue(":locationPath", d.LocationPath());
+            query.bindValue(":manufacturer", d.Manufacturer());
+            query.bindValue(":serviceName", d.ServiceName());
+            query.bindValue(":windowsDeviceType", d.WindowsDeviceType());
+            query.bindValue(":provided", d.IsProvided());
+            
+            
 
             bool res = query.exec();
             if (!res)
@@ -511,6 +518,8 @@ namespace RW{
             }
             return res;
         }
+
+
 
         template<> bool MySqlMapper<GlobalSetting>::Insert(const GlobalSetting &Data)
         {
@@ -781,20 +790,24 @@ namespace RW{
             QSqlQuery query;
             query.prepare(Update_Peripheral);
             query.bindValue(":address", d.Address());
-            query.bindValue(":subAddress1", d.SubAddress1());
-            query.bindValue(":subAddress2", d.SubAddress2());
-            query.bindValue(":subAddress3", d.SubAddress3());
-            query.bindValue(":name", d.Name());
-            query.bindValue(":type", (int)d.Type());
-            query.bindValue(":connectionType", d.ConnectionType());
-            query.bindValue(":serialNumber", d.SerialNumber());
-            query.bindValue(":deviceName", d.DeviceName());
+            query.bindValue(":busGUID", d.BusGUID());
+            query.bindValue(":busnummer", d.Busnummer());
+            query.bindValue(":class", d.Class());
+            query.bindValue(":classGUID", d.ClassGUID());
+            query.bindValue(":compatibleID", d.CompatibleID());
             query.bindValue(":description", d.Description());
-            query.bindValue(":hardwareID1", d.HardwareID1());
-            query.bindValue(":hardwareID2", d.HardwareID2());
-            query.bindValue(":hardwareID3", d.HardwareID3());
-            query.bindValue(":state", (int)d.State());
-
+            query.bindValue(":deviceName", d.DeviceName());
+            query.bindValue(":enumeratorName", d.EnumeratorName());
+            query.bindValue(":friendlyName", d.FriendlyName());
+            query.bindValue(":hardwareID", d.HardwareID());
+            query.bindValue(":installState", d.InstallState());
+            query.bindValue(":internalType", QVariant::fromValue(d.InteralType()));
+            query.bindValue(":locationInformation", d.LocationInformation());
+            query.bindValue(":locationPath", d.LocationPath());
+            query.bindValue(":manufacturer", d.Manufacturer());
+            query.bindValue(":serviceName", d.ServiceName());
+            query.bindValue(":windowsDeviceType", d.WindowsDeviceType());
+            query.bindValue(":provided", d.IsProvided());
             bool res = query.exec();
             if (!res)
             {
@@ -1226,21 +1239,25 @@ namespace RW{
             {
                 // \!todo unschöne Konvertierung
                 d.SetID(query.value("idPeripheral").toInt());
-                d.SetAddress(query.value("address").toString());
-                d.SetSubAddress1(query.value("subAddress1").toString());
-                d.SetSubAddress2(query.value("subAddress2").toString());
-                d.SetSubAddress3(query.value("subAddress3").toString());
-                d.SetName(query.value("name").toString());
-                d.SetType((PeripheralType)query.value("type").toInt());
-                d.SetConnectionType(query.value("connectionType").toString());
-                d.SetSerialNumber(query.value("serialNumber").toString());
-                d.SetDeviceName(query.value("deviceName").toString());
+                d.SetAddress(query.value("address").toInt());
+                d.SetBusGUID(query.value("busGUID").toString());
+                d.SetBusnummer(query.value("busnummer").toUInt());
+                d.SetClass(query.value("class").toString());
+                d.SetClassGUID(query.value("classGUID").toString());
+                d.SetCompatibleID(query.value("compatibleID").toStringList());
                 d.SetDescription(query.value("description").toString());
-                d.SetHardwareID1(query.value("hardwareID1").toString());
-                d.SetHardwareID2(query.value("hardwareID2").toString());
-                d.SetHardwareID3(query.value("hardwareID3").toString());
-                d.SetState((PeripheralState)query.value("state").toInt());
-
+                d.SetDeviceName(query.value("deviceName").toString());
+                d.SetEnumeratorName(query.value("enumeratorName").toString());
+                d.SetFriendlyName(query.value("friendlyName").toString());
+                d.SetHardwareID(query.value("hardwareID").toStringList());
+                d.SetInstallState(query.value("installState").toUInt());
+                d.SetInteralType(query.value("internalType").value<PeripheralType>());
+                d.SetLocationInformation(query.value("locationInformation").toString());
+                d.SetLocationPath(query.value("locationPath").toString());
+                d.SetManufacturer(query.value("manufacturer").toString());
+                d.SetServiceName(query.value("serviceName").toString());
+                d.SetWindowsDeviceType(query.value("windowsDeviceType").toUInt());
+                d.SetProvided(query.value("provided").toBool());
             }
 
             if (!res)
@@ -1692,20 +1709,25 @@ namespace RW{
                 Peripheral d;
                 // \!todo unschöne Konvertierung
                 d.SetID(query.value("idPeripheral").toInt());
-                d.SetAddress(query.value("address").toString());
-                d.SetSubAddress1(query.value("subAddress1").toString());
-                d.SetSubAddress2(query.value("subAddress2").toString());
-                d.SetSubAddress3(query.value("subAddress3").toString());
-                d.SetName(query.value("name").toString());
-                d.SetType((PeripheralType)query.value("type").toInt());
-                d.SetConnectionType(query.value("connectionType").toString());
-                d.SetSerialNumber(query.value("serialNumber").toString());
-                d.SetDeviceName(query.value("deviceName").toString());
+                d.SetAddress(query.value("address").toInt());
+                d.SetBusGUID(query.value("busGUID").toString());
+                d.SetBusnummer(query.value("busnummer").toUInt());
+                d.SetClass(query.value("class").toString());
+                d.SetClassGUID(query.value("classGUID").toString());
+                d.SetCompatibleID(query.value("compatibleID").toStringList());
                 d.SetDescription(query.value("description").toString());
-                d.SetHardwareID1(query.value("hardwareID1").toString());
-                d.SetHardwareID2(query.value("hardwareID2").toString());
-                d.SetHardwareID3(query.value("hardwareID3").toString());
-                d.SetState((PeripheralState)query.value("state").toInt());
+                d.SetDeviceName(query.value("deviceName").toString());
+                d.SetEnumeratorName(query.value("enumeratorName").toString());
+                d.SetFriendlyName(query.value("friendlyName").toString());
+                d.SetHardwareID(query.value("hardwareID").toStringList());
+                d.SetInstallState(query.value("installState").toUInt());
+                d.SetInteralType(query.value("internalType").value<PeripheralType>());
+                d.SetLocationInformation(query.value("locationInformation").toString());
+                d.SetLocationPath(query.value("locationPath").toString());
+                d.SetManufacturer(query.value("manufacturer").toString());
+                d.SetServiceName(query.value("serviceName").toString());
+                d.SetWindowsDeviceType(query.value("windowsDeviceType").toUInt());
+                d.SetProvided(query.value("provided").toBool());
                 list << d;
             }
 
@@ -1868,5 +1890,52 @@ namespace RW{
 			return list;
 
 		}
+
+        template<> QList<Peripheral> MySqlMapper<Peripheral>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
+        {
+            QList<Peripheral> list;
+            QSqlQuery query;
+            bool res = false;
+            if (Value == Specifier::GetPeripheralByWorkstationID)
+            {
+                quint64 workstationId = Parameter.first().toInt();
+                query.prepare(SelectByWorkstationID_PeripheralMapping);
+                query.bindValue(":workstationID", workstationId);
+                res = query.exec();
+            }
+
+            while (query.next())
+            {
+                Peripheral d;
+                d.SetID(query.value("idPeripheral").toInt());
+                d.SetAddress(query.value("address").toInt());
+                d.SetBusGUID(query.value("busGUID").toString());
+                d.SetBusnummer(query.value("busnummer").toUInt());
+                d.SetClass(query.value("class").toString());
+                d.SetClassGUID(query.value("classGUID").toString());
+                d.SetCompatibleID(query.value("compatibleID").toStringList());
+                d.SetDescription(query.value("description").toString());
+                d.SetDeviceName(query.value("deviceName").toString());
+                d.SetEnumeratorName(query.value("enumeratorName").toString());
+                d.SetFriendlyName(query.value("friendlyName").toString());
+                d.SetHardwareID(query.value("hardwareID").toStringList());
+                d.SetInstallState(query.value("installState").toUInt());
+                d.SetInteralType(query.value("internalType").value<PeripheralType>());
+                d.SetLocationInformation(query.value("locationInformation").toString());
+                d.SetLocationPath(query.value("locationPath").toString());
+                d.SetManufacturer(query.value("manufacturer").toString());
+                d.SetServiceName(query.value("serviceName").toString());
+                d.SetWindowsDeviceType(query.value("windowsDeviceType").toUInt());
+                d.SetProvided(query.value("provided").toBool());
+                list << d;
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return list;
+
+        }
 	}
 }
