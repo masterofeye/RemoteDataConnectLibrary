@@ -146,7 +146,7 @@ namespace RW{
                 m_ConfigCollection->insert(ConfigurationName::WorkstationType, QVariant::fromValue(rw.TypeOfWorkstation()->Type()));
 #ifdef DEBUG
                 timer.Stop();
-                m_Logger->trace("LoadProjectSoftware needs : {} ms", timer.ElapsedMilliseconds());
+                m_Logger->trace("LoadWorkstation needs : {} ms", timer.ElapsedMilliseconds());
                 timer.Reset();
 #endif
                 return true;

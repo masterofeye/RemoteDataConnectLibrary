@@ -6,13 +6,15 @@ namespace RW{
 
         PeripheralPrivate::PeripheralPrivate(Peripheral *Parent) :
             QObject(Parent),
-            q_ptr(Parent)
+            q_ptr(Parent),
+            m_ConditionList(new PeripheralConditionList(this))
         {
         }
 
         PeripheralPrivate::~PeripheralPrivate()
         {
-
+            if (m_ConditionList != nullptr)
+                delete m_ConditionList;
         }
 
         Peripheral::Peripheral(Entity *Parent) : Entity(Parent),
@@ -23,6 +25,7 @@ namespace RW{
 
         Peripheral::~Peripheral()
         {
+
         }
 
         Peripheral::Peripheral(Peripheral &&R) : d_ptr(R.d_ptr)
@@ -48,6 +51,19 @@ namespace RW{
             if (&F != nullptr)
             {
                 d_ptr = new PeripheralPrivate(this);
+                if (F.d_ptr->m_ConditionList != nullptr)
+                {
+                    if (d_ptr->m_ConditionList == nullptr)
+                    {
+                        d_ptr->m_ConditionList = new PeripheralConditionList(this);
+
+                    }
+                    for (size_t i = 0; i < F.d_ptr->m_ConditionList->rowCount(); i++)
+                    {
+                        d_ptr->m_ConditionList->AddData(F.d_ptr->m_ConditionList->peripheralCondition(i));
+                    }
+                }
+
                 d_ptr->m_Address = F.d_ptr->m_Address;
                 d_ptr->m_BusGUID = F.d_ptr->m_BusGUID;
                 d_ptr->m_Busnummer = F.d_ptr->m_Busnummer;
@@ -78,7 +94,18 @@ namespace RW{
             if (&F != nullptr)
             {
                 d_ptr = new PeripheralPrivate(this);
+                if (F.d_ptr->m_ConditionList != nullptr)
+                {
+                    if (d_ptr->m_ConditionList == nullptr)
+                    {
+                        d_ptr->m_ConditionList = new PeripheralConditionList(this);
 
+                    }
+                    for (size_t i = 0; i < F.d_ptr->m_ConditionList->rowCount(); i++)
+                    {
+                        d_ptr->m_ConditionList->AddData(F.d_ptr->m_ConditionList->peripheralCondition(i));
+                    }
+                }
                 d_ptr->m_Address = F.d_ptr->m_Address;
                 d_ptr->m_BusGUID = F.d_ptr->m_BusGUID;
                 d_ptr->m_Busnummer = F.d_ptr->m_Busnummer;
@@ -106,7 +133,7 @@ namespace RW{
         }
 
 
-        quint64 Peripheral::Address()
+        quint64 Peripheral::Address()const
         {
             Q_D(const Peripheral);
             return d->m_Address;
@@ -118,7 +145,7 @@ namespace RW{
             emit AddressChanged();
         }
 
-        QString Peripheral::LocationInformation()
+        QString Peripheral::LocationInformation()const
         {
             Q_D(const Peripheral);
             return d->m_LocationInformation;
@@ -130,7 +157,7 @@ namespace RW{
             emit LocationInformationChanged();
         }
 
-        QString Peripheral::LocationPath()
+        QString Peripheral::LocationPath()const
         {
             Q_D(const Peripheral);
             return d->m_LocationPath;
@@ -142,7 +169,7 @@ namespace RW{
             emit LocationPathChanged();
         }
 
-        QString Peripheral::Description()
+        QString Peripheral::Description()const
         {
             Q_D(const Peripheral);
             return d->m_Description;
@@ -154,7 +181,7 @@ namespace RW{
             emit DescriptionChanged();
         }
 
-        QString Peripheral::DeviceName()
+        QString Peripheral::DeviceName()const
         {
             Q_D(const Peripheral);
             return d->m_DeviceName;
@@ -166,7 +193,7 @@ namespace RW{
             emit DeviceNameChanged();
         }
 
-        QStringList Peripheral::HardwareID()
+        QStringList Peripheral::HardwareID()const
         {
             Q_D(const Peripheral);
             return d->m_HardwareID;
@@ -178,7 +205,7 @@ namespace RW{
             emit HardwareIDChanged();
         }
 
-        QString Peripheral::FriendlyName()
+        QString Peripheral::FriendlyName()const
         {
             Q_D(const Peripheral);
             return d->m_FriendlyName;
@@ -190,7 +217,7 @@ namespace RW{
             emit FriendlyNameChanged();
         }
 
-        quint64 Peripheral::Busnummer()
+        quint64 Peripheral::Busnummer()const
         {
             Q_D(const Peripheral);
             return d->m_Busnummer;
@@ -202,7 +229,8 @@ namespace RW{
             emit BusnummerChanged();
         }
 
-        QString Peripheral::BusGUID(){
+        QString Peripheral::BusGUID()const
+        {
             Q_D(const Peripheral);
             return d->m_BusGUID;
         }
@@ -213,7 +241,8 @@ namespace RW{
             emit BusGUIDChanged();
         }
 
-        QString Peripheral::Class(){
+        QString Peripheral::Class()const
+        {
             Q_D(const Peripheral);
             return d->m_Class;
         }
@@ -225,7 +254,8 @@ namespace RW{
         }
 
         
-        QString Peripheral::ClassGUID(){
+        QString Peripheral::ClassGUID()const
+        {
             Q_D(const Peripheral);
             return d->m_ClassGUID;
         }
@@ -236,7 +266,8 @@ namespace RW{
             emit ClassGUIDChanged();
         }
 
-        QStringList Peripheral::CompatibleID(){
+        QStringList Peripheral::CompatibleID()const
+        {
             Q_D(const Peripheral);
             return d->m_CompatibleID;
         }
@@ -247,7 +278,8 @@ namespace RW{
             emit CompatibleIDChanged();
         }
 
-        quint16 Peripheral::WindowsDeviceType(){
+        quint16 Peripheral::WindowsDeviceType()const
+        {
             Q_D(const Peripheral);
             return d->m_WindowsDeviceType;
         }
@@ -257,7 +289,8 @@ namespace RW{
             emit WindowsDeviceTypeChanged();
         }
 
-        QString Peripheral::EnumeratorName(){
+        QString Peripheral::EnumeratorName()const
+        {
             Q_D(const Peripheral);
             return d->m_EnumeratorName;
         }
@@ -268,7 +301,8 @@ namespace RW{
             emit EnumeratorNameChanged();
         }
 
-        quint16 Peripheral::InstallState(){
+        quint16 Peripheral::InstallState()const
+        {
             Q_D(const Peripheral);
             return d->m_InstallState;
         }
@@ -279,7 +313,8 @@ namespace RW{
             emit InstallStateChanged();
         }
 
-        QString Peripheral::Manufacturer(){
+        QString Peripheral::Manufacturer()const
+        {
             Q_D(const Peripheral);
             return d->m_Manufacturer;
         }
@@ -289,7 +324,8 @@ namespace RW{
             emit ManufacturerChanged();
         }
 
-        QString Peripheral::ServiceName(){
+        QString Peripheral::ServiceName()const
+        {
             Q_D(const Peripheral);
             return d->m_ServiceName;
         }
@@ -299,7 +335,8 @@ namespace RW{
             emit ServiceNameChanged();
         }
 
-        PeripheralType Peripheral::InteralType(){
+        PeripheralType Peripheral::InteralType()const
+        {
             Q_D(const Peripheral);
             return d->m_Type;
         }
@@ -309,7 +346,8 @@ namespace RW{
             emit InteralTypeChanged();
         }
 
-        bool Peripheral::IsRegistered(){
+        bool Peripheral::IsRegistered()const
+        {
             Q_D(const Peripheral);
             return d->m_IsRegistered;
         }
@@ -319,7 +357,8 @@ namespace RW{
             emit IsRegisteredChanged();
         }
 
-        bool Peripheral::IsActivate(){
+        bool Peripheral::IsActivate()const
+        {
             Q_D(const Peripheral);
             return d->m_IsActivate;
         }
@@ -329,7 +368,7 @@ namespace RW{
             emit IsActivateChanged();
         }
 
-        bool Peripheral::IsProvided()
+        bool Peripheral::IsProvided()const
         {
             Q_D(const Peripheral);
             return d->m_IsProvided;
@@ -338,6 +377,12 @@ namespace RW{
             Q_D(Peripheral);
             d->m_IsProvided = Provided;
             emit IsProvidedChanged();
+        }
+
+        PeripheralConditionList* Peripheral::ConditionList() const
+        {
+            Q_D(const Peripheral);
+            return d->m_ConditionList;
         }
 	}
 }

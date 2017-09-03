@@ -7,6 +7,7 @@ namespace RW{
 	namespace SQL{
 
         class Peripheral;
+        class PeripheralConditionList;
         class PeripheralPrivate : public QObject
 		{
 			Q_OBJECT
@@ -94,15 +95,17 @@ namespace RW{
             /*!
             @brief Gibt an, ob ein Gerät bereits registriert ist oder nicht.
             */
-            bool m_IsRegistered;
+            bool m_IsRegistered = false;
             /*!
             @brief Gibt an, ob ein Gerät noch aktiv, als Betriebsbereit oder vom Strom getrennt ist. 
             */
-            bool m_IsActivate;
+            bool m_IsActivate = false;
             /*!
             @brief Gibt an, ob ein Gerät der Workstation bereits schon zugeordnet ist oder nicht.
             */
-            bool m_IsProvided;
+            bool m_IsProvided = false;
+
+            PeripheralConditionList* m_ConditionList = nullptr;
 
 		};
 	}

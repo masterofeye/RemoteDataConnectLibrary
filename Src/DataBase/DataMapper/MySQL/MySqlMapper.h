@@ -88,6 +88,7 @@ namespace RW{
         const QString SelectById_PeripheralMapping = "SELECT * FROM peripheralmapping WHERE idPeripheralMapping=:idPeripheralMapping";
         const QString SelectById_Peripheral = "SELECT * FROM peripheral WHERE idPeripheral=:idPeripheral";
         const QString SelectByWorkstationID_PeripheralMapping = "SELECT * FROM peripheralmapping A inner join peripheral B on A.peripheralID = B.idPeripheral WHERE workstationID=:workstationID AND provided=1";
+        const QString SelectByPeripheralID_PeripheralConditionMapping = "SELECT A.port, A.pin, A.typeOfInformtation, A.state, A.typeOfConnection, B.idPeripheralCondition, C.internalType FROM peripheralconditionmapping A inner join peripheralcondition B on A.conditionID = B.idPeripheralCondition  inner join peripheral C on A.peripheralID = C.idPeripheral WHERE B.peripheralID=:peripheralID";
         const QString SelectByIdByHardwareID_Peripheral = "SELECT * FROM peripheral WHERE hardwareID1=:hardwareID1";
         const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
         const QString SelectById_WorkstationSetting = "SELECT * FROM workstationsetting WHERE idWorkstationSetting=:idWorkstationSetting";
@@ -1907,7 +1908,8 @@ namespace RW{
             while (query.next())
             {
                 Peripheral d;
-                d.SetID(query.value("idPeripheral").toInt());
+                quint64 id = query.value("idPeripheral").toInt();
+                d.SetID(id);
                 d.SetAddress(query.value("address").toInt());
                 d.SetBusGUID(query.value("busGUID").toString());
                 d.SetBusnummer(query.value("busnummer").toUInt());
@@ -1927,6 +1929,25 @@ namespace RW{
                 d.SetServiceName(query.value("serviceName").toString());
                 d.SetWindowsDeviceType(query.value("windowsDeviceType").toUInt());
                 d.SetProvided(query.value("provided").toBool());
+                d.SetActivate(query.value("active").toBool());
+                d.SetRegistered(query.value("registered").toBool());
+
+
+                QSqlQuery subQuery;
+                subQuery.prepare(SelectByPeripheralID_PeripheralConditionMapping);
+                subQuery.bindValue(":peripheralID", id);
+                res = subQuery.exec();
+                while (subQuery.next())
+                {
+                    PeripheralCondition *p = new PeripheralCondition();
+                    p->SetPort(subQuery.value("port").toString());
+                    p->SetPin(subQuery.value("pin").toString());
+                    p->SetTypeOfInformation(subQuery.value("typeOfInformtation").toInt());
+                    p->SetState(subQuery.value("state").toBool());
+                    p->SetDeviceType(subQuery.value("internalType").value<PeripheralType>());
+                    p->SetTypeOfConnection(subQuery.value("typeOfConnection").value<RW::TypeOfElement>());
+                    d.ConditionList()->AddData(p);
+                }
                 list << d;
             }
 

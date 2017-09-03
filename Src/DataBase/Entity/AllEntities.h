@@ -16,6 +16,7 @@
 #include "Peripheral.h"
 #include "WorkstationSetting.h"
 #include "PermanentLoginReason.h"
+#include "PeripheralCondition.h"
 
 #include <QQmlEngine>
 namespace RW{
@@ -44,17 +45,12 @@ namespace RW{
 				qRegisterMetaType<RW::SQL::Project*>("Project*");
 				qRegisterMetaType<RW::SQL::ElementType*>("RW::SQL::ElementType*");
 				qRegisterMetaType<RW::SQL::ElementType*>("ElementType*");
-
-                                //qRegisterMetaType<RW::SQL::ElementConfiguration*>("RW::SQL::ElementConfiguration*");
-                                //qRegisterMetaType<RW::SQL::ElementConfiguration*>("ElementConfiguration*");
-                                //qRegisterMetaType<RW::SQL::ElementConfiguration>("RW::SQL::ElementConfiguration");
-                                //qRegisterMetaType<RW::SQL::ElementConfiguration>("ElementConfiguration");
 				
 				qmlRegisterType<RW::SQL::Workstation>();
-                                qmlRegisterType<RW::SQL::User>();
-                                //qmlRegisterType<RW::WorkstationState>();
-                                qmlRegisterType<RW::SQL::WorkstationType>();
-                                qmlRegisterType<RW::SQL::WorkstationSetting>();
+                qmlRegisterType<RW::SQL::User>();
+                //qmlRegisterType<RW::WorkstationState>();
+                qmlRegisterType<RW::SQL::WorkstationType>();
+                qmlRegisterType<RW::SQL::WorkstationSetting>();
 				qmlRegisterType<RW::SQL::Project>();
 				qmlRegisterType<RW::SQL::ElementConfiguration>();
 
