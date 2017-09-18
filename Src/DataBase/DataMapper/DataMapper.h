@@ -11,6 +11,7 @@ namespace RW{
 		public:
 			enum class Specifier
 			{
+                GetWorkstationByHostname,
 				GetHistoryByWorkstationID,
 				GetLastestFlasHistoryEntryByWorkstationIDAndSoftwareProjectID,
 				GetSoftwareProjectsByProjectID,

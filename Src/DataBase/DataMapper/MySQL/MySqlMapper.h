@@ -70,6 +70,7 @@ namespace RW{
         const QString Delete_PermanentLoginReason = "DELETE FROM permanentloginreason WHERE idPermanentLoginReason=:idPermanentLoginReason";
 
 		const QString SelectById_Workstation = "SELECT * FROM Workstation WHERE idWorkstation = :idWorkstation";
+        const QString SelectByHostname_Workstation = "SELECT * FROM Workstation WHERE hostname = :hostname";
 		const QString SelectById_User = "SELECT * FROM user WHERE idUser = :idUser";
 		const QString SelectById_ElementConfiguration = "SELECT * FROM elementconfiguration WHERE idElementConfiguration = :idElementConfiguration";
 		const QString SelectById_ElementType = "SELECT * FROM elementType WHERE idElementType = :idElementType";
@@ -140,14 +141,28 @@ namespace RW{
 
 					//Please see the link for QT5: http://seppemagiels.com/blog/create-mysql-driver-qt5-windows => qsqlmysql.dll and libmysql.dll
 					//(and libmysql.lib, if your installation of MySQL has it) are needed
+
+                    quint8 amount = 0;
+                    while (!db.open())
+                    {
+                        m_logger->debug("Default connection not usable! {}", db.lastError().text().toStdString());
+                        Sleep(100);
+                        amount++;
+                        if (amount > 100)
+                            break;
+                    }
+
+
 					if (!db.open())
 					{
+                        m_logger->debug("Default connection not usable! {}", db.lastError().text().toStdString());
 						db.setHostName("localhost");
 						db.setPort(3306);
 						db.setDatabaseName("remoteworkstation");
 						db.setUserName("rwsUser");
 						db.setPassword("rwsUser!5%2017$");
-						db.open();
+						if(!db.open())
+                            m_logger->debug("Default connection not usable!.");
 					}
 				}
 
@@ -1866,7 +1881,44 @@ namespace RW{
 				m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
 			}
 			return list;
-
 		}
+
+        template<> QList<Workstation> MySqlMapper<Workstation>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
+        {
+            QList<Workstation> list;
+            QSqlQuery query;
+            bool res = false;
+            if (Value == Specifier::GetWorkstationByHostname)
+            {
+                QString hostname = Parameter.first().toString();
+                query.prepare(SelectByHostname_Workstation);
+                query.bindValue(":hostname", hostname);
+                res = query.exec();
+            }
+
+            while (query.next())
+            {
+                Workstation d;
+                d.SetID(query.value("idWorkstation").toInt());
+                if (FindByID<User>(query.value("userID").toInt()).UserName() == "")
+                    d.SetCurrentUser(nullptr);
+                else
+                    d.SetCurrentUser(new User(FindByID<User>(query.value("userID").toInt())));
+                d.SetIp(query.value("ip").toString());
+                d.SetMac(query.value("mac").toString());
+                d.SetHostname(query.value("hostname").toString());
+                d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toInt())));
+                d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toInt())));
+                d.SetState((RW::WorkstationState)query.value("state").toInt());
+                d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
+                list << d;
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return list;
+        }
 	}
 }

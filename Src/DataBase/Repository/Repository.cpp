@@ -207,7 +207,9 @@ namespace RW{
             try{
                 DataFactory d(m_logger);
                 DataMapper<Workstation> *dm = d.GetMapper<Workstation>(m_Source);
-                QList<Workstation> rwList = dm->FindAll();
+                QVariantList list;
+                list << Hostname;
+                QList<Workstation> rwList = dm->FindBySpecifier(DataMapper<Workstation>::Specifier::GetWorkstationByHostname, list);
 
                 if (rwList.count() == 0)
                 {
@@ -215,23 +217,14 @@ namespace RW{
                     delete dm;
                     return false;
                 }
-
-                //Jeden Eintrag in der Liste prüfen, ob er den entsprechenden Hostname enthält
-                for each (Workstation var in rwList)
+                else if (rwList.count() > 1)
                 {
-                    if (var.Hostname() == Hostname)
-                    {
-                        R = var;
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                {
-                    m_logger->error("GetWorkstationByHostname: No matched hostname found in workstation list.");
+                    m_logger->error("GetWorkstationByHostname: Multiple clients found");
                     delete dm;
                     return false;
                 }
+
+                R = rwList.first();
 
                 delete dm;
             }
@@ -1042,28 +1035,28 @@ namespace RW{
 
         bool Repository::GetPeripheralByHardwareID(QString HardwareID, Peripheral& R)
         {
-            QList<Peripheral> allLogEntry;
-            try{
-                DataFactory d(m_logger);
-                DataMapper<Peripheral> *dm = d.GetMapper<Peripheral>(m_Source);
-                if (dm == nullptr)
-                    return false;
-                allLogEntry = dm->FindAll();
-                delete dm;
+            //QList<Peripheral> allLogEntry;
+            //try{
+            //    DataFactory d(m_logger);
+            //    DataMapper<Peripheral> *dm = d.GetMapper<Peripheral>(m_Source);
+            //    if (dm == nullptr)
+            //        return false;
+            //    allLogEntry = dm->FindAll();
+            //    delete dm;
 
-                for each (auto var in allLogEntry)
-                {
-                    if (var.HardwareID1() == HardwareID)
-                    {
-                        R = var;
-                    }
-                }
-            }
-            catch (...)
-            {
-                m_logger->error("GetPeripheralByHardwareID throwed a exception");
-                return false;
-            }
+            //    for each (auto var in allLogEntry)
+            //    {
+            //        if (var.HardwareID1() == HardwareID)
+            //        {
+            //            R = var;
+            //        }
+            //    }
+            //}
+            //catch (...)
+            //{
+            //    m_logger->error("GetPeripheralByHardwareID throwed a exception");
+            //    return false;
+            //}
             return true;
         }
 
