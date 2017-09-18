@@ -1035,28 +1035,49 @@ namespace RW{
 
         bool Repository::GetPeripheralByHardwareID(QString HardwareID, Peripheral& R)
         {
-            //QList<Peripheral> allLogEntry;
-            //try{
-            //    DataFactory d(m_logger);
-            //    DataMapper<Peripheral> *dm = d.GetMapper<Peripheral>(m_Source);
-            //    if (dm == nullptr)
-            //        return false;
-            //    allLogEntry = dm->FindAll();
-            //    delete dm;
+            QList<Peripheral> allLogEntry;
+            try{
+                DataFactory d(m_logger);
+                DataMapper<Peripheral> *dm = d.GetMapper<Peripheral>(m_Source);
+                if (dm == nullptr)
+                    return false;
+                allLogEntry = dm->FindAll();
+                delete dm;
 
-            //    for each (auto var in allLogEntry)
-            //    {
-            //        if (var.HardwareID1() == HardwareID)
-            //        {
-            //            R = var;
-            //        }
-            //    }
-            //}
-            //catch (...)
-            //{
-            //    m_logger->error("GetPeripheralByHardwareID throwed a exception");
-            //    return false;
-            //}
+                //for each (auto var in allLogEntry)
+                //{
+                //    if (var.HardwareID() == HardwareID)
+                //    {
+                //        R = var;
+                //    }
+                //}
+            }
+            catch (...)
+            {
+                m_logger->error("GetPeripheralByHardwareID throwed a exception");
+                return false;
+            }
+            return true;
+        }
+
+        bool Repository::GetPeripheralByWorkstationID(quint64 ID, QList<Peripheral>& R)
+        {
+            try{
+                DataFactory d(m_logger);
+                DataMapper<Peripheral> *dm = d.GetMapper<Peripheral>(m_Source);
+                if (dm == nullptr)
+                    return false;
+                QVariantList list;
+                list << ID;
+                R = dm->FindBySpecifier(DataMapper<Peripheral>::Specifier::GetPeripheralByWorkstationID, list);
+                delete dm;
+
+            }
+            catch (...)
+            {
+                m_logger->error("GetPeripheralByHardwareID throwed a exception");
+                return false;
+            }
             return true;
         }
 

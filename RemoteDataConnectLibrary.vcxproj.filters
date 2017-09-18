@@ -301,6 +301,21 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_SQLGlobal.cpp">
       <Filter>Generierte Dateien\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Src\DataBase\Entity\PeripheralCondition.cpp">
+      <Filter>Src\DataBase\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PeripheralCondition.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PeripheralCondition.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_PeripheralCondition_p.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_PeripheralCondition_p.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -321,6 +336,9 @@
     </ClInclude>
     <ClInclude Include="Src\DataBase\Entity\AllEntities.h">
       <Filter>Src\DataBase\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Timer.h">
+      <Filter>Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -441,6 +459,12 @@
     <CustomBuild Include="Src\DataBase\Entity\WorkstationType.h">
       <Filter>Src\DataBase\Entity</Filter>
     </CustomBuild>
+    <CustomBuild Include="Src\DataBase\Entity\PeripheralCondition.h">
+      <Filter>Src\DataBase\Entity</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\DataBase\Entity\PeripheralCondition_p.h">
+      <Filter>Src\DataBase\Entity</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Src">
@@ -468,7 +492,9 @@
       <UniqueIdentifier>{158d9a46-fcd6-41b6-9ebd-292bda944f5e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Generierte Dateien">
-      <UniqueIdentifier>{74a55d76-97ef-4fcc-89ed-b7b1f480ec99}</UniqueIdentifier>
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <ParseFiles>true</ParseFiles>
     </Filter>
     <Filter Include="Generierte Dateien\Debug">
       <UniqueIdentifier>{1ab7d871-7f47-46e3-a40d-582edfc0ebf1}</UniqueIdentifier>

@@ -89,5 +89,11 @@ namespace RW{
 
             emit IDChanged(d->m_ID);
         };
+        
+        bool Entity::IsValid()
+        {
+            Q_D(Entity);
+            return d->m_ID == 0 ? false : true;
+        }
 	}
 }

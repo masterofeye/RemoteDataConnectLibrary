@@ -15,6 +15,7 @@ namespace RW{
 				GetHistoryByWorkstationID,
 				GetLastestFlasHistoryEntryByWorkstationIDAndSoftwareProjectID,
 				GetSoftwareProjectsByProjectID,
+                GetPeripheralByWorkstationID,
 
 			};
 			Q_ENUMS(Specifier)

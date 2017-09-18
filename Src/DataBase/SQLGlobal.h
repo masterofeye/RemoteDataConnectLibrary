@@ -75,8 +75,10 @@ namespace RW{
         SPIGray,
         SPIRed,
         RemoteBox,
-        PowerStripe,
-        PowerSupply
+        PowerStripe_Anel_NETPwrCtrl,
+        PowerSupply_Voltcraft_FPS1136,
+        PowerSupply_Voltcraft_PPS11815,
+        MaxAmount
 
     };
     Q_ENUM_NS(PeripheralType)

@@ -6,13 +6,15 @@ namespace RW{
 
         PeripheralPrivate::PeripheralPrivate(Peripheral *Parent) :
             QObject(Parent),
-            q_ptr(Parent)
+            q_ptr(Parent),
+            m_ConditionList(new PeripheralConditionList(this))
         {
         }
 
         PeripheralPrivate::~PeripheralPrivate()
         {
-
+            if (m_ConditionList != nullptr)
+                delete m_ConditionList;
         }
 
         Peripheral::Peripheral(Entity *Parent) : Entity(Parent),
@@ -23,6 +25,7 @@ namespace RW{
 
         Peripheral::~Peripheral()
         {
+
         }
 
         Peripheral::Peripheral(Peripheral &&R) : d_ptr(R.d_ptr)
@@ -48,22 +51,40 @@ namespace RW{
             if (&F != nullptr)
             {
                 d_ptr = new PeripheralPrivate(this);
-                d_ptr->m_Name = F.d_ptr->m_Name;
+                if (F.d_ptr->m_ConditionList != nullptr)
+                {
+                    if (d_ptr->m_ConditionList == nullptr)
+                    {
+                        d_ptr->m_ConditionList = new PeripheralConditionList(this);
+
+                    }
+                    for (size_t i = 0; i < F.d_ptr->m_ConditionList->rowCount(); i++)
+                    {
+                        d_ptr->m_ConditionList->AddData(F.d_ptr->m_ConditionList->peripheralCondition(i));
+                    }
+                }
+
                 d_ptr->m_Address = F.d_ptr->m_Address;
-                d_ptr->m_Name = F.d_ptr->m_Name;
-                d_ptr->m_SubAddress1 = F.d_ptr->m_SubAddress1;
-                d_ptr->m_SubAddress2 = F.d_ptr->m_SubAddress2;
-                d_ptr->m_SubAddress3 = F.d_ptr->m_SubAddress3;
-                d_ptr->m_HardwareID1 = F.d_ptr->m_HardwareID1;
-                d_ptr->m_HardwareID2 = F.d_ptr->m_HardwareID2;
-                d_ptr->m_HardwareID3 = F.d_ptr->m_HardwareID3;
-                d_ptr->m_ConnectionType = F.d_ptr->m_ConnectionType;
+                d_ptr->m_BusGUID = F.d_ptr->m_BusGUID;
+                d_ptr->m_Busnummer = F.d_ptr->m_Busnummer;
+                d_ptr->m_Class = F.d_ptr->m_Class;
+                d_ptr->m_ClassGUID = F.d_ptr->m_ClassGUID;
+                d_ptr->m_CompatibleID = F.d_ptr->m_CompatibleID;
                 d_ptr->m_Description = F.d_ptr->m_Description;
                 d_ptr->m_DeviceName = F.d_ptr->m_DeviceName;
-                d_ptr->m_State = F.d_ptr->m_State;
-                d_ptr->m_SerialNumber = F.d_ptr->m_SerialNumber;
+                d_ptr->m_EnumeratorName = F.d_ptr->m_EnumeratorName;
+                d_ptr->m_FriendlyName = F.d_ptr->m_FriendlyName;
+                d_ptr->m_HardwareID = F.d_ptr->m_HardwareID;
+                d_ptr->m_InstallState = F.d_ptr->m_InstallState;
+                d_ptr->m_IsActivate = F.d_ptr->m_IsActivate;
+                d_ptr->m_IsRegistered = F.d_ptr->m_IsRegistered;
+                d_ptr->m_LocationInformation = F.d_ptr->m_LocationInformation;
+                d_ptr->m_LocationPath = F.d_ptr->m_LocationPath;
+                d_ptr->m_Manufacturer = F.d_ptr->m_Manufacturer;
+                d_ptr->m_ServiceName = F.d_ptr->m_ServiceName;
                 d_ptr->m_Type = F.d_ptr->m_Type;
-
+                d_ptr->m_WindowsDeviceType = F.d_ptr->m_WindowsDeviceType;
+                d_ptr->m_IsProvided = F.d_ptr->m_IsProvided;
                 SetID(F.ID());
             }
         }
@@ -73,47 +94,46 @@ namespace RW{
             if (&F != nullptr)
             {
                 d_ptr = new PeripheralPrivate(this);
+                if (F.d_ptr->m_ConditionList != nullptr)
+                {
+                    if (d_ptr->m_ConditionList == nullptr)
+                    {
+                        d_ptr->m_ConditionList = new PeripheralConditionList(this);
 
-                d_ptr->m_Name = F.d_ptr->m_Name;
-                d_ptr->m_Name = F.d_ptr->m_Name;
+                    }
+                    for (size_t i = 0; i < F.d_ptr->m_ConditionList->rowCount(); i++)
+                    {
+                        d_ptr->m_ConditionList->AddData(F.d_ptr->m_ConditionList->peripheralCondition(i));
+                    }
+                }
                 d_ptr->m_Address = F.d_ptr->m_Address;
-                d_ptr->m_Name = F.d_ptr->m_Name;
-                d_ptr->m_SubAddress1 = F.d_ptr->m_SubAddress1;
-                d_ptr->m_SubAddress2 = F.d_ptr->m_SubAddress2;
-                d_ptr->m_SubAddress3 = F.d_ptr->m_SubAddress3;
-                d_ptr->m_HardwareID1 = F.d_ptr->m_HardwareID1;
-                d_ptr->m_HardwareID2 = F.d_ptr->m_HardwareID2;
-                d_ptr->m_HardwareID3 = F.d_ptr->m_HardwareID3;
-                d_ptr->m_ConnectionType = F.d_ptr->m_ConnectionType;
+                d_ptr->m_BusGUID = F.d_ptr->m_BusGUID;
+                d_ptr->m_Busnummer = F.d_ptr->m_Busnummer;
+                d_ptr->m_Class = F.d_ptr->m_Class;
+                d_ptr->m_ClassGUID = F.d_ptr->m_ClassGUID;
+                d_ptr->m_CompatibleID = F.d_ptr->m_CompatibleID;
                 d_ptr->m_Description = F.d_ptr->m_Description;
                 d_ptr->m_DeviceName = F.d_ptr->m_DeviceName;
-                d_ptr->m_State = F.d_ptr->m_State;
-                d_ptr->m_SerialNumber = F.d_ptr->m_SerialNumber;
+                d_ptr->m_EnumeratorName = F.d_ptr->m_EnumeratorName;
+                d_ptr->m_FriendlyName = F.d_ptr->m_FriendlyName;
+                d_ptr->m_HardwareID = F.d_ptr->m_HardwareID;
+                d_ptr->m_InstallState = F.d_ptr->m_InstallState;
+                d_ptr->m_IsActivate = F.d_ptr->m_IsActivate;
+                d_ptr->m_IsRegistered = F.d_ptr->m_IsRegistered;
+                d_ptr->m_LocationInformation = F.d_ptr->m_LocationInformation;
+                d_ptr->m_LocationPath = F.d_ptr->m_LocationPath;
+                d_ptr->m_Manufacturer = F.d_ptr->m_Manufacturer;
+                d_ptr->m_ServiceName = F.d_ptr->m_ServiceName;
                 d_ptr->m_Type = F.d_ptr->m_Type;
+                d_ptr->m_WindowsDeviceType = F.d_ptr->m_WindowsDeviceType;
+                d_ptr->m_IsProvided = F.d_ptr->m_IsProvided;
                 SetID(F.ID());
             }
             return *this;
         }
 
 
-        QString Peripheral::Name() const
-        {
-            Q_D(const Peripheral);
-            return d->m_Name;
-        }
-
-        void Peripheral::SetName(QString Name)
-        {
-            Q_D(Peripheral);
-            d->m_Name = Name;
-            emit NameChanged();
-        }
-
-
-        /*!
-        @brief Busspezifische Adresse der Geräteinstanz.
-        */
-        quint64 Peripheral::Address()
+        quint64 Peripheral::Address()const
         {
             Q_D(const Peripheral);
             return d->m_Address;
@@ -124,10 +144,8 @@ namespace RW{
             d->m_Address = Address;
             emit AddressChanged();
         }
-        /*!
-        @brief Busspezifische physikalischer Ort einer Geräteinstanz.
-        */
-        QString Peripheral::LocationInformation()
+
+        QString Peripheral::LocationInformation()const
         {
             Q_D(const Peripheral);
             return d->m_LocationInformation;
@@ -138,24 +156,20 @@ namespace RW{
             d->m_LocationInformation = Info;
             emit LocationInformationChanged();
         }
-        /*!
-        @brief Ort der Geräteinstanz innerhalb des Gerätebaums.
-        */
-        QString Peripheral::Peripheral::LocationPath()
+
+        QString Peripheral::LocationPath()const
         {
             Q_D(const Peripheral);
             return d->m_LocationPath;
         }
-        void Peripheral::Peripheral::SetLocationPath(QString Path)
+        void Peripheral::SetLocationPath(QString Path)
         {
             Q_D(Peripheral);
             d->m_LocationPath = Path;
             emit LocationPathChanged();
         }
-        /*!
-        @brief Beschreibung des Gerätes.
-        */
-        QString Peripheral::Description()
+
+        QString Peripheral::Description()const
         {
             Q_D(const Peripheral);
             return d->m_Description;
@@ -166,10 +180,8 @@ namespace RW{
             d->m_Description = Description;
             emit DescriptionChanged();
         }
-        /*!
-        @brief Sprechender Name des Gerätes.
-        */
-        QString Peripheral::DeviceName()
+
+        QString Peripheral::DeviceName()const
         {
             Q_D(const Peripheral);
             return d->m_DeviceName;
@@ -180,10 +192,8 @@ namespace RW{
             d->m_DeviceName = Name;
             emit DeviceNameChanged();
         }
-        /*!
-        @brief HardwareID des Gerätes.
-        */
-        QStringList Peripheral::HardwareID()
+
+        QStringList Peripheral::HardwareID()const
         {
             Q_D(const Peripheral);
             return d->m_HardwareID;
@@ -194,24 +204,20 @@ namespace RW{
             d->m_HardwareID = ID;
             emit HardwareIDChanged();
         }
-        /*!
-        @brief Friendly Name des Gerätes.
-        */
-        QString Peripheral::FriendlyName()
+
+        QString Peripheral::FriendlyName()const
         {
             Q_D(const Peripheral);
             return d->m_FriendlyName;
         }
-        void Peripheral::SetFriendyNane(QString FriendlyName)
+        void Peripheral::SetFriendlyName(QString FriendlyName)
         {
             Q_D(Peripheral);
             d->m_FriendlyName = FriendlyName;
             emit FriendlyNameChanged();
         }
-        /*!
-        @brief Busnummer des Gerätes.
-        */
-        quint64 Peripheral::Busnummer()
+
+        quint64 Peripheral::Busnummer()const
         {
             Q_D(const Peripheral);
             return d->m_Busnummer;
@@ -220,71 +226,163 @@ namespace RW{
         {
             Q_D(Peripheral);
             d->m_Busnummer = Busnummer;
-            emit FriendlyNameChanged();
+            emit BusnummerChanged();
         }
-        /*!
-        @brief Bus-GUID des Gerätes.
-        */
-        QString Peripheral::BusGUID(){}
-        void Peripheral::BusGUID(QString BusGUID){}
-        /*!
-        @brief Device Setup Class des Gerätes.
-        */
-        QString Peripheral::Class(){}
-        void Peripheral::SetClass(QString Class){}
-        /*!
-        @brief GUID des Device Setup Class des Gerätes.
-        */
-        QString Peripheral::ClassGUID(){}
-        void Peripheral::SetClassGUID(QString ClassGUID){}
-        /*!
-        @brief Kompatible ID's für das Gerät.
-        */
-        QStringList Peripheral::CompatibleID(){}
-        void Peripheral::SetCompatibleID(QStringList CompatibleID){}
-        /*!
-        @brief Type des Gerätes welches der Windowszuordnung entspricht.
-        Für eine Zuordnung siehe: https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/specifying-device-types
-        */
-        quint16 Peripheral::WindowsDeviceType(){}
-        void Peripheral::SetWindowsDeviceType(quint16 WindowsDeviceType){}
-        /*!
-        @brief Beinhaltet den Namen des Geräteenumerators, dieser entspricht dem übergeordneten Elterngruppe (z.b. für USB wäre es USB)
-        */
-        QString Peripheral::EnumeratorName(){}
-        void Peripheral::SetEnumeratorName(QString EnumeratorName){}
-        /*!
-        @brief Geräteinstallationsstatus. Für die Zuordnung siehe. https://msdn.microsoft.com/en-us/library/windows/hardware/ff543130(v=vs.85).aspx
-        */
-        quint16 Peripheral::InstallState(){}
-        void Peripheral::SetInstallState(quint16 InstallState){}
-        /*!
-        @brief Herstellername des Gerätes.
-        */
-        QString Peripheral::Manufacturer(){}
-        void Peripheral::SetManufacturer(QString Manufacturer){}
-        /*!
-        @brief Beinhaltet den Servicename für das Geräte.
-        */
-        QString Peripheral::ServiceName(){}
-        void Peripheral::SetServiceName(QString ServiceName){}
-        /*!
-        @brief Der interne Gerätetyp.
-        */
-        PeripheralType Peripheral::InteralType(){}
-        void Peripheral::SetInteralType(PeripheralType InteralType){}
 
-        /*!
-        @brief Gibt an, ob ein Gerät bereits registriert ist oder nicht.
-        */
-        bool Peripheral::IsRegistered(){}
-        void Peripheral::SetRegistered(bool Registered){}
+        QString Peripheral::BusGUID()const
+        {
+            Q_D(const Peripheral);
+            return d->m_BusGUID;
+        }
 
-        /*!
-        @brief Gibt an, ob ein Gerät noch aktiv, als Betriebsbereit oder vom Strom getrennt ist.
-        */
-        bool Peripheral::IsActivate(){}
-        void Peripheral::SetActivate(bool Activate){}
+        void Peripheral::SetBusGUID(QString BusGUID){
+            Q_D(Peripheral);
+            d->m_BusGUID = BusGUID;
+            emit BusGUIDChanged();
+        }
 
+        QString Peripheral::Class()const
+        {
+            Q_D(const Peripheral);
+            return d->m_Class;
+        }
+
+        void Peripheral::SetClass(QString Class){
+            Q_D(Peripheral);
+            d->m_Class = Class;
+            emit ClassChanged();
+        }
+
+        
+        QString Peripheral::ClassGUID()const
+        {
+            Q_D(const Peripheral);
+            return d->m_ClassGUID;
+        }
+
+        void Peripheral::SetClassGUID(QString ClassGUID){
+            Q_D(Peripheral);
+            d->m_ClassGUID = ClassGUID;
+            emit ClassGUIDChanged();
+        }
+
+        QStringList Peripheral::CompatibleID()const
+        {
+            Q_D(const Peripheral);
+            return d->m_CompatibleID;
+        }
+
+        void Peripheral::SetCompatibleID(QStringList CompatibleID){
+            Q_D(Peripheral);
+            d->m_CompatibleID = CompatibleID;
+            emit CompatibleIDChanged();
+        }
+
+        quint16 Peripheral::WindowsDeviceType()const
+        {
+            Q_D(const Peripheral);
+            return d->m_WindowsDeviceType;
+        }
+        void Peripheral::SetWindowsDeviceType(quint16 WindowsDeviceType){
+            Q_D(Peripheral);
+            d->m_WindowsDeviceType = WindowsDeviceType;
+            emit WindowsDeviceTypeChanged();
+        }
+
+        QString Peripheral::EnumeratorName()const
+        {
+            Q_D(const Peripheral);
+            return d->m_EnumeratorName;
+        }
+
+        void Peripheral::SetEnumeratorName(QString EnumeratorName){
+            Q_D(Peripheral);
+            d->m_EnumeratorName = EnumeratorName;
+            emit EnumeratorNameChanged();
+        }
+
+        quint16 Peripheral::InstallState()const
+        {
+            Q_D(const Peripheral);
+            return d->m_InstallState;
+        }
+
+        void Peripheral::SetInstallState(quint16 InstallState){
+            Q_D(Peripheral);
+            d->m_InstallState = InstallState;
+            emit InstallStateChanged();
+        }
+
+        QString Peripheral::Manufacturer()const
+        {
+            Q_D(const Peripheral);
+            return d->m_Manufacturer;
+        }
+        void Peripheral::SetManufacturer(QString Manufacturer){
+            Q_D(Peripheral);
+            d->m_Manufacturer = Manufacturer;
+            emit ManufacturerChanged();
+        }
+
+        QString Peripheral::ServiceName()const
+        {
+            Q_D(const Peripheral);
+            return d->m_ServiceName;
+        }
+        void Peripheral::SetServiceName(QString ServiceName){
+            Q_D(Peripheral);
+            d->m_ServiceName = ServiceName;
+            emit ServiceNameChanged();
+        }
+
+        PeripheralType Peripheral::InteralType()const
+        {
+            Q_D(const Peripheral);
+            return d->m_Type;
+        }
+        void Peripheral::SetInteralType(PeripheralType InteralType){
+            Q_D(Peripheral);
+            d->m_Type = InteralType;
+            emit InteralTypeChanged();
+        }
+
+        bool Peripheral::IsRegistered()const
+        {
+            Q_D(const Peripheral);
+            return d->m_IsRegistered;
+        }
+        void Peripheral::SetRegistered(bool Registered){
+            Q_D(Peripheral);
+            d->m_IsRegistered = Registered;
+            emit IsRegisteredChanged();
+        }
+
+        bool Peripheral::IsActivate()const
+        {
+            Q_D(const Peripheral);
+            return d->m_IsActivate;
+        }
+        void Peripheral::SetActivate(bool Activate){
+            Q_D(Peripheral);
+            d->m_IsActivate = Activate;
+            emit IsActivateChanged();
+        }
+
+        bool Peripheral::IsProvided()const
+        {
+            Q_D(const Peripheral);
+            return d->m_IsProvided;
+        }
+        void Peripheral::SetProvided(bool Provided){
+            Q_D(Peripheral);
+            d->m_IsProvided = Provided;
+            emit IsProvidedChanged();
+        }
+
+        PeripheralConditionList* Peripheral::ConditionList() const
+        {
+            Q_D(const Peripheral);
+            return d->m_ConditionList;
+        }
 	}
 }
