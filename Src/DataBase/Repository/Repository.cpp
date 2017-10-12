@@ -190,7 +190,12 @@ namespace RW{
 				DataFactory d(m_logger);
 				DataMapper<Workstation> *dm = d.GetMapper<Workstation>(m_Source);
 				R = dm->FindByID(ID, false);
-				delete dm;
+                delete dm;
+
+                if (R.Hostname() == "")
+                {
+                    return false;
+                }
 			}
 			catch (...)
 			{
@@ -1075,11 +1080,13 @@ namespace RW{
             }
             catch (...)
             {
-                m_logger->error("GetPeripheralByHardwareID throwed a exception");
+                m_logger->error("GetPeripheralByWorkstationID throwed a exception");
                 return false;
             }
             return true;
         }
+
+
 
 	}
 }

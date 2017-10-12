@@ -112,5 +112,19 @@ namespace RW
             emit BeShutdownTimerChanged();
         }
 
+        QDateTime GlobalSetting::LogoutTime()
+        {
+            Q_D(const GlobalSetting);
+            return d->m_LogoutTime;
+        }
+
+        void GlobalSetting::SetLogoutTime(QDateTime Timeout)
+        {
+            Q_D(GlobalSetting);
+
+            d->m_LogoutTime = Timeout;
+            emit LogoutTimeChanged();
+        }
+
 	}
 }

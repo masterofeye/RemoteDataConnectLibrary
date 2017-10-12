@@ -23,6 +23,7 @@ namespace RW{
             MKSPassword,
             MKSUsername,
             Initials,
+            UserWorkstation,
             UserEnd,
             /*UserSettings*/
             UserSettingsStart,
@@ -36,7 +37,9 @@ namespace RW{
             RwLogOutTimer,
             RwShutdownTimer,
             BeLogOutTimer, 
-            BeShutdownTimer, 
+            BeShutdownTimer,
+            LogoutTime,
+            GlobalSettingsEnd,
             AmoundOfFlashHistory,
             /*Project*/
             ProjectStart,

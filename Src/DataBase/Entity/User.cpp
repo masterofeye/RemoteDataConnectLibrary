@@ -15,7 +15,8 @@ namespace RW{
 			m_NotifiyRemoteDesktop(false),
 			m_UserName(""),
 			m_Password(""),
-			m_Role(UserRole::NON)
+			m_Role(UserRole::NON),
+            m_UserWorkstation(0)
 		{
 		}
 
@@ -37,6 +38,7 @@ namespace RW{
 				d_ptr->m_Password = other.d_ptr->m_Password;
 				d_ptr->m_UserName = other.d_ptr->m_UserName;
 				d_ptr->m_Role = other.d_ptr->m_Role;
+                d_ptr->m_UserWorkstation = other.d_ptr->m_UserWorkstation;
                 SetID(other.ID());
 			}
 		}
@@ -53,6 +55,7 @@ namespace RW{
 				d_ptr->m_Password = other.d_ptr->m_Password;
 				d_ptr->m_UserName = other.d_ptr->m_UserName;
 				d_ptr->m_Role = other.d_ptr->m_Role;
+                d_ptr->m_UserWorkstation = other.d_ptr->m_UserWorkstation;
                 SetID(other.ID());
 			}
 			return *this;
@@ -199,5 +202,17 @@ namespace RW{
 			d->m_Role = Role;
 			emit RoleChanged();
 		}
+
+        quint64 User::UserWorkstation()
+        {
+            Q_D(const User);
+            return d->m_UserWorkstation;
+        }
+        void User::SetUserWorkstation(quint64 UserWorkstation)
+        {
+            Q_D(User);
+            d->m_UserWorkstation = UserWorkstation;
+            emit UserWorkstationChanged();
+        }
 	}
 }

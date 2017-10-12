@@ -19,6 +19,7 @@ namespace RW{
 			Q_PROPERTY(bool NotifiyRemoteDesktop READ NotifiyRemoteDesktop WRITE SetNotifiyRemoteDesktop NOTIFY NotifiyRemoteDesktopChanged)
 			Q_PROPERTY(bool NotifiyDesktop READ NotifiyDesktop WRITE SetNotifiyDesktop NOTIFY NotifiyDesktopChanged)
 			Q_PROPERTY(UserRole Role READ Role WRITE SetRole NOTIFY RoleChanged)
+            Q_PROPERTY(quint64 UserWorkstation READ UserWorkstation WRITE SetUserWorkstation NOTIFY UserWorkstationChanged)
 			Q_CLASSINFO("Version", "0.0.1")
 
 		private:
@@ -58,6 +59,9 @@ namespace RW{
 			UserRole Role() const;
 			void SetRole(UserRole Role);
 
+            quint64 UserWorkstation();
+            void SetUserWorkstation(quint64 UserWorkstation);
+
 		signals:
 			void UserNameChanged();
 			void PasswordChanged();
@@ -67,6 +71,7 @@ namespace RW{
 			void NotifiyRemoteDesktopChanged();
 			void NotifiyDesktopChanged();
 			void RoleChanged();
+            void UserWorkstationChanged();
 		};
 	}
 }

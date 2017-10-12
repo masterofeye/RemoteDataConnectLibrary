@@ -20,6 +20,7 @@ namespace RW{
 			bool m_NotifiyRemoteDesktop;
 			bool m_NotifiyDesktop;
 			UserRole m_Role;
+            quint64 m_UserWorkstation;
 		private:
 			User * const q_ptr;
 		public:

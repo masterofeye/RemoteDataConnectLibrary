@@ -26,7 +26,7 @@ namespace RW{
         const QString Insert_WorkstationType = "INSERT INTO workstationtype (type) VALUES (type)";
         const QString Insert_PeripheralMapping = "INSERT INTO peripheralmapping (workstationID, peripheralID,isActivate,isRegistered) VALUES (:workstationID, :peripheralID,:isActivate,:isRegistered)";
         const QString Insert_Peripheral = "INSERT INTO peripheral (address, busGUID, busnummer, class, classGUID, compatibleID, description, deviceName , enumeratorName, friendlyName, hardwareID, installState, internalType,locationInformation,locationPath,manufacturer,serviceName,windowsDeviceType,provided) VALUES  (:address, :busGUID, :busnummer, :class, :classGUID, :compatibleID, :description, :deviceName , :enumeratorName, :friendlyName, :hardwareID, :installState, :internalType,:locationInformation,:locationPath,:manufacturer,:serviceName,:windowsDeviceType, :provided)";
-        const QString Insert_GlobalSetting = "INSERT INTO globalsetting ( rwShutdownTime, rwLogoutTime, beShutdownTime, beLogoutTime) VALUES ( :rwShutdownTime, :rwLogoutTime, :beShutdownTime, :beLogoutTime)";
+        const QString Insert_GlobalSetting = "INSERT INTO globalsetting ( rwShutdownTime, rwLogoutTime, beShutdownTime, beLogoutTime, logoutTime) VALUES ( :rwShutdownTime, :rwLogoutTime, :beShutdownTime, :beLogoutTime, :logoutTime)";
         const QString Insert_WorkstationSetting = "INSERT INTO workstationsetting(permanentLogin, permanentLoginReasonID) VALUES (:permanentLogin,:permanentLoginReasonID)";
         const QString Insert_PermanentLoginReason = "INSERT INTO permanentloginreason(reason, description) VALUES (:reason,:description)";
 
@@ -46,7 +46,7 @@ namespace RW{
         const QString Update_WorkstationType = "UPDATE workstationtype SET workstationTypeID=:workstationTypeID, type=:type";
         const QString Update_PeripheralMapping = "UPDATE peripheralmapping SET workstationID=:workstationID, peripheralID=:peripheralID";
 /*TODO*/const QString Update_Peripheral = "Update peripheral SET address=:adress, subAddress1=:subAddress1, subAddress2=:subAddress2, subAddress3=:subAddress3, name=:name, type=:type, connectionType=:connectionType, serialNumber=:serialNumber, deviceName=:deviceName, description=:description, hardwareID1=:hardwareID1, hardwareID2=:hardwareID2, hardwareID3=:hardwareID3, state=:state, provided=:provided)";
-        const QString Update_GlobalSetting = "UPDATE globalsetting rwShutdownTime=:rwShutdownTime, rwLogoutTime=:rwLogoutTime, beShutdownTime=:beShutdownTime, beLogoutTime=:beLogoutTime";
+        const QString Update_GlobalSetting = "UPDATE globalsetting rwShutdownTime=:rwShutdownTime, rwLogoutTime=:rwLogoutTime, beShutdownTime=:beShutdownTime, beLogoutTime=:beLogoutTime, logoutTime=:logoutTime";
         const QString Update_WorkstationSetting = "UPDATE workstationsetting permanentLogin=:permanentLogin,permamentLoginReasonID=:permanentLoginReasonID";
         const QString Update_PermanentLoginReason = "UPDATE permanentloginreason reason=:reason,description=:description";
 
@@ -90,6 +90,7 @@ namespace RW{
         const QString SelectById_Peripheral = "SELECT * FROM peripheral WHERE idPeripheral=:idPeripheral";
         const QString SelectByWorkstationID_PeripheralMapping = "SELECT * FROM peripheralmapping A inner join peripheral B on A.peripheralID = B.idPeripheral WHERE workstationID=:workstationID AND provided=1";
         const QString SelectByPeripheralID_PeripheralConditionMapping = "SELECT A.port, A.pin, A.typeOfInformtation, A.state, A.typeOfConnection, B.idPeripheralCondition, C.internalType FROM peripheralconditionmapping A inner join peripheralcondition B on A.conditionID = B.idPeripheralCondition  inner join peripheral C on A.peripheralID = C.idPeripheral WHERE B.peripheralID=:peripheralID";
+
         const QString SelectByIdByHardwareID_Peripheral = "SELECT * FROM peripheral WHERE hardwareID1=:hardwareID1";
         const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
         const QString SelectById_WorkstationSetting = "SELECT * FROM workstationsetting WHERE idWorkstationSetting=:idWorkstationSetting";
@@ -547,6 +548,7 @@ namespace RW{
             query.bindValue(":beShutdownTimer", d.BeShutdownTimer());
             query.bindValue(":rwLogOutTimerChanged", d.RwLogOutTimer());
             query.bindValue(":rwShutdownTimerChanged", d.RwShutdownTimer());
+            query.bindValue(":logoutTime", d.LogoutTime());
 
             bool res = query.exec();
             if (!res)
@@ -842,6 +844,7 @@ namespace RW{
             query.bindValue(":beShutdownTimer", d.BeShutdownTimer());
             query.bindValue(":rwLogOutTimerChanged", d.RwLogOutTimer());
             query.bindValue(":rwShutdownTimerChanged", d.RwShutdownTimer());
+            query.bindValue(":logoutTime", d.LogoutTime());
 
             bool res = query.exec();
             if (!res)
@@ -960,6 +963,7 @@ namespace RW{
 				d.SetNotifiyDesktop(query.value("notifiyDesktop").toBool());
 				//@todo unschöner cast hier
 				d.SetRole((RW::UserRole)query.value("role").toInt());
+                d.SetUserWorkstation(query.value("userWorkstation").toInt());
 			}
 
 			if (!res)
@@ -1298,6 +1302,7 @@ namespace RW{
                 d.SetRwShutdownTimer(query.value("rwShutdownTime").toInt());
                 d.SetBeLogOutTimer(query.value("beLogOutTime").toInt());
                 d.SetBeShutdownTimer(query.value("beShutdownTime").toInt());
+                d.SetLogoutTime(query.value("logoutTime").toDateTime());
 
             }
 
@@ -1421,6 +1426,7 @@ namespace RW{
 				d.SetNotifiyRemoteDesktop(query.value("notifiyRemoteDesktop").toBool());
 				d.SetNotifiyDesktop(query.value("notifiyDesktop").toBool());
 				d.SetRole((RW::UserRole)query.value("role").toInt());
+                d.SetUserWorkstation(query.value("userWorkstation").toInt());
 				list << d;
 			}
 
@@ -1770,6 +1776,7 @@ namespace RW{
                 d.SetRwShutdownTimer(query.value("rwShutdownTimer").toInt());
                 d.SetBeLogOutTimer(query.value("beLogOutTimer").toInt());
                 d.SetBeShutdownTimer(query.value("beShutdownTimer").toInt());
+                d.SetLogoutTime(query.value("logoutTime").toDateTime());
                 list << d;
             }
 

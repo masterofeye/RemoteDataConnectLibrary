@@ -227,6 +227,8 @@ namespace RW{
 #endif   
                 return false;
             }
+            RW::SQL::Workstation workstation;
+            m_Repository->GetWorkstationByID(user.UserWorkstation(), workstation);
 
             m_ConfigCollection->insert(ConfigurationName::UserName, user.UserName());
             m_ConfigCollection->insert(ConfigurationName::UserPassword, user.Password());
@@ -234,7 +236,7 @@ namespace RW{
             m_ConfigCollection->insert(ConfigurationName::MKSUsername, user.MKSUsername());
             m_ConfigCollection->insert(ConfigurationName::MKSPassword, user.MKSPassword());
             m_ConfigCollection->insert(ConfigurationName::Initials, user.Initials());
-
+            m_ConfigCollection->insert(ConfigurationName::UserWorkstation, workstation.Hostname());
             m_ConfigCollection->insert(ConfigurationName::UserId, user.ID());
 #ifdef DEBUG
             timer.Stop();
@@ -301,6 +303,7 @@ namespace RW{
                 return false;
             }
 
+            m_ConfigCollection->insert(ConfigurationName::LogoutTime, setting.LogoutTime());
             m_ConfigCollection->insert(ConfigurationName::RwLogOutTimer, setting.RwLogOutTimer());
             m_ConfigCollection->insert(ConfigurationName::RwShutdownTimer, setting.RwShutdownTimer());
             m_ConfigCollection->insert(ConfigurationName::BeLogOutTimer, setting.BeLogOutTimer());

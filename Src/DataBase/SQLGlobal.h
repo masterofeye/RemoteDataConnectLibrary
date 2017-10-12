@@ -37,10 +37,10 @@ namespace RW{
 		OFF,
 		RESERVE,
 		DEFECT,
-        FREE,
-        OCCUPY
+                FREE,
+                OCCUPY
 	};
-    Q_ENUM_NS(WorkstationState)
+        Q_ENUM_NS(WorkstationState)
 
 	enum class UserRole
 	{

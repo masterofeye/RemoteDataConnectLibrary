@@ -116,8 +116,6 @@ namespace RW{
 			bool GetSoftwareProjectsByProjectID(quint64 ID, QList<SoftwareProject>& P);
             bool GetPeripheralByHardwareID(QString HardwareID, Peripheral& R);
             bool GetPeripheralByWorkstationID(quint64 ID, QList<Peripheral>& R);
-
-
             bool GetLogEntryByHostName(QString HostName, QList<LogEntry> & AllR);
 
 			bool GetUserByID(quint64 ID, User& U);
