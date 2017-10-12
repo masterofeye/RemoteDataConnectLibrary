@@ -303,7 +303,8 @@ namespace RW{
                 return false;
             }
 
-            m_ConfigCollection->insert(ConfigurationName::LogoutTime, setting.LogoutTime());
+            m_ConfigCollection->insert(ConfigurationName::LogoutTimeStart, setting.LogoutTimeStart());
+            m_ConfigCollection->insert(ConfigurationName::LogoutTimeEnd, setting.LogoutTimeEnd());
             m_ConfigCollection->insert(ConfigurationName::RwLogOutTimer, setting.RwLogOutTimer());
             m_ConfigCollection->insert(ConfigurationName::RwShutdownTimer, setting.RwShutdownTimer());
             m_ConfigCollection->insert(ConfigurationName::BeLogOutTimer, setting.BeLogOutTimer());

@@ -1,6 +1,6 @@
 #pragma once
 #include "Entity.h"
-#include <qdatetime.h>
+#include <QTime>
 
 namespace RW
 {
@@ -15,7 +15,8 @@ namespace RW
             Q_PROPERTY(quint64 RwShutdownTimer READ RwShutdownTimer WRITE SetRwShutdownTimer NOTIFY RwShutdownTimerChanged)
             Q_PROPERTY(quint64 BeLogOutTimer READ BeLogOutTimer WRITE SetBeLogOutTimer NOTIFY BeLogOutTimerChanged)
             Q_PROPERTY(quint64 BeShutdownTimer READ BeShutdownTimer WRITE SetBeShutdownTimer NOTIFY BeShutdownTimerChanged)
-            Q_PROPERTY(QDateTime LogoutTime READ LogoutTime WRITE SetLogoutTime NOTIFY LogoutTimeChanged)
+            Q_PROPERTY(QTime LogoutTimeStart READ LogoutTimeStart WRITE SetLogoutTimeStart NOTIFY LogoutTimeStartChanged)
+            Q_PROPERTY(QTime LogoutTimeEnd READ LogoutTimeEnd WRITE SetLogoutTimeEnd NOTIFY LogoutTimeEndChanged)
 			Q_CLASSINFO("Version", "0.0.1")
 		private:
 			GlobalSettingPrivate* d_ptr;
@@ -45,15 +46,19 @@ namespace RW
             quint64 BeShutdownTimer();
             void SetBeShutdownTimer(quint64);
 
-            QDateTime LogoutTime();
-            void SetLogoutTime(QDateTime);
+            QTime LogoutTimeStart();
+            void SetLogoutTimeStart(QTime);
+
+            QTime LogoutTimeEnd();
+            void SetLogoutTimeEnd(QTime);
 
         signals:
             void RwLogOutTimerChanged();
             void RwShutdownTimerChanged();
             void BeLogOutTimerChanged();
             void BeShutdownTimerChanged();
-            void LogoutTimeChanged();
+            void LogoutTimeStartChanged();
+            void LogoutTimeEndChanged();
 		};
 	}
 }

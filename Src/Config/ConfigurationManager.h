@@ -38,9 +38,9 @@ namespace RW{
             RwShutdownTimer,
             BeLogOutTimer, 
             BeShutdownTimer,
-            LogoutTime,
+            LogoutTimeStart,
+            LogoutTimeEnd,
             GlobalSettingsEnd,
-            AmoundOfFlashHistory,
             /*Project*/
             ProjectStart,
             ProjectName,
@@ -71,8 +71,8 @@ namespace RW{
             BuildNumber,
             Date,
             FlashHistory,
+            AmoundOfFlashHistory,
             HistoryEnd,
-
             /*SoftwareProject*/
             SoftwareProjectStart,
             SoftwareProject,
