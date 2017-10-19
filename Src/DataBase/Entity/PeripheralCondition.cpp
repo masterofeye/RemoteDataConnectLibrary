@@ -2,6 +2,7 @@
 #include "PeripheralCondition_p.h"
 #include "qdebug.h"
 #include "../SQLGlobal.h"
+#include "Peripheral.h"
 
 namespace RW{
 	namespace SQL{
@@ -14,12 +15,22 @@ namespace RW{
             m_TypeOfInformation(0),
             m_State(true),
 			q_ptr(Parent),
-            m_DeviceType(RW::PeripheralType::MaxAmount)
+            m_DeviceType(RW::PeripheralType::MaxAmount),
+            m_Peripheral(nullptr)
 		{
 		}
 
 		PeripheralConditionPrivate::~PeripheralConditionPrivate()
 		{
+            for each (auto var in m_FollowUpCondition)
+            {
+                if (var != nullptr)
+                {
+                    delete var;
+                    var = nullptr;
+                }
+            }
+            m_FollowUpCondition.clear();
 		}
 
 		PeripheralCondition::PeripheralCondition(QObject *Parent) : Entity(Parent),
@@ -55,12 +66,28 @@ namespace RW{
             if (&F != nullptr)
             {
                 d_ptr = new PeripheralConditionPrivate(this);
+                if (F.d_ptr->m_Peripheral != nullptr)
+                {
+                    if (d_ptr->m_Peripheral == nullptr)
+                    {
+                        d_ptr->m_Peripheral = new Peripheral(*F.d_ptr->m_Peripheral);
+                    }
+                    else
+                    {
+                        *d_ptr->m_Peripheral = *F.d_ptr->m_Peripheral;
+                    }
+                }
+                d_ptr->m_Priority = F.d_ptr->m_Priority;
                 d_ptr->m_Port = F.d_ptr->m_Port;
                 d_ptr->m_Pin = F.d_ptr->m_Pin;
                 d_ptr->m_State = F.d_ptr->m_State;
                 d_ptr->m_TypeOfInformation = F.d_ptr->m_TypeOfInformation;
                 d_ptr->m_DeviceType = F.d_ptr->m_DeviceType;
                 d_ptr->m_TypeOfConnection = F.d_ptr->m_TypeOfConnection;
+                for each (auto var in F.d_ptr->m_FollowUpCondition)
+                {
+                    d_ptr->m_FollowUpCondition.append(new RW::SQL::PeripheralCondition(*var));
+                }
                 SetID(F.ID());
             }
         }
@@ -70,17 +97,67 @@ namespace RW{
             if (&F != nullptr)
             {
                 d_ptr = new PeripheralConditionPrivate(this);
+                if (F.d_ptr->m_Peripheral != nullptr)
+                {
+                    if (d_ptr->m_Peripheral == nullptr)
+                    {
+                        d_ptr->m_Peripheral = new Peripheral(*F.d_ptr->m_Peripheral);
+                    }
+                    else
+                    {
+                        *d_ptr->m_Peripheral = *F.d_ptr->m_Peripheral;
+                    }
+                }
+                d_ptr->m_Priority = F.d_ptr->m_Priority;
                 d_ptr->m_Port = F.d_ptr->m_Port;
                 d_ptr->m_Pin = F.d_ptr->m_Pin;
                 d_ptr->m_State = F.d_ptr->m_State;
                 d_ptr->m_TypeOfInformation = F.d_ptr->m_TypeOfInformation;
                 d_ptr->m_DeviceType = F.d_ptr->m_DeviceType;
                 d_ptr->m_TypeOfConnection = F.d_ptr->m_TypeOfConnection;
+
+                for each (auto var in F.d_ptr->m_FollowUpCondition)
+                {
+                    d_ptr->m_FollowUpCondition.append(new RW::SQL::PeripheralCondition(*var));
+                }
+
                 SetID(F.ID());
             }
             return *this;
         }
 
+        RW::SQL::Peripheral* PeripheralCondition::ConditionPeripheral()
+        {
+            Q_D(const PeripheralCondition);
+            return d->m_Peripheral;
+        }
+
+        void PeripheralCondition::SetConditionPeripheral(RW::SQL::Peripheral* P)
+        {
+            Q_D(PeripheralCondition);
+            if (P != nullptr)
+            {
+                P->setParent(d);
+                if (d->m_Peripheral != nullptr)
+                    delete d->m_Peripheral;
+
+                d->m_Peripheral = P;
+                emit ConditionPeripheralChanged();
+            }
+        }
+
+        quint8 PeripheralCondition::Priority()
+        {
+            Q_D(const PeripheralCondition);
+            return d->m_Priority;
+        }
+
+        void PeripheralCondition::SetPriority(quint8 Priority)
+        {
+            Q_D(PeripheralCondition);
+            d->m_Priority = Priority;
+            emit PriorityChanged();
+        }
 
         QString PeripheralCondition::Port()       
         {
@@ -93,7 +170,6 @@ namespace RW{
             d->m_Port = Port;
             emit PortChanged();
         }
-
 
         QString PeripheralCondition::Pin()
         {
@@ -144,7 +220,6 @@ namespace RW{
             emit DeviceTypeChanged();
         }
 
-
         TypeOfElement PeripheralCondition::TypeOfConnection()
         {
             Q_D(const PeripheralCondition);
@@ -155,6 +230,45 @@ namespace RW{
             Q_D(PeripheralCondition);
             d->m_TypeOfConnection = El;
             emit TypeOfConnectionChanged();
+        }
+
+        QList<PeripheralCondition*> PeripheralCondition::FollowUpCondition()
+        {
+            Q_D(const PeripheralCondition);
+            return d->m_FollowUpCondition;
+        }
+        void PeripheralCondition::SetFollowUpCondition(QList<PeripheralCondition*> El)
+        {
+            Q_D(PeripheralCondition);
+
+            d->m_FollowUpCondition = El;
+            emit FollowUpConditionChanged();
+        }
+
+        QHostAddress PeripheralCondition::Ip()
+        {
+            Q_D(const PeripheralCondition);
+            return d->m_Ip;
+        }
+        void PeripheralCondition::SetIp(QHostAddress El)
+        {
+            Q_D(PeripheralCondition);
+
+            d->m_Ip = El;
+            emit IpChanged();
+        }
+
+
+        void PeripheralCondition::SetFollowUpCondition(QList<PeripheralCondition> El)
+        {
+            Q_D(PeripheralCondition);
+
+            for each (auto var in El)
+            {
+                d->m_FollowUpCondition.append(new PeripheralCondition(var));
+            }
+
+            emit FollowUpConditionChanged();
         }
 
 
@@ -168,7 +282,10 @@ namespace RW{
             for (size_t i = 0; i < mThings.size(); i++)
             {
                 if (mThings[i] != nullptr)
+                {
                     delete mThings[i];
+                    mThings[i] = nullptr;
+                }
             }
             mThings.clear();
         }

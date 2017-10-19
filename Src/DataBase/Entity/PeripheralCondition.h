@@ -4,13 +4,15 @@
 #include "..\Global.h"
 #include "Entity.h"
 #include "QAbstractListModel"
+#include <qhostaddress.h>
 
 namespace RW{
     enum class PeripheralType;
     enum class TypeOfElement;
+    
     namespace SQL{
         class PeripheralConditionPrivate;
-
+        class Peripheral;
 
         /*!
         @brief Diese Klasse kapselt eine Einschaltbedingung für ein Gerät. Dabei können zwei Parameter (Port & Pin) angegeben werden,
@@ -22,12 +24,15 @@ namespace RW{
             public Entity
         {
             Q_OBJECT
-                Q_PROPERTY(QString Port READ Port WRITE SetPort NOTIFY PortChanged)
-                Q_PROPERTY(QString Pin READ Pin WRITE SetPin NOTIFY PinChanged)
-                Q_PROPERTY(quint8 TypeOfInformation READ TypeOfInformation WRITE SetTypeOfInformation NOTIFY TypeOfInformationChanged)
-                Q_PROPERTY(bool State READ State WRITE SetState NOTIFY StateChanged)
-                Q_PROPERTY(PeripheralType DeviceType READ DeviceType WRITE SetDeviceType NOTIFY DeviceTypeChanged)
-                Q_PROPERTY(TypeOfElement TypeOfConnection READ TypeOfConnection WRITE SetTypeOfConnection NOTIFY TypeOfConnectionChanged)
+            Q_PROPERTY(RW::SQL::Peripheral* ConditionPeripheral READ ConditionPeripheral WRITE SetConditionPeripheral NOTIFY ConditionPeripheralChanged)
+            Q_PROPERTY(quint8 Priority READ Priority WRITE SetPriority NOTIFY PriorityChanged)
+            Q_PROPERTY(QString Port READ Port WRITE SetPort NOTIFY PortChanged)
+            Q_PROPERTY(QString Pin READ Pin WRITE SetPin NOTIFY PinChanged)
+            Q_PROPERTY(quint8 TypeOfInformation READ TypeOfInformation WRITE SetTypeOfInformation NOTIFY TypeOfInformationChanged)
+            Q_PROPERTY(bool State READ State WRITE SetState NOTIFY StateChanged)
+            Q_PROPERTY(PeripheralType DeviceType READ DeviceType WRITE SetDeviceType NOTIFY DeviceTypeChanged)
+            Q_PROPERTY(TypeOfElement TypeOfConnection READ TypeOfConnection WRITE SetTypeOfConnection NOTIFY TypeOfConnectionChanged)
+            Q_PROPERTY(QList<PeripheralCondition*> FollowUpCondition READ FollowUpCondition WRITE SetFollowUpCondition NOTIFY FollowUpConditionChanged)
         private:
             PeripheralConditionPrivate* d_ptr;
             Q_DECLARE_PRIVATE(PeripheralCondition);
@@ -39,6 +44,13 @@ namespace RW{
 
             PeripheralCondition(PeripheralCondition &&rvalue);
             PeripheralCondition& PeripheralCondition::operator=(PeripheralCondition&& other);
+
+            RW::SQL::Peripheral* ConditionPeripheral();
+            void SetConditionPeripheral(RW::SQL::Peripheral*);
+
+            
+            quint8 Priority();
+            void SetPriority(quint8 Priority);
 
             /*!
             @brief Erster Parameter für die Einschaltbedingung.
@@ -66,15 +78,26 @@ namespace RW{
             TypeOfElement TypeOfConnection();
             void SetTypeOfConnection(TypeOfElement);
 
+            QList<PeripheralCondition*> FollowUpCondition();
+            void SetFollowUpCondition(QList<PeripheralCondition*>);
+            void SetFollowUpCondition(QList<PeripheralCondition> El);
+
+            QHostAddress Ip();
+            void SetIp(QHostAddress);
+
+
 
         signals:
+            void ConditionPeripheralChanged();
             void PortChanged();
             void PinChanged();
             void StateChanged();
             void TypeOfInformationChanged();
             void DeviceTypeChanged();
             void TypeOfConnectionChanged();
-
+            void FollowUpConditionChanged();
+            void IpChanged();
+            void PriorityChanged();
         };
 
         class REMOTE_DATA_CONNECT_API PeripheralConditionList : public QAbstractListModel
@@ -101,3 +124,4 @@ namespace RW{
 
     };
 }
+Q_DECLARE_METATYPE(RW::SQL::PeripheralCondition)

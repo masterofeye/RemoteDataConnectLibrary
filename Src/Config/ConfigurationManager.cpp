@@ -278,7 +278,7 @@ namespace RW{
             m_ConfigCollectionLists->insert(ConfigurationName::FlashHistory, list);
 #ifdef DEBUG
             timer.Stop();
-            m_Logger->trace("LoadPeripheralTable needs : {} ms", timer.ElapsedMilliseconds());
+            m_Logger->trace("LoadHistory needs : {} ms", timer.ElapsedMilliseconds());
             timer.Reset();
 #endif
             return true;

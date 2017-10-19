@@ -60,9 +60,10 @@ namespace RW{
                     }
                     for (size_t i = 0; i < F.d_ptr->m_ConditionList->rowCount(); i++)
                     {
-                        d_ptr->m_ConditionList->AddData(F.d_ptr->m_ConditionList->peripheralCondition(i));
+                        d_ptr->m_ConditionList->AddData(new RW::SQL::PeripheralCondition(*F.d_ptr->m_ConditionList->peripheralCondition(i)));
                     }
                 }
+
 
                 d_ptr->m_Address = F.d_ptr->m_Address;
                 d_ptr->m_BusGUID = F.d_ptr->m_BusGUID;
@@ -103,7 +104,7 @@ namespace RW{
                     }
                     for (size_t i = 0; i < F.d_ptr->m_ConditionList->rowCount(); i++)
                     {
-                        d_ptr->m_ConditionList->AddData(F.d_ptr->m_ConditionList->peripheralCondition(i));
+                        d_ptr->m_ConditionList->AddData(new RW::SQL::PeripheralCondition(*F.d_ptr->m_ConditionList->peripheralCondition(i)));
                     }
                 }
                 d_ptr->m_Address = F.d_ptr->m_Address;

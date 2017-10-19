@@ -316,6 +316,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_PeripheralCondition_p.cpp">
       <Filter>Generierte Dateien\Release</Filter>
     </ClCompile>
+    <ClCompile Include="Src\DataBase\DataMapper\MySQL\MySqlMapper.cpp">
+      <Filter>Src\DataMapper\SQL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />

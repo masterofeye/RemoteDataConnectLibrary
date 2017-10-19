@@ -12,10 +12,11 @@ namespace RW{
 			enum class Specifier
 			{
                 GetWorkstationByHostname,
-				GetHistoryByWorkstationID,
-				GetLastestFlasHistoryEntryByWorkstationIDAndSoftwareProjectID,
-				GetSoftwareProjectsByProjectID,
+                GetHistoryByWorkstationID,
+                GetLastestFlasHistoryEntryByWorkstationIDAndSoftwareProjectID,
+                GetSoftwareProjectsByProjectID,
                 GetPeripheralByWorkstationID,
+                GetPeripheralConditionListByConditionID
 
 			};
 			Q_ENUMS(Specifier)

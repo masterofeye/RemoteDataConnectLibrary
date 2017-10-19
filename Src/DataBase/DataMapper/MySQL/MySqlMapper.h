@@ -1,4 +1,6 @@
 #pragma once
+
+
 #include "DataMapper.h"
 #include "AllEntities.h"
 #include "qsqlquery.h"
@@ -10,6 +12,7 @@
 #include "..\..\Entity\Nothing.h"
 namespace RW{
 	namespace SQL{
+
 
         const QString Insert_Workstation = "INSERT INTO Workstation (userID,hostname,mac,ip,state,projectID,workstationSetting,workstationType) VALUES (:user,:hostname,:mac,:ip,:state,( SELECT idProject FROM project WHERE name=:name),:workstationSetting,:workstationType)";
 		const QString Insert_User = "INSERT INTO user (username,password,mksUsername,mksPassword,initials,notifiyRemoteDesktop,notifiyDesktop,role ) VALUES (:username,:password,:mksUsername,:mksPassword,:initials,:notifiyRemoteDesktop,:notifiyDesktop, :role)";
@@ -89,7 +92,8 @@ namespace RW{
         const QString SelectById_PeripheralMapping = "SELECT * FROM peripheralmapping WHERE idPeripheralMapping=:idPeripheralMapping";
         const QString SelectById_Peripheral = "SELECT * FROM peripheral WHERE idPeripheral=:idPeripheral";
         const QString SelectByWorkstationID_PeripheralMapping = "SELECT * FROM peripheralmapping A inner join peripheral B on A.peripheralID = B.idPeripheral WHERE workstationID=:workstationID AND provided=1";
-        const QString SelectByPeripheralID_PeripheralConditionMapping = "SELECT A.port, A.pin, A.typeOfInformtation, A.state, A.typeOfConnection, B.idPeripheralCondition, C.internalType FROM peripheralconditionmapping A inner join peripheralcondition B on A.conditionID = B.idPeripheralCondition  inner join peripheral C on A.peripheralID = C.idPeripheral WHERE B.peripheralID=:peripheralID";
+        const QString SelectByPeripheralID_PeripheralConditionMapping = "SELECT A.priority, A.peripheralID, A.port, A.pin, A.typeOfInformation, A.state, A.typeOfCondition, A.idPeripheralCondition, D.internalType, A.followUpCondition, A.followUpID FROM peripheralcondition A inner join peripheralmapping C on A.peripheralMappingID = C.idPeripheralMapping inner join peripheral D on A.peripheralID = D.idPeripheral WHERE C.peripheralID =:peripheralID AND C.workstationID =:workstationID";
+        const QString SelectById_PeripheralCondition = "SELECT * FROM peripheralcondition WHERE idPeripheralCondition=:idPeripheralCondition";
 
         const QString SelectByIdByHardwareID_Peripheral = "SELECT * FROM peripheral WHERE hardwareID1=:hardwareID1";
         const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
@@ -115,8 +119,11 @@ namespace RW{
         const QString SelectALL_WorkstationSetting = "SELECT * FROM workstationsetting";
         const QString SelectALL_PermanentLoginReason = "SELECT * FROM permanentloginreason";
 
-		const QString Select_ElementConfigurationByWorkstationID = "SELECT el.remoteWorkstationID, t.type = type ,el.displayName,el.name,el.groupName, el.function, el.tooltip, el.pin, el.isFeature FROM elementconfiguration el join elementType t on el.elementTypeID = t.idElementType WHERE el.remoteWorkstationID = :WorkstationID";
+		const QString Select_ElementConfigurationByWorkstationID = "SELECT el.remoteWorkstationID, t.type = type ,el.displayName,el.name,el.groupName, el.function, el.tooltip, el.pin, el.isFeature FROM elementconfiguration el join elementType t on el.elementTypeID = t.idElementType WHERE el.remoteWorkstationID =:WorkstationID";
 		const QString SelectLastID = "SELECT idWorkstation from workstation ORDER BY idWorkstation DESC LIMIT 1;";
+        const QString SelectAllConditionsInPeripheralCondition = "SELECT * FROM peripheralcondition WHERE followUpID=:followUpID";
+
+
 		class Entity;
 
 		template<class T, class T2 = Nothing>
@@ -171,6 +178,7 @@ namespace RW{
 			}
 			~MySqlMapper(){}
 
+            template<class X1> QList<X1> Temp(QVariant);
 			bool Insert(const T &Data){ return false; }
 			bool Update(const T &Data){ return false; }
 
@@ -198,9 +206,14 @@ namespace RW{
                     return 0;
                 }
             }
-			QList<T> FindBySpecifier(const Specifier Value, const QVariantList Parameter){ QList<T> m; return std::move(m); }
+            QList<T> FindBySpecifier(const Specifier Value, const QVariantList Parameter);
 			//QList<T> FindBySpecifier(const Specifier Value, const T2 Parameter){ QList<T> m; return std::move(m); }
 		};
+
+
+
+
+
 
 		template<> bool MySqlMapper<LogEntry>::Insert(const LogEntry &Data)
 		{
@@ -1359,6 +1372,41 @@ namespace RW{
             return d;
         }
 
+        template<> PeripheralCondition MySqlMapper<PeripheralCondition>::FindByID(const quint64 ID, bool Flag)
+        {
+            PeripheralCondition d;
+            QSqlQuery query;
+            query.prepare(SelectById_PeripheralCondition);
+            query.bindValue(":idPeripheral", ID);
+            bool res = query.exec();
+
+            while (query.next())
+            {
+                // \!todo unschöne Konvertierung
+                d.SetID(query.value("idPeripheralCondition").toInt());
+                d.SetPort(query.value("port").toString());
+                d.SetPin(query.value("pin").toString());
+                d.SetTypeOfInformation(query.value("typeOfInformtation").toInt());
+                d.SetState(query.value("state").toBool());
+                d.SetIp(QHostAddress(query.value("ip").toString()));
+                d.SetDeviceType(query.value("internalType").value<PeripheralType>());
+                d.SetTypeOfConnection(query.value("typeOfConnection").value<RW::TypeOfElement>());
+                QVariant followUpID = query.value("followUpCondition");
+                if (!followUpID.isNull())
+                {
+                    QVariantList var;
+                    var.append(followUpID);
+                   // d.SetFollowUpCondition(FindBySpecifier(Specifier::GetPeripheralConditionListByConditionID, var));
+                }
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl PeripheralCondition FindByID failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return d;
+        }
+
 		template<> QList<Workstation> MySqlMapper<Workstation>::FindAll()
 		{
 			QList<Workstation> list;
@@ -1838,188 +1886,6 @@ namespace RW{
             return list;
         }
 
-		template<> QList<FlashHistory> MySqlMapper<FlashHistory>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
-		{
-			QList<FlashHistory> list;
-			QSqlQuery query;
-			bool res = false;
-			if (Value == Specifier::GetHistoryByWorkstationID)
-			{
-				quint64 workstationId = Parameter.first().toInt();
-				query.prepare(SelectByWorkstationId_FlashHistory);
-				query.bindValue(":workstationID", workstationId);
-				res = query.exec();
-			}
-			else if (Value == Specifier::GetLastestFlasHistoryEntryByWorkstationIDAndSoftwareProjectID)
-			{
-				quint64 workstationId = Parameter.first().toInt();
-				quint64 softwareProjectsId = Parameter.last().toInt();
-				query.prepare(SelectByWorkstationIdAndSoftwareProject_FlastHistory);
-				query.bindValue(":workstationID", workstationId);
-				query.bindValue(":softwareProjectID", softwareProjectsId);
-				res = query.exec();
-			}
 
-
-			while (query.next())
-			{
-				FlashHistory d;
-				d.SetID(query.value("idFlashHistory").toInt());
-				// \!todo unschöne Konvertierung
-				d.SetUserHistory(new User(FindByID<User>(query.value("userID").toInt())));
-				d.SetWorkstationHistory(new Workstation(FindByID<Workstation>(query.value("workstationID").toInt())));
-				d.SetSoftwareProjectHistory(new SoftwareProject(FindByID<SoftwareProject>(query.value("softwareProjectID").toInt())));
-				d.SetMajor(query.value("major"));
-				d.SetMinor(query.value("minor"));
-				d.SetPatchLevel(query.value("patchlevel"));
-				d.SetBuildnumber(query.value("buildnumber"));
-				d.SetDate(query.value("date").toDateTime());
-				list << d;
-			}
-
-			if (!res)
-			{
-				m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
-			}
-			return list;
-
-		}
-
-		template<> QList<SoftwareProject> MySqlMapper<SoftwareProject>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
-		{
-			QList<SoftwareProject> list;
-			QSqlQuery query;
-			bool res = false;
-			if (Value == Specifier::GetSoftwareProjectsByProjectID)
-			{
-				quint64 projectId = Parameter.first().toInt();
-				query.prepare(SelectByProjectID_SoftwareProject);
-				query.bindValue(":projectID", projectId);
-				res = query.exec();
-			}
-			
-			while (query.next())
-			{
-				SoftwareProject d;
-				d.SetID(query.value("idSoftwareProject").toInt());
-				d.SetProjectSw(new Project(FindByID<Project>(query.value("projectID").toInt())));
-				// \!todo unschöne Konvertierung
-				d.SetName(query.value("name").toString());
-				d.SetNaturalName(query.value("naturalName").toString());
-				list << d;
-			}
-
-			if (!res)
-			{
-				m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
-			}
-			return list;
-		}
-
-        template<> QList<Workstation> MySqlMapper<Workstation>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
-        {
-            QList<Workstation> list;
-            QSqlQuery query;
-            bool res = false;
-            if (Value == Specifier::GetWorkstationByHostname)
-            {
-                QString hostname = Parameter.first().toString();
-                query.prepare(SelectByHostname_Workstation);
-                query.bindValue(":hostname", hostname);
-                res = query.exec();
-            }
-
-            while (query.next())
-            {
-                Workstation d;
-                d.SetID(query.value("idWorkstation").toInt());
-                if (FindByID<User>(query.value("userID").toInt()).UserName() == "")
-                    d.SetCurrentUser(nullptr);
-                else
-                    d.SetCurrentUser(new User(FindByID<User>(query.value("userID").toInt())));
-                d.SetIp(query.value("ip").toString());
-                d.SetMac(query.value("mac").toString());
-                d.SetHostname(query.value("hostname").toString());
-                d.SetSettingOfWorkstation(new WorkstationSetting(FindByID<WorkstationSetting>(query.value("workstationSettingID").toInt())));
-                d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toInt())));
-                d.SetState((RW::WorkstationState)query.value("state").toInt());
-                d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
-                list << d;
-            }
-
-            if (!res)
-            {
-                m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
-            }
-            return list;
-        }
-
-        template<> QList<Peripheral> MySqlMapper<Peripheral>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
-        {
-            QList<Peripheral> list;
-            QSqlQuery query;
-            bool res = false;
-            if (Value == Specifier::GetPeripheralByWorkstationID)
-            {
-                quint64 workstationId = Parameter.first().toInt();
-                query.prepare(SelectByWorkstationID_PeripheralMapping);
-                query.bindValue(":workstationID", workstationId);
-                res = query.exec();
-            }
-
-            while (query.next())
-            {
-                Peripheral d;
-                quint64 id = query.value("idPeripheral").toInt();
-                d.SetID(id);
-                d.SetAddress(query.value("address").toInt());
-                d.SetBusGUID(query.value("busGUID").toString());
-                d.SetBusnummer(query.value("busnummer").toUInt());
-                d.SetClass(query.value("class").toString());
-                d.SetClassGUID(query.value("classGUID").toString());
-                d.SetCompatibleID(query.value("compatibleID").toStringList());
-                d.SetDescription(query.value("description").toString());
-                d.SetDeviceName(query.value("deviceName").toString());
-                d.SetEnumeratorName(query.value("enumeratorName").toString());
-                d.SetFriendlyName(query.value("friendlyName").toString());
-                d.SetHardwareID(query.value("hardwareID").toStringList());
-                d.SetInstallState(query.value("installState").toUInt());
-                d.SetInteralType(query.value("internalType").value<PeripheralType>());
-                d.SetLocationInformation(query.value("locationInformation").toString());
-                d.SetLocationPath(query.value("locationPath").toString());
-                d.SetManufacturer(query.value("manufacturer").toString());
-                d.SetServiceName(query.value("serviceName").toString());
-                d.SetWindowsDeviceType(query.value("windowsDeviceType").toUInt());
-                d.SetProvided(query.value("provided").toBool());
-                d.SetActivate(query.value("active").toBool());
-                d.SetRegistered(query.value("registered").toBool());
-
-
-                QSqlQuery subQuery;
-                subQuery.prepare(SelectByPeripheralID_PeripheralConditionMapping);
-                subQuery.bindValue(":peripheralID", id);
-                res = subQuery.exec();
-                while (subQuery.next())
-                {
-                    PeripheralCondition *p = new PeripheralCondition();
-                    p->SetPort(subQuery.value("port").toString());
-                    p->SetPin(subQuery.value("pin").toString());
-                    p->SetTypeOfInformation(subQuery.value("typeOfInformtation").toInt());
-                    p->SetState(subQuery.value("state").toBool());
-                    p->SetDeviceType(subQuery.value("internalType").value<PeripheralType>());
-                    p->SetTypeOfConnection(subQuery.value("typeOfConnection").value<RW::TypeOfElement>());
-                    d.ConditionList()->AddData(p);
-                }
-                list << d;
-            }
-
-            if (!res)
-            {
-                m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
-            }
-            return list;
-
-        }
-		
 	}
 }
