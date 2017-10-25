@@ -16,9 +16,6 @@ namespace RW{
 		private:
             WorkstationSetting * const q_ptr;
 		public:
-            bool m_PermanentLogin;
-            PermanentLoginReason* m_Reason;
-		public:
             WorkstationSettingPrivate(WorkstationSetting *Parent);
             ~WorkstationSettingPrivate();
 		signals:

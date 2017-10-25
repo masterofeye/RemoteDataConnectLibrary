@@ -846,6 +846,29 @@ namespace RW{
             return true;
         }
 
+
+        bool Repository::UpdateWorkstationSetting(WorkstationSetting Setting)
+        {
+            try{
+                Workstation rw;
+                DataFactory d(m_logger);
+                DataMapper<WorkstationSetting> *dm = d.GetMapper<WorkstationSetting>(m_Source);
+                if (dm == nullptr)
+                    return false;
+
+                if (!dm->Update(Setting))
+                    m_logger->error("UpdateWorkstationSetting failed durring update.");
+                delete dm;
+            }
+            catch (...)
+            {
+                m_logger->error("UpdateWorkstationSetting throwed a exception.");
+                return false;
+            }
+            return true;
+        }
+
+
         bool Repository::UpdateWorkstation(Workstation& R)
         {
             try{
@@ -862,43 +885,6 @@ namespace RW{
             catch (...)
             {
                 m_logger->error("UpdateWorkstation throwed a exception.");
-                return false;
-            }
-            return true;
-        }
-
-        bool Repository::UpdateWorkstationState(quint16 WorkstationId, WorkstationState& State)
-        {
-            try{
-                Workstation rw;
-                User user;
-                DataFactory d(m_logger);
-                DataMapper<Workstation> *dmRw = d.GetMapper<Workstation>(m_Source);
-                if (dmRw == nullptr)
-                    return false;
-
-                rw = dmRw->FindByID(WorkstationId, false);
-
-                if (rw.Hostname().isEmpty())
-                {
-                    m_logger->error("UpdateWorkstationState failed durring update, couldn't find Workstation with id {}.", WorkstationId);
-                    delete dmRw;
-                    return false;
-                }
-
-                rw.SetState(State);
-
-                if (!dmRw->Update(rw))
-                {
-                    m_logger->error("UpdateWorkstationState failed durring update.");
-                    delete dmRw;
-                    return false;
-                }
-                delete dmRw;
-            }
-            catch (...)
-            {
-                m_logger->error("UpdateWorkstationState throwed a exception.");
                 return false;
             }
             return true;

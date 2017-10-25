@@ -31,6 +31,8 @@ namespace RW{
             NotifyDesktop,
             StartCanEasy,
             StartRemoteApp,
+            LogoutTimeStart,
+            LogoutTimeEnd,
             UserSettingsEnd,
             /*Globalsettings*/
             GlobalSettingsStart,
@@ -38,8 +40,7 @@ namespace RW{
             RwShutdownTimer,
             BeLogOutTimer, 
             BeShutdownTimer,
-            LogoutTimeStart,
-            LogoutTimeEnd,
+            PermanentLogoutEnd,
             GlobalSettingsEnd,
             /*Project*/
             ProjectStart,
@@ -54,13 +55,13 @@ namespace RW{
             Mac,
             WorkstationType,
             WorkstationState,
+            PermanentLogin,
+            PermanentLoginReason,
+            MaxPermanentLoginTime,
             WorkstationEnd,
             /*WorkstationSettings*/
             WorkstationSettingsStart,
-            PermanentLogin,
-            PermanentLoginReason,
             WorkstationSettingsEnd,
-
             /*History*/
             HistoryStart,
             FlashedByUser,

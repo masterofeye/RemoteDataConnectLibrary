@@ -10,6 +10,7 @@ namespace spdlog
 
 namespace RW{
     REMOTE_DATA_CONNECT_API Q_NAMESPACE
+
 	enum class TypeOfElement
 	{
 		USB,
@@ -37,10 +38,10 @@ namespace RW{
 		OFF,
 		RESERVE,
 		DEFECT,
-                FREE,
-                OCCUPY
+        FREE,
+        OCCUPY
 	};
-        Q_ENUM_NS(WorkstationState)
+    Q_ENUM_NS(WorkstationState)
 
 	enum class UserRole
 	{
@@ -61,7 +62,6 @@ namespace RW{
         FrontEndPC,
         JenkinsBackendPC,
         NON
-
     };
     Q_ENUM_NS(WorkstationKind)
 

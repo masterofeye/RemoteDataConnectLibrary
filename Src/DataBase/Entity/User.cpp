@@ -1,5 +1,6 @@
 #include "User.h"
 #include "User_p.h"
+#include "UserSettings.h"
 
 #include "qdebug.h"
 namespace RW{
@@ -16,7 +17,8 @@ namespace RW{
 			m_UserName(""),
 			m_Password(""),
 			m_Role(UserRole::NON),
-            m_UserWorkstation(0)
+            m_UserWorkstation(0),
+            m_Settings(nullptr)
 		{
 		}
 
@@ -39,6 +41,17 @@ namespace RW{
 				d_ptr->m_UserName = other.d_ptr->m_UserName;
 				d_ptr->m_Role = other.d_ptr->m_Role;
                 d_ptr->m_UserWorkstation = other.d_ptr->m_UserWorkstation;
+                if (other.d_ptr->m_Settings != nullptr)
+                {
+                    if (d_ptr->m_Settings == nullptr)
+                    {
+                        d_ptr->m_Settings = new UserSettings(*other.d_ptr->m_Settings);
+                    }
+                    else
+                    {
+                        *d_ptr->m_Settings = *other.d_ptr->m_Settings;
+                    }
+                }
                 SetID(other.ID());
 			}
 		}
@@ -56,7 +69,19 @@ namespace RW{
 				d_ptr->m_UserName = other.d_ptr->m_UserName;
 				d_ptr->m_Role = other.d_ptr->m_Role;
                 d_ptr->m_UserWorkstation = other.d_ptr->m_UserWorkstation;
+                if (other.d_ptr->m_Settings != nullptr)
+                {
+                    if (d_ptr->m_Settings == nullptr)
+                    {
+                        d_ptr->m_Settings = new UserSettings(*other.d_ptr->m_Settings);
+                    }
+                    else
+                    {
+                        *d_ptr->m_Settings = *other.d_ptr->m_Settings;
+                    }
+                }
                 SetID(other.ID());
+
 			}
 			return *this;
 		}
@@ -214,5 +239,19 @@ namespace RW{
             d->m_UserWorkstation = UserWorkstation;
             emit UserWorkstationChanged();
         }
+
+        UserSettings* User::Settings()
+        {
+            Q_D(const User);
+            return d->m_Settings;
+        }
+
+        void User::SetSettings(UserSettings* Settings)
+        {
+            Q_D(User);
+            d->m_Settings = Settings;
+            emit SettingsChanged();
+        }
+
 	}
 }

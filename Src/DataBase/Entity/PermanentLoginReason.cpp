@@ -27,19 +27,26 @@ namespace RW{
 		{
 		}
 
-		PermanentLoginReason::PermanentLoginReason(const PermanentLoginReason& other) : d_ptr(new PermanentLoginReasonPrivate(this))
+		PermanentLoginReason::PermanentLoginReason(const PermanentLoginReason& other)
 		{
-            d_ptr->m_Reason = other.d_ptr->m_Reason;
-            d_ptr->m_Description = other.d_ptr->m_Description;
-            SetID(other.ID());
-
+            if (&other != nullptr)
+            {
+                d_ptr = new PermanentLoginReasonPrivate(this);
+                d_ptr->m_Reason = other.d_ptr->m_Reason;
+                d_ptr->m_Description = other.d_ptr->m_Description;
+                SetID(other.ID());
+            }
 		}
 
 		PermanentLoginReason& PermanentLoginReason::operator=(PermanentLoginReason& other)
 		{
-            d_ptr->m_Reason = other.d_ptr->m_Reason;
-            d_ptr->m_Description = other.d_ptr->m_Description;
-            SetID(other.ID());
+            if (&other != nullptr)
+            {
+                d_ptr = new PermanentLoginReasonPrivate(this);
+                d_ptr->m_Reason = other.d_ptr->m_Reason;
+                d_ptr->m_Description = other.d_ptr->m_Description;
+                SetID(other.ID());
+            }
 			return *this;
 		}
 

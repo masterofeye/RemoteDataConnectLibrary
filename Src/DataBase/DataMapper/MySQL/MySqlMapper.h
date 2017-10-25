@@ -14,7 +14,7 @@ namespace RW{
 	namespace SQL{
 
 
-        const QString Insert_Workstation = "INSERT INTO Workstation (userID,hostname,mac,ip,state,projectID,workstationSetting,workstationType) VALUES (:user,:hostname,:mac,:ip,:state,( SELECT idProject FROM project WHERE name=:name),:workstationSetting,:workstationType)";
+        const QString Insert_Workstation = "INSERT INTO Workstation (userID,hostname,mac,ip,state,projectID,workstationSetting,workstationType,permanentLogin, permanentLoginReasonID) VALUES (:user,:hostname,:mac,:ip,:state,( SELECT idProject FROM project WHERE name=:name),:workstationSetting,:workstationType,:permanentLogin,:permanentLoginReasonID, :maxPermanentLogin)";
 		const QString Insert_User = "INSERT INTO user (username,password,mksUsername,mksPassword,initials,notifiyRemoteDesktop,notifiyDesktop,role ) VALUES (:username,:password,:mksUsername,:mksPassword,:initials,:notifiyRemoteDesktop,:notifiyDesktop, :role)";
 		const QString Insert_ElementConfiguration = "INSERT INTO elementconfiguration (remoteWorkstationID, elementTypeID, displayName, name, groupName, function, tooltip, remoteViewRelevant, isFeature, pin) VALUES (:remoteWorkstationID, (SELECT idElementType FROM elementType WHERE type=:type),:displayName,:name,:groupName,:function,:tooltip,:remoteViewRelevant, :isFeature, :pin)";
 		const QString Insert_ElementType = "INSERT INTO elementType (type) VALUES (:type)";
@@ -30,11 +30,11 @@ namespace RW{
         const QString Insert_PeripheralMapping = "INSERT INTO peripheralmapping (workstationID, peripheralID,isActivate,isRegistered) VALUES (:workstationID, :peripheralID,:isActivate,:isRegistered)";
         const QString Insert_Peripheral = "INSERT INTO peripheral (address, busGUID, busnummer, class, classGUID, compatibleID, description, deviceName , enumeratorName, friendlyName, hardwareID, installState, internalType,locationInformation,locationPath,manufacturer,serviceName,windowsDeviceType,provided) VALUES  (:address, :busGUID, :busnummer, :class, :classGUID, :compatibleID, :description, :deviceName , :enumeratorName, :friendlyName, :hardwareID, :installState, :internalType,:locationInformation,:locationPath,:manufacturer,:serviceName,:windowsDeviceType, :provided)";
         const QString Insert_GlobalSetting = "INSERT INTO globalsetting ( rwShutdownTime, rwLogoutTime, beShutdownTime, beLogoutTime, logoutTimeStart, logoutTimeEnd ) VALUES ( :rwShutdownTime, :rwLogoutTime, :beShutdownTime, :beLogoutTime, :logoutTimeStart,:logoutTimeEnd)";
-        const QString Insert_WorkstationSetting = "INSERT INTO workstationsetting(permanentLogin, permanentLoginReasonID) VALUES (:permanentLogin,:permanentLoginReasonID)";
+        const QString Insert_WorkstationSetting = "INSERT INTO workstationsetting() VALUES ()";
         const QString Insert_PermanentLoginReason = "INSERT INTO permanentloginreason(reason, description) VALUES (:reason,:description)";
+        const QString Insert_UserSetting = "INSERT INTO usersettings ( logoutTimeStart, logoutTimeEnd ) VALUES ( :logoutTimeStart,:logoutTimeEnd)";
 
-
-		const QString Update_Workstation = "UPDATE workstation SET userID=:userID,hostname=:hostname,mac=:mac,ip=:ip,state=:state, projectID=:projectID, workstationSettingID=:workstationSettingID, workstationTypeID=:workstationTypeID WHERE idWorkstation=:idWorkstation";
+		const QString Update_Workstation = "UPDATE workstation SET userID=:userID,hostname=:hostname,mac=:mac,ip=:ip,state=:state, projectID=:projectID, workstationSettingID=:workstationSettingID, workstationTypeID=:workstationTypeID,permanentLogin=:permanentLogin,permanentLoginReasonID=:permanentLoginReasonID, maxPermanentLogin=:maxPermanentLogin WHERE idWorkstation=:idWorkstation";
 		const QString Update_User = "UPDATE user SET username=:username,password=:password,mksUsername=:mksUsername,mksPassword=:mksPassword,initials=:intitials,notifiyRemoteDesktop=:notifiyRemoteDesktop,notifiyDesktop=:notifiyDesktop, role=:role";
 		const QString Update_ElementConfiguration = "UPDATE elementconfiguration SET WorkstationID=:WorkstationID,type=:type,displayName=:displayName,name=:name,groupName=:groupName,function=:function, tooltip=:tooltip, remoteViewRelevant=:remoteViewRelevant, isFeature=:isFeature, pin=:pin";
 		const QString Update_ElementType = "UPDATE elementType SET type=:type";
@@ -50,8 +50,9 @@ namespace RW{
         const QString Update_PeripheralMapping = "UPDATE peripheralmapping SET workstationID=:workstationID, peripheralID=:peripheralID";
 /*TODO*/const QString Update_Peripheral = "Update peripheral SET address=:adress, subAddress1=:subAddress1, subAddress2=:subAddress2, subAddress3=:subAddress3, name=:name, type=:type, connectionType=:connectionType, serialNumber=:serialNumber, deviceName=:deviceName, description=:description, hardwareID1=:hardwareID1, hardwareID2=:hardwareID2, hardwareID3=:hardwareID3, state=:state, provided=:provided)";
         const QString Update_GlobalSetting = "UPDATE globalsetting rwShutdownTime=:rwShutdownTime, rwLogoutTime=:rwLogoutTime, beShutdownTime=:beShutdownTime, beLogoutTime=:beLogoutTime, logoutTimeStart=:logoutTimeStart, logoutTimeEnd=:logoutTimeEnd";
-        const QString Update_WorkstationSetting = "UPDATE workstationsetting permanentLogin=:permanentLogin,permamentLoginReasonID=:permanentLoginReasonID";
+        const QString Update_WorkstationSetting = "UPDATE workstationsetting SET permanentLogin=:permanentLogin,permanentLoginReasonID=:permanentLoginReasonID WHERE idWorkstationSetting=:idWorkstationSetting";
         const QString Update_PermanentLoginReason = "UPDATE permanentloginreason reason=:reason,description=:description";
+        const QString Update_UserSetting = "UPDATE INTO usersettings ( logoutTimeStart, logoutTimeEnd ) VALUES ( :logoutTimeStart,:logoutTimeEnd)";
 
 		const QString Delete_RemoteWorkstattion = "DELETE FROM Workstation WHERE idWorkstation=:idWorkstation";
 		const QString Delete_User = "DELETE FROM user WHERE idUser=:idUser";
@@ -71,6 +72,7 @@ namespace RW{
         const QString Delete_GlobalSetting= "DELETE FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
         const QString Delete_WorkstationSetting = "DELETE FROM workstationsetting WHERE idWorkstationSetting=:idWorkstationSetting";
         const QString Delete_PermanentLoginReason = "DELETE FROM permanentloginreason WHERE idPermanentLoginReason=:idPermanentLoginReason";
+        const QString Delete_UserSetting = "DELETE FROM usersettings WHERE idUserSettings=:idUserSettings";
 
 		const QString SelectById_Workstation = "SELECT * FROM Workstation WHERE idWorkstation = :idWorkstation";
         const QString SelectByHostname_Workstation = "SELECT * FROM Workstation WHERE hostname = :hostname";
@@ -99,6 +101,8 @@ namespace RW{
         const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
         const QString SelectById_WorkstationSetting = "SELECT * FROM workstationsetting WHERE idWorkstationSetting=:idWorkstationSetting";
         const QString SelectById_PermanentLoginReason= "SELECT * FROM permanentloginreason WHERE idPermanentLoginReason=:idPermanentLoginReason";
+        const QString SelectById_UserSetting = "SELECT * FROM  usersettings WHERE idUserSettings=:idUserSettings";
+
 
 		const QString SelectAll_Workstation = "SELECT * FROM workstation";
 		const QString SelectAll_User = "SELECT * FROM user";
@@ -118,11 +122,12 @@ namespace RW{
         const QString SelectAll_GlobalSetting = "SELECT * FROM globalsetting";
         const QString SelectALL_WorkstationSetting = "SELECT * FROM workstationsetting";
         const QString SelectALL_PermanentLoginReason = "SELECT * FROM permanentloginreason";
+        const QString SelectALL_UserSetting = "SELECT * FROM  usersettings";
 
 		const QString Select_ElementConfigurationByWorkstationID = "SELECT el.remoteWorkstationID, t.type = type ,el.displayName,el.name,el.groupName, el.function, el.tooltip, el.pin, el.isFeature FROM elementconfiguration el join elementType t on el.elementTypeID = t.idElementType WHERE el.remoteWorkstationID =:WorkstationID";
 		const QString SelectLastID = "SELECT idWorkstation from workstation ORDER BY idWorkstation DESC LIMIT 1;";
         const QString SelectAllConditionsInPeripheralCondition = "SELECT * FROM peripheralcondition WHERE followUpID=:followUpID";
-
+        const QString SelectUserSettingsByUserID = "SELECT* FROM usersettings WHERE userID=:userID";
 
 		class Entity;
 
@@ -178,7 +183,6 @@ namespace RW{
 			}
 			~MySqlMapper(){}
 
-            template<class X1> QList<X1> Temp(QVariant);
 			bool Insert(const T &Data){ return false; }
 			bool Update(const T &Data){ return false; }
 
@@ -207,12 +211,7 @@ namespace RW{
                 }
             }
             QList<T> FindBySpecifier(const Specifier Value, const QVariantList Parameter);
-			//QList<T> FindBySpecifier(const Specifier Value, const T2 Parameter){ QList<T> m; return std::move(m); }
 		};
-
-
-
-
 
 
 		template<> bool MySqlMapper<LogEntry>::Insert(const LogEntry &Data)
@@ -256,6 +255,9 @@ namespace RW{
             query.bindValue(":workstationType", d.TypeOfWorkstation()->ID());
             query.bindValue(":workstationSetting", d.SettingOfWorkstation()->ID());
 			query.bindValue(":state",(int) d.State());
+            query.bindValue(":permanentLogin", d.PermanentLogin());
+            query.bindValue(":permanentLoginReasonID", d.Reason()->ID());
+            query.bindValue(":maxPermanentLogin", d.MaxPermanentLogin());
 			if (d.AssignedProject() == nullptr)
 			{
 				m_logger->error("Project entry can't be NULL!");
@@ -561,8 +563,6 @@ namespace RW{
             query.bindValue(":beShutdownTimer", d.BeShutdownTimer());
             query.bindValue(":rwLogOutTimerChanged", d.RwLogOutTimer());
             query.bindValue(":rwShutdownTimerChanged", d.RwShutdownTimer());
-            query.bindValue(":logoutTimeStart", d.LogoutTimeStart());
-            query.bindValue(":logoutTimeEnd", d.LogoutTimeEnd());
 
             bool res = query.exec();
             if (!res)
@@ -578,8 +578,7 @@ namespace RW{
 
             QSqlQuery query;
             query.prepare(Insert_WorkstationSetting);
-            query.bindValue(":permanentLogin", d.PermanentLogin());
-            query.bindValue(":permanentLoginReasonID", d.Reason()->ID());
+ 
 
             bool res = query.exec();
             if (!res)
@@ -606,6 +605,23 @@ namespace RW{
             return res;
         }
 
+        template<> bool MySqlMapper<UserSettings>::Insert(const UserSettings &Data)
+        {
+            UserSettings d = Data;
+
+            QSqlQuery query;
+            query.prepare(Insert_UserSetting);
+            query.bindValue(":logoutTimeStart", d.LogoutTimeStart());
+            query.bindValue(":logoutTimeEnd", d.LogoutTimeEnd());
+
+            bool res = query.exec();
+            if (!res)
+            {
+                m_logger->error("Tbl UserSettings insert failed. Error: {}", query.lastError().text().toUtf8().constData());
+            }
+            return res;
+        }
+
 		template<> bool MySqlMapper<Workstation>::Update(const Workstation &Data)
 		{
 			Workstation d = Data;
@@ -621,6 +637,9 @@ namespace RW{
             query.bindValue(":workstationTypeID", d.TypeOfWorkstation()->ID());
             query.bindValue(":workstationSettingID", d.SettingOfWorkstation()->ID());
 			query.bindValue(":state", (int)d.State());
+            query.bindValue(":permanentLogin", d.PermanentLogin());
+            query.bindValue(":permanentLoginReasonID", d.Reason()->ID());
+            query.bindValue(":maxPermanentLogin", d.MaxPermanentLogin());
             bool res = query.exec();
 			if (!res)
 			{
@@ -858,8 +877,6 @@ namespace RW{
             query.bindValue(":beShutdownTimer", d.BeShutdownTimer());
             query.bindValue(":rwLogOutTimerChanged", d.RwLogOutTimer());
             query.bindValue(":rwShutdownTimerChanged", d.RwShutdownTimer());
-            query.bindValue(":logoutTimeStart", d.LogoutTimeStart());
-            query.bindValue(":logoutTimeEnd", d.LogoutTimeEnd());
 
             bool res = query.exec();
             if (!res)
@@ -875,8 +892,8 @@ namespace RW{
 
             QSqlQuery query;
             query.prepare(Update_WorkstationSetting);
-            query.bindValue(":permanentLogin", d.PermanentLogin());
-            query.bindValue(":permanentLoginReasonID", d.Reason()->ID());
+            query.bindValue(":idWorkstationSetting", d.ID());
+            //query.bindValue(":permanentLoginReasonID", d.Reason()->ID());
 
             bool res = query.exec();
             if (!res)
@@ -903,6 +920,23 @@ namespace RW{
             return res;
         }
 
+        template<> bool MySqlMapper<UserSettings>::Update(const UserSettings &Data)
+        {
+            UserSettings d = Data;
+
+            QSqlQuery query;
+            query.prepare(Update_UserSetting);
+            query.bindValue(":logoutTimeStart", d.LogoutTimeStart());
+            query.bindValue(":logoutTimeEnd", d.LogoutTimeEnd());
+
+            bool res = query.exec();
+            if (!res)
+            {
+                m_logger->error("Tbl UserSettings Update failed. Error: {}", query.lastError().text().toUtf8().constData());
+            }
+            return res;
+        }
+
 
 		template<> Workstation MySqlMapper<Workstation>::FindByID(const quint64 ID, bool Flag)
 		{
@@ -925,6 +959,9 @@ namespace RW{
                 d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toInt())));
 				d.SetState((RW::WorkstationState)query.value("state").toInt());
 				d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
+                d.SetPermanentLogin(query.value("permanentLogin").toBool());
+                d.SetReason(new PermanentLoginReason(FindByID<PermanentLoginReason>(query.value("permanentLoginReasonID").toInt())));
+                d.SetMaxPermanentLogin(query.value("maxPermanentLogin").toDateTime());
 
 				QSqlQuery query;
 				query.prepare(Select_ElementConfigurationByWorkstationID);
@@ -958,35 +995,7 @@ namespace RW{
 			return d;
 		}
 
-		template<> User MySqlMapper<User>::FindByID(const quint64 ID, bool Flag)
-		{
-			User d;
-			QSqlQuery query;
-			query.prepare(SelectById_User);
-			query.bindValue(":idUser", ID);
-			bool res = query.exec();
-			while (query.next())
-			{
 
-                d.SetID(query.value("idUser").toInt());
-				d.SetUserName(query.value("username").toString());
-				d.SetPassword(query.value("password").toString());
-				d.SetMKSUsername(query.value("mksUsername").toString());
-				d.SetMKSPassword(query.value("mksPassword").toString());
-				d.SetInitials(query.value("initials").toString());
-				d.SetNotifiyRemoteDesktop(query.value("notifiyRemoteDesktop").toBool());
-				d.SetNotifiyDesktop(query.value("notifiyDesktop").toBool());
-				//@todo unschöner cast hier
-				d.SetRole((RW::UserRole)query.value("role").toInt());
-                d.SetUserWorkstation(query.value("userWorkstation").toInt());
-			}
-
-			if (!res)
-			{
-				m_logger->error("Tbl user FindByID failed. Error:{}", query.lastError().text().toUtf8().constData());
-			}
-			return d;
-		}
 
 
 		template<> ElementConfiguration MySqlMapper<ElementConfiguration>::FindByID(const quint64 ID, bool Flag)
@@ -1317,8 +1326,6 @@ namespace RW{
                 d.SetRwShutdownTimer(query.value("rwShutdownTime").toInt());
                 d.SetBeLogOutTimer(query.value("beLogOutTime").toInt());
                 d.SetBeShutdownTimer(query.value("beShutdownTime").toInt());
-                d.SetLogoutTimeStart(query.value("logoutTimeStart").toTime());
-                d.SetLogoutTimeEnd(query.value("logoutTimeEnd").toTime());
             }
 
             if (!res)
@@ -1339,8 +1346,7 @@ namespace RW{
             while (query.next())
             {
                 d.SetID(query.value("idWorkstationSetting").toInt());
-                d.SetPermanentLogin(query.value("permanentLogin").toBool());
-                d.SetReason(new PermanentLoginReason(FindByID<PermanentLoginReason>(query.value("permanentLoginReasonID").toInt())));
+
             }
 
             if (!res)
@@ -1407,6 +1413,28 @@ namespace RW{
             return d;
         }
 
+        template<> UserSettings MySqlMapper<UserSettings>::FindByID(const quint64 ID, bool Flag)
+        {
+            UserSettings d;
+            QSqlQuery query;
+            query.prepare(SelectById_UserSetting);
+            query.bindValue(":idUserSetting", ID);
+            bool res = query.exec();
+
+            while (query.next())
+            {
+
+                d.SetLogoutTimeStart(query.value("logoutTimeStart").toTime());
+                d.SetLogoutTimeEnd(query.value("logoutTimeEnd").toTime());
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl UserSettings FindByID failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return d;
+        }
+
 		template<> QList<Workstation> MySqlMapper<Workstation>::FindAll()
 		{
 			QList<Workstation> list;
@@ -1425,6 +1453,9 @@ namespace RW{
                 d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toInt())));
 				d.SetState((RW::WorkstationState)query.value("state").toInt());
 				d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
+                d.SetPermanentLogin(query.value("permanentLogin").toBool());
+                d.SetReason(new PermanentLoginReason(FindByID<PermanentLoginReason>(query.value("permanentLoginReasonID").toInt())));
+                d.SetMaxPermanentLogin(query.value("maxPermanentLogin").toDateTime());
 
 				//QSqlQuery query;
 				//query.prepare(Select_ElementConfigurationByWorkstationID);
@@ -1477,6 +1508,7 @@ namespace RW{
 				d.SetNotifiyDesktop(query.value("notifiyDesktop").toBool());
 				d.SetRole((RW::UserRole)query.value("role").toInt());
                 d.SetUserWorkstation(query.value("userWorkstation").toInt());
+                d.SetSettings(new UserSettings(FindByID<UserSettings>(query.value("userID").toInt())));
 				list << d;
 			}
 
@@ -1826,8 +1858,6 @@ namespace RW{
                 d.SetRwShutdownTimer(query.value("rwShutdownTimer").toInt());
                 d.SetBeLogOutTimer(query.value("beLogOutTimer").toInt());
                 d.SetBeShutdownTimer(query.value("beShutdownTimer").toInt());
-                d.SetLogoutTimeStart(query.value("logoutTimeStart").toTime());
-                d.SetLogoutTimeEnd(query.value("logoutTimeEnd").toTime());
                 list << d;
             }
 
@@ -1850,8 +1880,6 @@ namespace RW{
             {
                 WorkstationSetting d;
                 d.SetID(query.value("idWorkstationSetting").toInt());
-                d.SetPermanentLogin(query.value("permanentLogin").toInt());
-                d.SetReason(new PermanentLoginReason(FindByID<PermanentLoginReason>(query.value("permanentLoginReasonID").toInt())));
                 list << d;
             }
 
@@ -1882,6 +1910,30 @@ namespace RW{
             if (!res)
             {
                 m_logger->error("Tbl PermanentLoginReason FindAll failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return list;
+        }
+
+        template<> QList<UserSettings> MySqlMapper<UserSettings>::FindAll()
+        {
+            QList<UserSettings> list;
+            QSqlQuery query;
+            query.prepare(SelectALL_UserSetting);
+            bool res = query.exec();
+
+            while (query.next())
+            {
+
+                UserSettings d;
+                d.SetLogoutTimeStart(query.value("logoutTimeStart").toTime());
+                d.SetLogoutTimeEnd(query.value("logoutTimeEnd").toTime());
+                list << d;
+
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl Usersettings FindAll failed. Error:{}", query.lastError().text().toUtf8().constData());
             }
             return list;
         }

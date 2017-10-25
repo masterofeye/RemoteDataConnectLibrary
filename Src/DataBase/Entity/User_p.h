@@ -1,11 +1,14 @@
 #pragma once
 #include <qobject.h>
+#include <QTime>
+
 #include "SQLGlobal.h"
 
 namespace RW{
 	namespace SQL{
 
 		class User;
+        class UserSettings;
 		class UserPrivate: public QObject
 		{
 			Q_OBJECT
@@ -21,6 +24,7 @@ namespace RW{
 			bool m_NotifiyDesktop;
 			UserRole m_Role;
             quint64 m_UserWorkstation;
+            UserSettings* m_Settings;
 		private:
 			User * const q_ptr;
 		public:

@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "qdebug.h"
 #include <QQmlListProperty>
+#include <QDateTime>
 
 namespace RW{
 	enum class WorkstationState;
@@ -14,7 +15,7 @@ namespace RW{
         class WorkstationType;
         class Peripheral;
         class WorkstationSetting;
-        
+        class PermanentLoginReason;
 
 		class REMOTE_DATA_CONNECT_API Workstation :
 			public Entity
@@ -30,6 +31,9 @@ namespace RW{
             Q_PROPERTY(WorkstationType* TypeOfWorkstation READ TypeOfWorkstation WRITE SetTypeOfWorkstation NOTIFY TypeOfWorkstationChanged)
             Q_PROPERTY(WorkstationSetting* SettingOfWorkstation READ SettingOfWorkstation WRITE SetSettingOfWorkstation NOTIFY SettingOfWorkstationChanged)
             Q_PROPERTY(QQmlListProperty<RW::SQL::Peripheral> PeripheralListQml READ PeripheralListQml NOTIFY PeripheralListQmlChanged)
+            Q_PROPERTY(bool PermanentLogin READ PermanentLogin WRITE SetPermanentLogin NOTIFY PermanentLoginChanged)
+            Q_PROPERTY(PermanentLoginReason* Reason READ Reason WRITE SetReason NOTIFY ReasonChanged)
+            Q_PROPERTY(QDateTime MaxPermanentLogin READ MaxPermanentLogin WRITE SetMaxPermanentLogin NOTIFY MaxPermanentLoginChanged)
 
 			Q_CLASSINFO("Version", "0.1.1")
 		private:
@@ -91,6 +95,15 @@ namespace RW{
             void SetPeripheralList(QList<Peripheral*> PeripheralList);
             void AddPeripheral(Peripheral Peripheral);
 
+            bool PermanentLogin();
+            void SetPermanentLogin(bool PermanentLogin);
+
+            PermanentLoginReason* Reason();
+            void SetReason(PermanentLoginReason*);
+
+            QDateTime MaxPermanentLogin();
+            void SetMaxPermanentLogin(QDateTime);
+
 		signals:
 			void ElementCfgChanged();
 			void CurrentUserChanged();
@@ -107,6 +120,9 @@ namespace RW{
             void TypeOfWorkstationChanged();
             void PeripheralListQmlChanged();
             void SettingOfWorkstationChanged();
+            void PermanentLoginChanged();
+            void ReasonChanged();
+            void MaxPermanentLoginChanged();
 
 		};
 	}

@@ -1,7 +1,5 @@
 #pragma once
 #include <qobject.h>
-#include <QTime>
-
 #include "SQLGlobal.h"
 
 namespace RW
@@ -24,8 +22,7 @@ namespace RW
             quint64 m_RwShutdownTimer;
             quint64 m_BeLogOutTimer;
             quint64 m_BeShutdownTimer;
-            QTime m_LogoutTimeStart;
-            QTime m_LogoutTimeEnd;
+
 		};
 	}
 }

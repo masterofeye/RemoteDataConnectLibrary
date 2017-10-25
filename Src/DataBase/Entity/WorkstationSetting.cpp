@@ -9,8 +9,8 @@ namespace RW{
 
 		WorkstationSettingPrivate::WorkstationSettingPrivate(WorkstationSetting *Parent) :
 			QObject(Parent),
-            m_PermanentLogin(false),
 			q_ptr(Parent)
+
 		{
 		}
 
@@ -27,17 +27,25 @@ namespace RW{
 		{
 		}
 
-		WorkstationSetting::WorkstationSetting(const WorkstationSetting& other) : d_ptr(new WorkstationSettingPrivate(this))
-		{
-            d_ptr->m_PermanentLogin = other.d_ptr->m_PermanentLogin;
-            SetID(other.ID());
+		WorkstationSetting::WorkstationSetting(const WorkstationSetting& other)
+        {
+            if (&other != nullptr)
+            {
+                d_ptr = new WorkstationSettingPrivate(this);
+                SetID(other.ID());
+            }
+
 
 		}
 
 		WorkstationSetting& WorkstationSetting::operator=(WorkstationSetting& other)
 		{
-			std::swap(d_ptr, const_cast<WorkstationSettingPrivate*>(other.d_ptr));
-            SetID(other.ID());
+            if (&other != nullptr)
+            {
+                d_ptr = new WorkstationSettingPrivate(this);
+
+                SetID(other.ID());
+            }
 			return *this;
 		}
 
@@ -60,30 +68,5 @@ namespace RW{
 		}
 
 
-        bool WorkstationSetting::PermanentLogin()
-		{
-			Q_D(WorkstationSetting);
-			return d_ptr->m_PermanentLogin;
-		}
-
-        void WorkstationSetting::SetPermanentLogin(bool PermanentLogin)
-		{ 
-			Q_D(WorkstationSetting);
-            d_ptr->m_PermanentLogin = PermanentLogin;
-			emit d_ptr->PermanentLoginChanged();
-		}
-
-        PermanentLoginReason* WorkstationSetting::Reason()
-        {
-            Q_D(WorkstationSetting);
-            return d_ptr->m_Reason;
-        }
-
-        void WorkstationSetting::SetReason(PermanentLoginReason* Reason)
-        {
-            Q_D(WorkstationSetting);
-            d_ptr->m_Reason = Reason;
-            emit ReasonChanged();
-        }
 	}
 }

@@ -319,6 +319,21 @@
     <ClCompile Include="Src\DataBase\DataMapper\MySQL\MySqlMapper.cpp">
       <Filter>Src\DataMapper\SQL</Filter>
     </ClCompile>
+    <ClCompile Include="Src\DataBase\Entity\UserSettings.cpp">
+      <Filter>Src\DataBase\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_UserSettings_p.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_UserSettings.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_UserSettings.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_UserSettings_p.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -466,6 +481,12 @@
       <Filter>Src\DataBase\Entity</Filter>
     </CustomBuild>
     <CustomBuild Include="Src\DataBase\Entity\PeripheralCondition_p.h">
+      <Filter>Src\DataBase\Entity</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\DataBase\Entity\UserSettings_p.h">
+      <Filter>Src\DataBase\Entity</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Src\DataBase\Entity\UserSettings.h">
       <Filter>Src\DataBase\Entity</Filter>
     </CustomBuild>
   </ItemGroup>

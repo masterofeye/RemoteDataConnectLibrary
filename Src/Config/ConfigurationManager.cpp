@@ -144,6 +144,9 @@ namespace RW{
                 m_ConfigCollection->insert(ConfigurationName::ProjectName, rw.AssignedProject()->Projectname());
                 m_ConfigCollection->insert(ConfigurationName::ProjectId, rw.AssignedProject()->ID());
                 m_ConfigCollection->insert(ConfigurationName::WorkstationType, QVariant::fromValue(rw.TypeOfWorkstation()->Type()));
+                m_ConfigCollection->insert(ConfigurationName::PermanentLogin, rw.PermanentLogin());
+                m_ConfigCollection->insert(ConfigurationName::PermanentLoginReason, rw.Reason()->Reason());
+                m_ConfigCollection->insert(ConfigurationName::MaxPermanentLoginTime, rw.MaxPermanentLogin());
 #ifdef DEBUG
                 timer.Stop();
                 m_Logger->trace("LoadWorkstation needs : {} ms", timer.ElapsedMilliseconds());
@@ -230,6 +233,8 @@ namespace RW{
             RW::SQL::Workstation workstation;
             m_Repository->GetWorkstationByID(user.UserWorkstation(), workstation);
 
+            m_ConfigCollection->insert(ConfigurationName::LogoutTimeStart, user.Settings()->LogoutTimeStart());
+            m_ConfigCollection->insert(ConfigurationName::LogoutTimeEnd, user.Settings()->LogoutTimeEnd());
             m_ConfigCollection->insert(ConfigurationName::UserName, user.UserName());
             m_ConfigCollection->insert(ConfigurationName::UserPassword, user.Password());
             m_ConfigCollection->insert(ConfigurationName::UserRole, QVariant::fromValue(user.Role()));
@@ -238,6 +243,7 @@ namespace RW{
             m_ConfigCollection->insert(ConfigurationName::Initials, user.Initials());
             m_ConfigCollection->insert(ConfigurationName::UserWorkstation, workstation.Hostname());
             m_ConfigCollection->insert(ConfigurationName::UserId, user.ID());
+
 #ifdef DEBUG
             timer.Stop();
             m_Logger->trace("LoadUser needs : {} ms", timer.ElapsedMilliseconds());
@@ -290,7 +296,7 @@ namespace RW{
             if ((m_Repository != nullptr))
             {
 #ifdef DEBUG
-                if (!m_Repository->GetGlobalSettingByID(1, setting))
+                if (!m_Repository->GetGlobalSettingByID(3, setting))
                     return false;
                 
 #else
@@ -303,8 +309,6 @@ namespace RW{
                 return false;
             }
 
-            m_ConfigCollection->insert(ConfigurationName::LogoutTimeStart, setting.LogoutTimeStart());
-            m_ConfigCollection->insert(ConfigurationName::LogoutTimeEnd, setting.LogoutTimeEnd());
             m_ConfigCollection->insert(ConfigurationName::RwLogOutTimer, setting.RwLogOutTimer());
             m_ConfigCollection->insert(ConfigurationName::RwShutdownTimer, setting.RwShutdownTimer());
             m_ConfigCollection->insert(ConfigurationName::BeLogOutTimer, setting.BeLogOutTimer());
@@ -458,13 +462,12 @@ namespace RW{
         void ConfigurationManagerPrivate::UpdateWorkstation(const ConfigurationName &Key, const QVariant &Val)
         {
             m_ConfigCollection->insert(Key, Val);
-            if (Key == ConfigurationName::WorkstationState)
+            if (Key == ConfigurationName::WorkstationState || Key == ConfigurationName::PermanentLogin)
                 emit SaveConfiguration(Key, ChangeReason::WorkstationStatusUpdate);
         }
         
         void ConfigurationManagerPrivate::UpdateWorkstationSettings(const ConfigurationName &Key, const QVariant &Val)
         {
-
         }
 
         void ConfigurationManagerPrivate::UpdateGlobalSettings(const ConfigurationName &Key, const QVariant &Val)
@@ -482,7 +485,9 @@ namespace RW{
         void ConfigurationManagerPrivate::OnSaveConfiguration(ConfigurationName Key, ChangeReason Reason)
         {
             if (Key > ConfigurationName::UserStart && Key < ConfigurationName::UserEnd ||
-                Key > ConfigurationName::WorkstationStart && Key < ConfigurationName::WorkstationEnd)
+                Key > ConfigurationName::WorkstationStart && Key < ConfigurationName::WorkstationEnd ||
+                Key > ConfigurationName::WorkstationSettingsStart && Key < ConfigurationName::WorkstationSettingsEnd
+                )
             {
                 switch (Reason)
                 {
@@ -506,19 +511,25 @@ namespace RW{
                 case ChangeReason::UserSave:
                     UpdateUser();
                     break;
+                case ChangeReason::PermanentLoginChanged:
                 case ChangeReason::WorkstationStatusUpdate:
                 {
                     RW::WorkstationState state = m_ConfigCollection->value(ConfigurationName::WorkstationState).value<RW::WorkstationState>();
+                    RW::SQL::Workstation rw;
                     //Überprüft ob die UserIs wirklich Valid ist ... Dies soll verhindern, das Ungültige ID's in die Datenbank gelangen
                     QVariant userid = m_ConfigCollection->value(ConfigurationName::UserId);
                     RW::SQL::User user;
                     m_Repository->GetUserByName(m_ConfigCollection->value(ConfigurationName::UserName).toString(), user);
+                    m_Repository->GetWorkstationByID(m_ConfigCollection->value(ConfigurationName::WorkstationId).toInt(), rw);
+                    rw.SetPermanentLogin(m_ConfigCollection->value(ConfigurationName::PermanentLogin).toBool());
+                    rw.SetState(state);
                     if (userid.isValid() && !userid.isNull() && user.IsValid())
-                        m_Repository->UpdateWorkstationState(m_ConfigCollection->value(ConfigurationName::WorkstationId).toInt(), state);
+                        m_Repository->UpdateWorkstation(rw);
                     else
                         m_Logger->critical("OnSaveConfiguration: invalid user id.");
                     break;
                 }
+               
                 default:
                     m_Logger->warn("OnSaveConfiguration: invalid change reason");
                     break;
@@ -589,6 +600,10 @@ namespace RW{
             else if (Key > ConfigurationName::WorkstationStart && Key < ConfigurationName::WorkstationEnd)
             {
                 d_ptr->UpdateWorkstation(Key, Val);
+            }
+            else if (Key > ConfigurationName::WorkstationSettingsStart && Key < ConfigurationName::WorkstationSettingsEnd)
+            {
+                d_ptr->UpdateWorkstationSettings(Key, Val);
             }
 
             return true;

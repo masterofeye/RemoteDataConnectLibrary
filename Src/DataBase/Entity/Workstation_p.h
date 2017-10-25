@@ -1,8 +1,9 @@
 #pragma once
 #include <qobject.h>
-
+#include <QDateTime>
 #include "SQLGlobal.h"
 #include "Product.h"
+
 
 namespace RW{
 	namespace SQL{
@@ -14,6 +15,7 @@ namespace RW{
         class WorkstationType;
         class WorkstationSetting;
         class Peripheral;
+        class PermanentLoginReason;
 		class WorkstationPrivate : public QObject
 		{
 			Q_OBJECT
@@ -42,6 +44,9 @@ namespace RW{
 			WorkstationState m_State;
             WorkstationType* m_Type;
             QList<Peripheral*> m_PeripheralList;
+            bool m_PermanentLogin;
+            PermanentLoginReason* m_Reason;
+            QDateTime m_MaxPermamentLogin;
 
 		};
 	}

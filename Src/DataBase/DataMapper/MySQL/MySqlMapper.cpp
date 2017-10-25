@@ -53,6 +53,35 @@ namespace RW{
             QList<GlobalSetting> m; return std::move(m);
         }
 
+        template<> QList<UserSettings> MySqlMapper<UserSettings>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
+        {
+            QList<UserSettings> list;
+            QSqlQuery query;
+            bool res = false;
+            if (Value == Specifier::GetUserSettingByUserID)
+            {
+                quint64 userID = Parameter.first().toInt();
+                query.prepare(SelectUserSettingsByUserID);
+                query.bindValue(":userID", userID);
+                res = query.exec();
+            }
+
+            while (query.next())
+            {
+                UserSettings d;
+                d.SetLogoutTimeStart(query.value("logoutTimeStart").toTime());
+                d.SetLogoutTimeEnd(query.value("logoutTimeEnd").toTime());
+                list << d;
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl UserSettings FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return list;
+        }
+
+
         template<> QList<PeripheralCondition> MySqlMapper<PeripheralCondition>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
         {
             QList<PeripheralCondition> list;
@@ -99,23 +128,6 @@ namespace RW{
             return list;
         }
 
-        template<class T, class T2 = Nothing> template<class X1> QList<X1> MySqlMapper<T, T2>::Temp(QVariant test)
-        {
-        }
-
-        template<> template<> QList<PeripheralCondition> MySqlMapper<Peripheral>::Temp<PeripheralCondition>(QVariant test)
-        {
-            QVariantList var;
-            var.append(test);
-            RW::SQL::DataFactory dd(m_logger);
-            DataMapper<PeripheralCondition> *dm = dd.GetMapper<PeripheralCondition>(SourceType::SQL);
-            QList<PeripheralCondition> res = dm->FindBySpecifier(DataMapper<PeripheralCondition>::Specifier::GetPeripheralConditionListByConditionID, var);
-
-            delete dm;
-            dm = nullptr;
-
-            return res;
-        }
 
 
         template<> QList<Peripheral> MySqlMapper<Peripheral>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
@@ -166,6 +178,10 @@ namespace RW{
                 subQuery.bindValue(":workstationID", workstationId);
                 
                 res = subQuery.exec();
+
+                RW::SQL::DataFactory dd(m_logger);
+                DataMapper<PeripheralCondition> *dm = dd.GetMapper<PeripheralCondition>(SourceType::SQL);
+
                 while (subQuery.next())
                 {
                     PeripheralCondition *p = new PeripheralCondition();
@@ -181,14 +197,22 @@ namespace RW{
                     QVariant followUpID = subQuery.value("followUpCondition");
                     if (!followUpID.isNull())
                     {
-                        QList<PeripheralCondition> temp = Temp<PeripheralCondition>(followUpID);
-                        p->SetFollowUpCondition(temp);
+                        QVariantList var;
+                        var.append(followUpID);
+
+                        QList<PeripheralCondition> res = dm->FindBySpecifier(DataMapper<PeripheralCondition>::Specifier::GetPeripheralConditionListByConditionID, var);
+                        p->SetFollowUpCondition(res);
 
                     }
                     d.ConditionList()->AddData(p);
                 }
                 list << d;
+
+                delete dm;
+                dm = nullptr;
             }
+
+
 
             if (!res)
             {
@@ -303,6 +327,9 @@ namespace RW{
                 d.SetTypeOfWorkstation(new WorkstationType(FindByID<WorkstationType>(query.value("workstationTypeID").toInt())));
                 d.SetState((RW::WorkstationState)query.value("state").toInt());
                 d.setAssignedProject(new Project(FindByID<Project>(query.value("projectID").toInt())));
+                d.SetPermanentLogin(query.value("permanentLogin").toBool());
+                d.SetReason(new PermanentLoginReason(FindByID<PermanentLoginReason>(query.value("permanentLoginReasonID").toInt())));
+                d.SetMaxPermanentLogin(query.value("maxPermanentLogin").toDateTime());
                 list << d;
             }
 
@@ -313,6 +340,48 @@ namespace RW{
             return list;
         }
 
+        template<> User MySqlMapper<User>::FindByID(const quint64 ID, bool Flag)
+        {
+            User d;
+            QSqlQuery query;
+            query.prepare(SelectById_User);
+            query.bindValue(":idUser", ID);
+            bool res = query.exec();
+
+            RW::SQL::DataFactory dd(m_logger);
+            DataMapper<UserSettings> *dm = dd.GetMapper<UserSettings>(SourceType::SQL);
+
+            while (query.next())
+            {
+
+                d.SetID(query.value("idUser").toInt());
+                d.SetUserName(query.value("username").toString());
+                d.SetPassword(query.value("password").toString());
+                d.SetMKSUsername(query.value("mksUsername").toString());
+                d.SetMKSPassword(query.value("mksPassword").toString());
+                d.SetInitials(query.value("initials").toString());
+                d.SetNotifiyRemoteDesktop(query.value("notifiyRemoteDesktop").toBool());
+                d.SetNotifiyDesktop(query.value("notifiyDesktop").toBool());
+                //@todo unschöner cast hier
+                d.SetRole((RW::UserRole)query.value("role").toInt());
+                d.SetUserWorkstation(query.value("userWorkstation").toInt());
+
+                QVariantList var;
+                var.append(query.value("idUser").toInt());
+
+                QList<UserSettings> res = dm->FindBySpecifier(DataMapper<UserSettings>::Specifier::GetUserSettingByUserID, var);
+                d.SetSettings(new UserSettings(res.first()));
+            }
+
+            delete dm;
+            dm = nullptr;
+
+            if (!res)
+            {
+                m_logger->error("Tbl user FindByID failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return d;
+        }
 
 
     }

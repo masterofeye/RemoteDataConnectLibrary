@@ -14,7 +14,8 @@ namespace RW{
         {
             UserChanged,
             UserSave,
-            WorkstationStatusUpdate
+            WorkstationStatusUpdate,
+            PermanentLoginChanged,
         };
 
         class ConfigurationManagerPrivate :

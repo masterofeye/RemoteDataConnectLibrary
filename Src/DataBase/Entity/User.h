@@ -1,11 +1,12 @@
 #pragma once
 #include "Entity.h"
 
+
 namespace RW{
 	enum class UserRole;
 	namespace SQL{
 
-
+        class UserSettings;
 		class UserPrivate;
 		class REMOTE_DATA_CONNECT_API User :
 			public Entity
@@ -20,7 +21,8 @@ namespace RW{
 			Q_PROPERTY(bool NotifiyDesktop READ NotifiyDesktop WRITE SetNotifiyDesktop NOTIFY NotifiyDesktopChanged)
 			Q_PROPERTY(UserRole Role READ Role WRITE SetRole NOTIFY RoleChanged)
             Q_PROPERTY(quint64 UserWorkstation READ UserWorkstation WRITE SetUserWorkstation NOTIFY UserWorkstationChanged)
-			Q_CLASSINFO("Version", "0.0.1")
+            Q_PROPERTY(UserSettings* Settings READ Settings WRITE SetSettings NOTIFY SettingsChanged)
+			Q_CLASSINFO("Version", "0.0.2")
 
 		private:
 			UserPrivate *d_ptr;
@@ -62,6 +64,9 @@ namespace RW{
             quint64 UserWorkstation();
             void SetUserWorkstation(quint64 UserWorkstation);
 
+            UserSettings* Settings();
+            void SetSettings(UserSettings* Settings);
+
 		signals:
 			void UserNameChanged();
 			void PasswordChanged();
@@ -72,6 +77,7 @@ namespace RW{
 			void NotifiyDesktopChanged();
 			void RoleChanged();
             void UserWorkstationChanged();
+            void SettingsChanged();
 		};
 	}
 }

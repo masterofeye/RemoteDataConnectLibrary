@@ -31,6 +31,7 @@ namespace spdlog
             LocalCommunicationServer,
             WtsSession,
             WtsSessionMananger,
+            PermanentLoginState,
             NON,
 
         };

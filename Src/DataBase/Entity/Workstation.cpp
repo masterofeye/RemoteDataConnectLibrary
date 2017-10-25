@@ -7,6 +7,7 @@
 #include "Peripheral.h"
 #include "WorkstationSetting.h"
 #include "WorkstationType.h"
+#include "PermanentLoginReason.h"
 
 namespace RW{
 	namespace SQL{
@@ -22,8 +23,10 @@ namespace RW{
             m_Type(nullptr),
 			m_State(RW::WorkstationState::OFF),
 			m_ElementConfiguration(),
-			m_Project(nullptr)
-            
+			m_Project(nullptr),
+            m_Reason(nullptr),
+            m_PermanentLogin(false),
+            m_MaxPermamentLogin(QDateTime(QDate::currentDate(), QTime(23,59,0,0)))
 		{
 		}
 
@@ -71,7 +74,21 @@ namespace RW{
 		{
 			if (&R != nullptr)
 			{
+
 				d_ptr = new WorkstationPrivate(this);
+                d_ptr->m_PermanentLogin = R.d_ptr->m_PermanentLogin;
+                if (R.d_ptr->m_Reason != nullptr)
+                {
+                    if (d_ptr->m_Reason == nullptr)
+                    {
+                        d_ptr->m_Reason = new PermanentLoginReason(*R.d_ptr->m_Reason);
+                    }
+                    else
+                    {
+                        *d_ptr->m_Reason = *R.d_ptr->m_Reason;
+                    }
+                }
+                d_ptr->m_MaxPermamentLogin = R.d_ptr->m_MaxPermamentLogin;
 				d_ptr->m_Hostname = R.d_ptr->m_Hostname;
 				d_ptr->m_Mac = R.d_ptr->m_Mac;
 				d_ptr->m_Ip = R.d_ptr->m_Ip;
@@ -139,14 +156,70 @@ namespace RW{
 			if (&R != nullptr)
 			{
 				d_ptr = new WorkstationPrivate(this);
-				d_ptr->m_Hostname = R.d_ptr->m_Hostname;
-				d_ptr->m_Mac = R.d_ptr->m_Mac;
-				d_ptr->m_Ip = R.d_ptr->m_Ip;
-				d_ptr->m_User = R.d_ptr->m_User;
-                d_ptr->m_Project = R.d_ptr->m_Project;
-                d_ptr->m_WorkstationSetting = R.d_ptr->m_WorkstationSetting;
-                d_ptr->m_Type = R.d_ptr->m_Type;
-				d_ptr->m_State = R.d_ptr->m_State;
+                d_ptr->m_PermanentLogin = R.d_ptr->m_PermanentLogin;
+                if (R.d_ptr->m_Reason != nullptr)
+                {
+                    if (d_ptr->m_Reason == nullptr)
+                    {
+                        d_ptr->m_Reason = new PermanentLoginReason(*R.d_ptr->m_Reason);
+                    }
+                    else
+                    {
+                        *d_ptr->m_Reason = *R.d_ptr->m_Reason;
+                    }
+                }
+                
+                d_ptr->m_MaxPermamentLogin = R.d_ptr->m_MaxPermamentLogin;
+                d_ptr->m_Hostname = R.d_ptr->m_Hostname;
+                d_ptr->m_Mac = R.d_ptr->m_Mac;
+                d_ptr->m_Ip = R.d_ptr->m_Ip;
+                if (R.d_ptr->m_User != nullptr)
+                {
+                    if (d_ptr->m_User == nullptr)
+                    {
+                        d_ptr->m_User = new User(*R.d_ptr->m_User);
+                    }
+                    else
+                    {
+                        *d_ptr->m_User = *R.d_ptr->m_User;
+                    }
+                }
+                d_ptr->m_State = R.d_ptr->m_State;
+                if (R.d_ptr->m_Project != nullptr)
+                {
+                    if (d_ptr->m_Project == nullptr)
+                    {
+                        d_ptr->m_Project = new Project(*R.d_ptr->m_Project);
+                    }
+                    else
+                    {
+                        *d_ptr->m_Project = *R.d_ptr->m_Project;
+                    }
+                }
+
+                if (R.d_ptr->m_WorkstationSetting != nullptr)
+                {
+                    if (d_ptr->m_WorkstationSetting == nullptr)
+                    {
+                        d_ptr->m_WorkstationSetting = new WorkstationSetting(*R.d_ptr->m_WorkstationSetting);
+                    }
+                    else
+                    {
+                        *d_ptr->m_WorkstationSetting = *R.d_ptr->m_WorkstationSetting;
+                    }
+                }
+
+                if (R.d_ptr->m_Type != nullptr)
+                {
+                    if (d_ptr->m_Type == nullptr)
+                    {
+                        d_ptr->m_Type = new WorkstationType(*R.d_ptr->m_Type);
+                    }
+                    else
+                    {
+                        *d_ptr->m_Type = *R.d_ptr->m_Type;
+                    }
+                }
 				//Deep Copy of all Elements!
 				for each (auto var in R.d_ptr->m_ElementConfiguration)
 				{
@@ -352,6 +425,46 @@ namespace RW{
                 emit SettingOfWorkstationChanged();
             }
         }
+
+        bool Workstation::PermanentLogin()
+        {
+            Q_D(Workstation);
+            return d_ptr->m_PermanentLogin;
+        }
+
+        void Workstation::SetPermanentLogin(bool PermanentLogin)
+        {
+            Q_D(Workstation);
+            d_ptr->m_PermanentLogin = PermanentLogin;
+            emit PermanentLoginChanged();
+        }
+
+        PermanentLoginReason* Workstation::Reason()
+        {
+            Q_D(Workstation);
+            return d_ptr->m_Reason;
+        }
+
+        void Workstation::SetReason(PermanentLoginReason* Reason)
+        {
+            Q_D(Workstation);
+            d_ptr->m_Reason = Reason;
+            emit ReasonChanged();
+        }
+
+        QDateTime Workstation::MaxPermanentLogin()
+        {
+            Q_D(Workstation);
+            return d_ptr->m_MaxPermamentLogin;
+        }
+
+        void Workstation::SetMaxPermanentLogin(QDateTime PermanentLogin)
+        {
+            Q_D(Workstation);
+            d_ptr->m_MaxPermamentLogin = PermanentLogin;
+            emit MaxPermanentLoginChanged();
+        }
+
 
 	}
 }

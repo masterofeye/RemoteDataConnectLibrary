@@ -23,6 +23,7 @@ namespace RW{
         class WorkstationType;
         class GlobalSetting;
         class Peripheral;
+        class WorkstationSetting;
 
 		/*
 		@brief Schnittstelle zwischen dem Datenzugriff von Clienten und externen Datenquellen. Jeder Zugriff auf externe Datenquellen
@@ -153,9 +154,9 @@ namespace RW{
 
             bool UpdateUser(User& U);
 
-            bool UpdateWorkstation(Workstation& R);
             bool UpdateWorkstationUser(quint16 WorkstationId, QString& Name);
-            bool UpdateWorkstationState(quint16 WorkstationId, WorkstationState& State);
+            bool UpdateWorkstation(Workstation& Workstation);
+            bool UpdateWorkstationSetting(WorkstationSetting Setting);
 		};
 	}
 }
