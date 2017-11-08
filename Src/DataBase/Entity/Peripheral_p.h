@@ -8,6 +8,7 @@ namespace RW{
 
         class Peripheral;
         class PeripheralConditionList;
+        class PeripheralProperties;
         class PeripheralPrivate : public QObject
 		{
 			Q_OBJECT
@@ -106,6 +107,8 @@ namespace RW{
             bool m_IsProvided = false;
 
             PeripheralConditionList* m_ConditionList = nullptr;
+
+            PeripheralProperties* m_Properties;
 
 		};
 	}

@@ -4,7 +4,6 @@
 #include "..\Global.h"
 #include "Entity.h"
 #include "QAbstractListModel"
-#include <qhostaddress.h>
 
 namespace RW{
     enum class PeripheralType;
@@ -81,11 +80,6 @@ namespace RW{
             QList<PeripheralCondition*> FollowUpCondition();
             void SetFollowUpCondition(QList<PeripheralCondition*>);
             void SetFollowUpCondition(QList<PeripheralCondition> El);
-
-            QHostAddress Ip();
-            void SetIp(QHostAddress);
-
-
 
         signals:
             void ConditionPeripheralChanged();

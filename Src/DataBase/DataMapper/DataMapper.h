@@ -18,12 +18,17 @@ namespace RW{
                 GetPeripheralByWorkstationID,
                 GetPeripheralConditionListByConditionID,
                 GetUserSettingByUserID,
+                GetPeripheralPropertiesbyMappingID,
+
+                /*UpdateSection*/
+                UpdatePeripheralState,
 
 			};
 			Q_ENUMS(Specifier)
 
 			virtual bool Insert(const T &Data) = 0;
 			virtual bool Update(const T &Data) = 0;
+            virtual bool UpdateBySpecifier(const Specifier Value, const QVariantList Parameter) = 0;
 			virtual T FindByID(const quint64 id,bool Flag) = 0;
 			virtual QList<T> FindAll() = 0;
 

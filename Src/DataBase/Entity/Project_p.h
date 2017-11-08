@@ -8,8 +8,8 @@ namespace RW{
 		class ProjectPrivate : public QObject
 		{
 			Q_OBJECT
-				Q_DISABLE_COPY(ProjectPrivate)
-				Q_DECLARE_PUBLIC(Project)
+			Q_DISABLE_COPY(ProjectPrivate)
+			Q_DECLARE_PUBLIC(Project)
 		public:
 			QString m_ProjectName;
 		private:

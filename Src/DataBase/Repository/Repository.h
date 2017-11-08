@@ -157,6 +157,7 @@ namespace RW{
             bool UpdateWorkstationUser(quint16 WorkstationId, QString& Name);
             bool UpdateWorkstation(Workstation& Workstation);
             bool UpdateWorkstationSetting(WorkstationSetting Setting);
+            bool UpdatePeripheralState(quint64 WorkstationID, quint8 PeripheralID, bool IsProvided, bool IsRegistered, bool IsActive);
 		};
 	}
 }

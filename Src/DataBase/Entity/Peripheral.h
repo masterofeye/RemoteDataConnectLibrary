@@ -9,7 +9,7 @@ namespace RW{
 
         class Project;
         class PeripheralPrivate;
-
+        class PeripheralProperties;
         class REMOTE_DATA_CONNECT_API Peripheral :
 			public Entity
 		{
@@ -36,7 +36,7 @@ namespace RW{
             Q_PROPERTY(bool IsActivate READ IsActivate WRITE SetActivate NOTIFY IsActivateChanged)
             Q_PROPERTY(bool IsProvided READ IsProvided WRITE SetProvided NOTIFY IsProvidedChanged)
             Q_PROPERTY(PeripheralConditionList* ConditionList READ ConditionList CONSTANT)
-
+            Q_PROPERTY(PeripheralProperties* PeripheralPropertie READ PeripheralPropertie WRITE SetPeripheralPropertie NOTIFY PeripheralPropertieChanged)
             Q_CLASSINFO("Version", "0.0.1")
         private:
             PeripheralPrivate* d_ptr;
@@ -163,6 +163,8 @@ namespace RW{
 
             PeripheralConditionList* ConditionList() const;
 
+            PeripheralProperties* PeripheralPropertie()const;
+            void SetPeripheralPropertie(PeripheralProperties*);
         signals:
             void AddressChanged();
             void LocationInformationChanged();
@@ -186,6 +188,7 @@ namespace RW{
             void IsActivateChanged();
             void IsProvidedChanged();
             void ConditionListChanged();
+            void PeripheralPropertieChanged();
 		};
 	}
 }

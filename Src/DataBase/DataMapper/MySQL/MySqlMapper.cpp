@@ -107,7 +107,6 @@ namespace RW{
                 d.SetPin(query.value("pin").toString());
                 d.SetTypeOfInformation(query.value("typeOfInformtation").toInt());
                 d.SetState(query.value("state").toBool());
-                d.SetIp(QHostAddress(query.value("ip").toString()));
                 d.SetDeviceType(query.value("internalType").value<PeripheralType>());
                 d.SetTypeOfConnection(query.value("typeOfCondition").value<RW::TypeOfElement>());
                 QVariant followUpID = query.value("followUpCondition");
@@ -144,6 +143,7 @@ namespace RW{
                 res = query.exec();
             }
 
+
             while (query.next())
             {
                 Peripheral d;
@@ -170,7 +170,24 @@ namespace RW{
                 d.SetProvided(query.value("provided").toBool());
                 d.SetActivate(query.value("active").toBool());
                 d.SetRegistered(query.value("registered").toBool());
-
+                
+                RW::SQL::DataFactory dProperties(m_logger);
+                DataMapper<PeripheralProperties> *dmProperties = dProperties.GetMapper<PeripheralProperties>(SourceType::SQL);
+                
+                QVariantList varMappingID;
+                varMappingID.append(query.value("idPeripheralMapping").toInt());
+                QList<PeripheralProperties> listProperties = dmProperties->FindBySpecifier(DataMapper<PeripheralProperties>::Specifier::GetPeripheralPropertiesbyMappingID, varMappingID);
+                if (listProperties.count() == 0)
+                {
+                    d.SetPeripheralPropertie(new PeripheralProperties());
+                }
+                else
+                {
+                    d.SetPeripheralPropertie(new PeripheralProperties(listProperties.first()));
+                }
+                
+                delete dmProperties;
+                dmProperties = nullptr;
 
                 QSqlQuery subQuery;
                 subQuery.prepare(SelectByPeripheralID_PeripheralConditionMapping);
@@ -192,7 +209,6 @@ namespace RW{
                     p->SetTypeOfInformation(subQuery.value("typeOfInformtation").toInt());
                     p->SetState(subQuery.value("state").toBool());
                     p->SetDeviceType(subQuery.value("internalType").value<PeripheralType>());
-                    p->SetIp(QHostAddress(subQuery.value("ip").toString()));
                     p->SetTypeOfConnection(subQuery.value("typeOfCondition").value<RW::TypeOfElement>());
                     QVariant followUpID = subQuery.value("followUpCondition");
                     if (!followUpID.isNull())
@@ -263,6 +279,37 @@ namespace RW{
             if (!res)
             {
                 m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return list;
+
+        }
+
+        template<> QList<PeripheralProperties> MySqlMapper<PeripheralProperties>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
+        {
+            QList<PeripheralProperties> list;
+            QSqlQuery query;
+            bool res = false;
+            if (Value == Specifier::GetPeripheralPropertiesbyMappingID)
+            {
+                quint64 peripheralmappingID = Parameter.first().toInt();
+                query.prepare(SelectByPeripheralMappingID_PeripheralProperties);
+                query.bindValue(":peripheralmappingID", peripheralmappingID);
+                res = query.exec();
+            }
+            while (query.next())
+            {
+                PeripheralProperties d;
+                d.SetID(query.value("idPeripheralProperties").toInt());
+                d.SetProperty1(query.value("property1"));
+                d.SetProperty2(query.value("property2"));
+                d.SetProperty3(query.value("property3"));
+                d.SetProperty4(query.value("property4"));
+                d.SetProperty5(query.value("property5"));
+                list << d;
+            }
+            if (!res)
+            {
+                m_logger->error("Tbl PeripheralProperties FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
             }
             return list;
 
@@ -383,6 +430,90 @@ namespace RW{
             return d;
         }
 
+        template<> Peripheral MySqlMapper<Peripheral>::FindByID(const quint64 ID, bool Flag)
+        {
+            Peripheral d;
+            QSqlQuery query;
+            query.prepare(SelectById_Peripheral);
+            query.bindValue(":idPeripheral", ID);
+            bool res = query.exec();
+
+            while (query.next())
+            {
+                // \!todo unschöne Konvertierung
+                d.SetID(query.value("idPeripheral").toInt());
+                d.SetAddress(query.value("address").toInt());
+                d.SetBusGUID(query.value("busGUID").toString());
+                d.SetBusnummer(query.value("busnummer").toUInt());
+                d.SetClass(query.value("class").toString());
+                d.SetClassGUID(query.value("classGUID").toString());
+                d.SetCompatibleID(query.value("compatibleID").toStringList());
+                d.SetDescription(query.value("description").toString());
+                d.SetDeviceName(query.value("deviceName").toString());
+                d.SetEnumeratorName(query.value("enumeratorName").toString());
+                d.SetFriendlyName(query.value("friendlyName").toString());
+                d.SetHardwareID(query.value("hardwareID").toStringList());
+                d.SetInstallState(query.value("installState").toUInt());
+                d.SetInteralType(query.value("internalType").value<PeripheralType>());
+                d.SetLocationInformation(query.value("locationInformation").toString());
+                d.SetLocationPath(query.value("locationPath").toString());
+                d.SetManufacturer(query.value("manufacturer").toString());
+                d.SetServiceName(query.value("serviceName").toString());
+                d.SetWindowsDeviceType(query.value("windowsDeviceType").toUInt());
+                d.SetProvided(query.value("provided").toBool());
+
+                RW::SQL::DataFactory dProperties(m_logger);
+                DataMapper<PeripheralProperties> *dmProperties = dProperties.GetMapper<PeripheralProperties>(SourceType::SQL);
+                QVariantList varMappingID;
+                varMappingID.append(query.value("peripheralID").toInt());
+                QList<PeripheralProperties> listProperties = dmProperties->FindBySpecifier(DataMapper<PeripheralProperties>::Specifier::GetPeripheralPropertiesbyMappingID, varMappingID);
+                if (listProperties.count() == 0)
+                {
+                    d.SetPeripheralPropertie(new PeripheralProperties());
+                }
+                else
+                {
+                    d.SetPeripheralPropertie(new PeripheralProperties(listProperties.first()));
+                }
+
+                delete dmProperties;
+                dmProperties = nullptr;
+
+
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl Peripheral FindByID failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return d;
+        }
+
+        template<> bool MySqlMapper<Peripheral>::UpdateBySpecifier(const Specifier Value, const QVariantList Parameter)
+        {
+            QSqlQuery query;
+
+            quint64 workstationID = Parameter[0].toInt();
+            quint8 peripheralID = Parameter[1].toInt();
+            bool isProvided = Parameter[2].toBool();
+            bool isRegistered = Parameter[3].toBool();
+            bool isActive = Parameter[4].toBool();
+
+            query.prepare(Update_PeripheralState);
+            query.bindValue(":workstationID", workstationID);
+            query.bindValue(":peripheralID", peripheralID);
+            query.bindValue(":provided", isProvided);
+            query.bindValue(":registered", isRegistered);
+            query.bindValue(":active", isActive);
+            bool res = query.exec();
+
+            if (!res)
+            {
+                m_logger->error("Tbl Peripheral UpdateBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
+                return false;
+            }
+            return true;
+        }
 
     }
 }

@@ -245,20 +245,6 @@ namespace RW{
             emit FollowUpConditionChanged();
         }
 
-        QHostAddress PeripheralCondition::Ip()
-        {
-            Q_D(const PeripheralCondition);
-            return d->m_Ip;
-        }
-        void PeripheralCondition::SetIp(QHostAddress El)
-        {
-            Q_D(PeripheralCondition);
-
-            d->m_Ip = El;
-            emit IpChanged();
-        }
-
-
         void PeripheralCondition::SetFollowUpCondition(QList<PeripheralCondition> El)
         {
             Q_D(PeripheralCondition);

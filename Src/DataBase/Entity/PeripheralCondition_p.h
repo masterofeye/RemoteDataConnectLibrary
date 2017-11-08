@@ -1,7 +1,5 @@
 #pragma once
 #include <qobject.h>
-#include <QHostAddress>
-
 namespace RW{
     enum class TypeOfElement;
     enum class PeripheralType;
@@ -26,7 +24,6 @@ namespace RW{
             PeripheralType m_DeviceType;
             TypeOfElement m_TypeOfConnection;
             QList<PeripheralCondition*> m_FollowUpCondition;
-            QHostAddress m_Ip;
 		public:
             PeripheralConditionPrivate(PeripheralCondition *Parent);
             ~PeripheralConditionPrivate();

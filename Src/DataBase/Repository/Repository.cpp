@@ -846,6 +846,33 @@ namespace RW{
             return true;
         }
 
+        bool Repository::UpdatePeripheralState(quint64 WorkstationID, quint8 PeripheralID, bool IsProvided, bool IsRegistered, bool IsActive)
+        {
+            try{
+                Workstation rw;
+                DataFactory d(m_logger);
+                DataMapper<Peripheral> *dm = d.GetMapper<Peripheral>(m_Source);
+                if (dm == nullptr)
+                    return false;
+
+                QVariantList list;
+                list.append(WorkstationID);
+                list.append(PeripheralID);
+                list.append(IsProvided);
+                list.append(IsRegistered);
+                list.append(IsActive);
+
+                if (!dm->UpdateBySpecifier(DataMapper<Peripheral>::Specifier::UpdatePeripheralState, list))
+                    m_logger->error("UpdatePeripheralState failed durring update.");
+                delete dm;
+            }
+            catch (...)
+            {
+                m_logger->error("UpdatePeripheralState throwed a exception.");
+                return false;
+            }
+            return true;
+        }
 
         bool Repository::UpdateWorkstationSetting(WorkstationSetting Setting)
         {

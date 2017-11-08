@@ -1,5 +1,6 @@
 #include "Peripheral.h"
 #include "Peripheral_p.h"
+#include "PeripheralProperties.h"
 
 namespace RW{
     namespace SQL{
@@ -7,7 +8,28 @@ namespace RW{
         PeripheralPrivate::PeripheralPrivate(Peripheral *Parent) :
             QObject(Parent),
             q_ptr(Parent),
-            m_ConditionList(new PeripheralConditionList(this))
+            m_ConditionList(new PeripheralConditionList(this)),
+            m_Properties(nullptr),
+            m_Address(0),
+            m_BusGUID(""),
+            m_Busnummer(0),
+            m_Class(""),
+            m_ClassGUID(""),
+            m_CompatibleID({}),
+            m_Description(""),
+            m_DeviceName(""),
+            m_EnumeratorName(""),
+            m_FriendlyName(""),
+            m_HardwareID({}),
+            m_InstallState(0),
+            m_IsActivate(false),
+            m_IsProvided(false),
+            m_IsRegistered(false),
+            m_LocationInformation(""),
+            m_LocationPath(""),
+            m_Manufacturer(""),
+            m_ServiceName(""),
+            m_Type(PeripheralType::MaxAmount)
         {
         }
 
@@ -64,6 +86,17 @@ namespace RW{
                     }
                 }
 
+                if (F.d_ptr->m_Properties != nullptr)
+                {
+                    if (d_ptr->m_Properties == nullptr)
+                    {
+                        d_ptr->m_Properties = new PeripheralProperties(*F.d_ptr->m_Properties);
+                    }
+                    else
+                    {
+                        *d_ptr->m_Properties = *F.d_ptr->m_Properties;
+                    }
+                }
 
                 d_ptr->m_Address = F.d_ptr->m_Address;
                 d_ptr->m_BusGUID = F.d_ptr->m_BusGUID;
@@ -107,6 +140,18 @@ namespace RW{
                         d_ptr->m_ConditionList->AddData(new RW::SQL::PeripheralCondition(*F.d_ptr->m_ConditionList->peripheralCondition(i)));
                     }
                 }
+
+                if (F.d_ptr->m_Properties != nullptr)
+                {
+                    if (d_ptr->m_Properties == nullptr)
+                    {
+                        d_ptr->m_Properties = new PeripheralProperties(*F.d_ptr->m_Properties);
+                    }
+                    else
+                    {
+                        *d_ptr->m_Properties = *F.d_ptr->m_Properties;
+                    }
+                } 
                 d_ptr->m_Address = F.d_ptr->m_Address;
                 d_ptr->m_BusGUID = F.d_ptr->m_BusGUID;
                 d_ptr->m_Busnummer = F.d_ptr->m_Busnummer;
@@ -384,6 +429,18 @@ namespace RW{
         {
             Q_D(const Peripheral);
             return d->m_ConditionList;
+        }
+
+        PeripheralProperties* Peripheral::PeripheralPropertie()const
+        {
+            Q_D(const Peripheral);
+            return d->m_Properties;
+        }
+        void Peripheral::SetPeripheralPropertie(PeripheralProperties* Prop)
+        {
+            Q_D(Peripheral);
+            d->m_Properties = Prop;
+            emit PeripheralPropertieChanged();
         }
 	}
 }

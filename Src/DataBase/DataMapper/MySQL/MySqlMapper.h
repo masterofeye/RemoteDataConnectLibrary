@@ -48,11 +48,12 @@ namespace RW{
         const QString Update_FlashHistory = "UPDATE flashhistory SET userID=:userID, softwareProjectID=:softwareProjectID, workstationID=:workstationID, major=:major, minor=:minor, patchlevel=:patchlevel, buildnumber=:buildnumber, data=:data";
         const QString Update_WorkstationType = "UPDATE workstationtype SET workstationTypeID=:workstationTypeID, type=:type";
         const QString Update_PeripheralMapping = "UPDATE peripheralmapping SET workstationID=:workstationID, peripheralID=:peripheralID";
-/*TODO*/const QString Update_Peripheral = "Update peripheral SET address=:adress, subAddress1=:subAddress1, subAddress2=:subAddress2, subAddress3=:subAddress3, name=:name, type=:type, connectionType=:connectionType, serialNumber=:serialNumber, deviceName=:deviceName, description=:description, hardwareID1=:hardwareID1, hardwareID2=:hardwareID2, hardwareID3=:hardwareID3, state=:state, provided=:provided)";
+/*TODO*/const QString Update_Peripheral = "Update peripheral SET address=:address, busGUID=:busGUID, busnummer=:busnummer, class=:class, classGUID=:classGUID, compatibleID=:compatibleID, description=:description, deviceName=:deviceName, enumeratorName=:enumeratorName, friendlyName=:friendlyName, hardwareID=:hardwareID, installState=:installState, internalType=:internalType, locationInformation=:locationInformation, locationPath=:locationPath, manufacturer=:manufacturer, serviceName=:serviceName, windowsDeviceType=:windowsDeviceType, provided = :provided, registered = : registered, active = : active";
         const QString Update_GlobalSetting = "UPDATE globalsetting rwShutdownTime=:rwShutdownTime, rwLogoutTime=:rwLogoutTime, beShutdownTime=:beShutdownTime, beLogoutTime=:beLogoutTime, logoutTimeStart=:logoutTimeStart, logoutTimeEnd=:logoutTimeEnd";
         const QString Update_WorkstationSetting = "UPDATE workstationsetting SET permanentLogin=:permanentLogin,permanentLoginReasonID=:permanentLoginReasonID WHERE idWorkstationSetting=:idWorkstationSetting";
         const QString Update_PermanentLoginReason = "UPDATE permanentloginreason reason=:reason,description=:description";
         const QString Update_UserSetting = "UPDATE INTO usersettings ( logoutTimeStart, logoutTimeEnd ) VALUES ( :logoutTimeStart,:logoutTimeEnd)";
+        const QString Update_PeripheralState = "UPDATE peripheralmapping SET provided=:provided, registered=:registered, active=:active WHERE workstationID=:workstationID and peripheralID=:peripheralID"; //Aktuell einfach über Peripheral Update
 
 		const QString Delete_RemoteWorkstattion = "DELETE FROM Workstation WHERE idWorkstation=:idWorkstation";
 		const QString Delete_User = "DELETE FROM user WHERE idUser=:idUser";
@@ -96,6 +97,8 @@ namespace RW{
         const QString SelectByWorkstationID_PeripheralMapping = "SELECT * FROM peripheralmapping A inner join peripheral B on A.peripheralID = B.idPeripheral WHERE workstationID=:workstationID AND provided=1";
         const QString SelectByPeripheralID_PeripheralConditionMapping = "SELECT A.priority, A.peripheralID, A.port, A.pin, A.typeOfInformation, A.state, A.typeOfCondition, A.idPeripheralCondition, D.internalType, A.followUpCondition, A.followUpID FROM peripheralcondition A inner join peripheralmapping C on A.peripheralMappingID = C.idPeripheralMapping inner join peripheral D on A.peripheralID = D.idPeripheral WHERE C.peripheralID =:peripheralID AND C.workstationID =:workstationID";
         const QString SelectById_PeripheralCondition = "SELECT * FROM peripheralcondition WHERE idPeripheralCondition=:idPeripheralCondition";
+        const QString SelectByPeripheralMappingID_PeripheralProperties = "SELECT * FROM peripheralproperties WHERE peripheralmappingID=:peripheralmappingID";
+
 
         const QString SelectByIdByHardwareID_Peripheral = "SELECT * FROM peripheral WHERE hardwareID1=:hardwareID1";
         const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
@@ -185,6 +188,7 @@ namespace RW{
 
 			bool Insert(const T &Data){ return false; }
 			bool Update(const T &Data){ return false; }
+            bool UpdateBySpecifier(const Specifier Value, const QVariantList Parameter){ return false; }
 
 			T FindByID(const quint64 id, bool Flag){ return new T(); }
 			template<class Y> Y FindByID(const quint64 ID){
@@ -858,6 +862,8 @@ namespace RW{
             query.bindValue(":manufacturer", d.Manufacturer());
             query.bindValue(":serviceName", d.ServiceName());
             query.bindValue(":windowsDeviceType", d.WindowsDeviceType());
+            query.bindValue(":active", d.IsProvided());
+            query.bindValue(":registered", d.IsProvided());
             query.bindValue(":provided", d.IsProvided());
             bool res = query.exec();
             if (!res)
@@ -1271,45 +1277,7 @@ namespace RW{
             return d;
         }
 
-        template<> Peripheral MySqlMapper<Peripheral>::FindByID(const quint64 ID, bool Flag)
-        {
-            Peripheral d;
-            QSqlQuery query;
-            query.prepare(SelectById_Peripheral);
-            query.bindValue(":idPeripheral", ID);
-            bool res = query.exec();
-
-            while (query.next())
-            {
-                // \!todo unschöne Konvertierung
-                d.SetID(query.value("idPeripheral").toInt());
-                d.SetAddress(query.value("address").toInt());
-                d.SetBusGUID(query.value("busGUID").toString());
-                d.SetBusnummer(query.value("busnummer").toUInt());
-                d.SetClass(query.value("class").toString());
-                d.SetClassGUID(query.value("classGUID").toString());
-                d.SetCompatibleID(query.value("compatibleID").toStringList());
-                d.SetDescription(query.value("description").toString());
-                d.SetDeviceName(query.value("deviceName").toString());
-                d.SetEnumeratorName(query.value("enumeratorName").toString());
-                d.SetFriendlyName(query.value("friendlyName").toString());
-                d.SetHardwareID(query.value("hardwareID").toStringList());
-                d.SetInstallState(query.value("installState").toUInt());
-                d.SetInteralType(query.value("internalType").value<PeripheralType>());
-                d.SetLocationInformation(query.value("locationInformation").toString());
-                d.SetLocationPath(query.value("locationPath").toString());
-                d.SetManufacturer(query.value("manufacturer").toString());
-                d.SetServiceName(query.value("serviceName").toString());
-                d.SetWindowsDeviceType(query.value("windowsDeviceType").toUInt());
-                d.SetProvided(query.value("provided").toBool());
-            }
-
-            if (!res)
-            {
-                m_logger->error("Tbl Peripheral FindByID failed. Error:{}", query.lastError().text().toUtf8().constData());
-            }
-            return d;
-        }
+        
 
         template<> GlobalSetting MySqlMapper<GlobalSetting>::FindByID(const quint64 ID, bool Flag)
         {
@@ -1394,7 +1362,6 @@ namespace RW{
                 d.SetPin(query.value("pin").toString());
                 d.SetTypeOfInformation(query.value("typeOfInformtation").toInt());
                 d.SetState(query.value("state").toBool());
-                d.SetIp(QHostAddress(query.value("ip").toString()));
                 d.SetDeviceType(query.value("internalType").value<PeripheralType>());
                 d.SetTypeOfConnection(query.value("typeOfConnection").value<RW::TypeOfElement>());
                 QVariant followUpID = query.value("followUpCondition");

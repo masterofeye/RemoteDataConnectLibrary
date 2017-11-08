@@ -296,7 +296,7 @@ namespace RW{
             if ((m_Repository != nullptr))
             {
 #ifdef DEBUG
-                if (!m_Repository->GetGlobalSettingByID(3, setting))
+                if (!m_Repository->GetGlobalSettingByID(1, setting))
                     return false;
                 
 #else
@@ -480,13 +480,19 @@ namespace RW{
         
         }
 
-
+        void ConfigurationManagerPrivate::UpdatePeripheral(const ConfigurationName &Key, const QVariant &Val)
+        {
+            m_ConfigCollection->insert(Key, Val);
+            if (Key == ConfigurationName::PeripheralUpdateID)
+                emit SaveConfiguration(Key, ChangeReason::PeripheralStateChanged);
+        }
 
         void ConfigurationManagerPrivate::OnSaveConfiguration(ConfigurationName Key, ChangeReason Reason)
         {
             if (Key > ConfigurationName::UserStart && Key < ConfigurationName::UserEnd ||
                 Key > ConfigurationName::WorkstationStart && Key < ConfigurationName::WorkstationEnd ||
-                Key > ConfigurationName::WorkstationSettingsStart && Key < ConfigurationName::WorkstationSettingsEnd
+                Key > ConfigurationName::WorkstationSettingsStart && Key < ConfigurationName::WorkstationSettingsEnd ||
+                Key > ConfigurationName::PeripheralStart && Key < ConfigurationName::PeripheralEnd
                 )
             {
                 switch (Reason)
@@ -529,7 +535,23 @@ namespace RW{
                         m_Logger->critical("OnSaveConfiguration: invalid user id.");
                     break;
                 }
-               
+                case ChangeReason::PeripheralStateChanged:
+                {
+                    quint64 workstationID = m_ConfigCollection->value(ConfigurationName::WorkstationId).toInt();
+                    quint64 updateId = m_ConfigCollection->value(ConfigurationName::PeripheralUpdateID).toInt();
+                    QVariant var;
+                    var = m_ConfigCollection->value(RW::CORE::ConfigurationName::PeripheralTable);
+                    QList<RW::SQL::Peripheral> list = var.value<QList<RW::SQL::Peripheral>>();
+
+                    for each (auto var in list)
+                    {
+                        if (var.ID() == updateId)
+                        {
+                           m_Repository->UpdatePeripheralState(workstationID, var.ID().toInt(), var.IsProvided(), var.IsRegistered(), var.IsActivate());
+                        }
+                    }
+                }
+                    break;
                 default:
                     m_Logger->warn("OnSaveConfiguration: invalid change reason");
                     break;
@@ -604,6 +626,10 @@ namespace RW{
             else if (Key > ConfigurationName::WorkstationSettingsStart && Key < ConfigurationName::WorkstationSettingsEnd)
             {
                 d_ptr->UpdateWorkstationSettings(Key, Val);
+            }
+            else if (Key > ConfigurationName::PeripheralStart && Key < ConfigurationName::PeripheralEnd)
+            {
+                d_ptr->UpdatePeripheral(Key, Val);
             }
 
             return true;

@@ -18,6 +18,7 @@
 #include "PermanentLoginReason.h"
 #include "PeripheralCondition.h"
 #include "UserSettings.h"
+#include "PeripheralProperties.h"
 
 #include <QQmlEngine>
 namespace RW{

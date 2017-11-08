@@ -81,8 +81,12 @@ namespace RW{
             SoftwareProjectEnd,
 
             /*Peripheral*/
+            PeripheralStart,
             PeripheralTable,        //Liste alle möglichen HW Geräte, die aus der Datenbank ermittelt wird
             PeripheralCurrentActive, //Liste an HW Komponenten die Wirklich angeschlossen sind und erkannt wurden
+            PeripheralUpdate,
+            PeripheralUpdateID,
+            PeripheralEnd
 
         };
 

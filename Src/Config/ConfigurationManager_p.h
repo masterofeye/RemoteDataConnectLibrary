@@ -16,6 +16,7 @@ namespace RW{
             UserSave,
             WorkstationStatusUpdate,
             PermanentLoginChanged,
+            PeripheralStateChanged,
         };
 
         class ConfigurationManagerPrivate :
@@ -69,7 +70,7 @@ namespace RW{
             void UpdateWorkstationSettings(const ConfigurationName &Key, const QVariant &Val);
             void UpdateGlobalSettings(const ConfigurationName &Key, const QVariant &Val);
             void UpdateUserSettings(const ConfigurationName &Key, const QVariant &Val);
-
+            void UpdatePeripheral(const ConfigurationName &Key, const QVariant &Val);
 
             void UpdateValue(ConfigurationName Name, QVariant Value);
 
