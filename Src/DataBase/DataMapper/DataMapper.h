@@ -19,6 +19,7 @@ namespace RW{
                 GetPeripheralConditionListByConditionID,
                 GetUserSettingByUserID,
                 GetPeripheralPropertiesbyMappingID,
+                GetUserByHostname,
 
                 /*UpdateSection*/
                 UpdatePeripheralState,

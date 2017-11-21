@@ -118,6 +118,7 @@ namespace RW{
             bool GetPeripheralByHardwareID(QString HardwareID, Peripheral& R);
             bool GetPeripheralByWorkstationID(quint64 ID, QList<Peripheral>& R);
             bool GetLogEntryByHostName(QString HostName, QList<LogEntry> & AllR);
+            bool GetUserbyHostName(QString HostName, User & AllR);
 
 			bool GetUserByID(quint64 ID, User& U);
 			bool GetElementConfigurationByID(quint64 ID, ElementConfiguration& E);

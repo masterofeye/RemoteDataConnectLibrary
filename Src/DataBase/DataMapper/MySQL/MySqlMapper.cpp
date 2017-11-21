@@ -515,5 +515,42 @@ namespace RW{
             return true;
         }
 
+        template<> QList<User> MySqlMapper<User>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
+        {
+            QList<User> list;
+            QSqlQuery query;
+            bool res = false;
+            if (Value == Specifier::GetUserByHostname)
+            {
+                QString hostname = Parameter.first().toString();
+                query.prepare(SelectByHostname_User);
+                query.bindValue(":hostname", hostname);
+                res = query.exec();
+            }
+
+            while (query.next())
+            {
+                User d;
+                d.SetID(query.value("idUser").toInt());
+                d.SetUserName(query.value("username").toString());
+                d.SetPassword(query.value("password").toString());
+                d.SetMKSUsername(query.value("mksUsername").toString());
+                d.SetMKSPassword(query.value("mksPassword").toString());
+                d.SetInitials(query.value("initials").toString());
+                d.SetNotifiyRemoteDesktop(query.value("notifiyRemoteDesktop").toBool());
+                d.SetNotifiyDesktop(query.value("notifiyDesktop").toBool());
+                d.SetRole((RW::UserRole)query.value("role").toInt());
+                d.SetUserWorkstation(query.value("userWorkstation").toInt());
+                d.SetSettings(new UserSettings(FindByID<UserSettings>(query.value("idUser").toInt())));
+                list << d;
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return list;
+        }
+
     }
 }

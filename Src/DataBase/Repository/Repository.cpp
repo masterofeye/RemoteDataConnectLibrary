@@ -1051,6 +1051,35 @@ namespace RW{
             return true;
         }
 
+        bool Repository::GetUserbyHostName(QString HostName, User & AllR)
+        {
+            QList<User> list;
+            try{
+                DataFactory d(m_logger);
+                DataMapper<User> *dm = d.GetMapper<User>(m_Source);
+                if (dm == nullptr)
+                    return false;
+                QVariantList paramlist;
+                paramlist << HostName;
+                list = dm->FindBySpecifier(DataMapper<User>::Specifier::GetUserByHostname, paramlist);
+                delete dm;
+                
+                if (list.count() == 0 && list.count() > 1)
+                {
+                    m_logger->error("GetUserbyHostName invalid number of users found");
+                    return false;
+                }
+
+                AllR = list.first();
+            }
+            catch (...)
+            {
+                m_logger->error("GetUserbyHostName throwed a exception");
+                return false;
+            }
+            return true;
+        }
+
         bool Repository::GetPeripheralByHardwareID(QString HardwareID, Peripheral& R)
         {
             QList<Peripheral> allLogEntry;

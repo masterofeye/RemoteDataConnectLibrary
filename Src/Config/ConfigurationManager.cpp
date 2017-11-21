@@ -212,7 +212,7 @@ namespace RW{
 #ifdef DEBUG
             timer.Start();
 #endif           
-            if (!m_Repository->GetUserByHostName(HostName, user))
+            if (!m_Repository->GetUserbyHostName(HostName, user))
             {
 #ifdef DEBUG
                 timer.Reset();

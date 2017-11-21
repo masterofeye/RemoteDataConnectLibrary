@@ -78,6 +78,7 @@ namespace RW{
 		const QString SelectById_Workstation = "SELECT * FROM Workstation WHERE idWorkstation = :idWorkstation";
         const QString SelectByHostname_Workstation = "SELECT * FROM Workstation WHERE hostname = :hostname";
 		const QString SelectById_User = "SELECT * FROM user WHERE idUser = :idUser";
+        const QString SelectByHostname_User = "SELECT * FROM user A inner join workstation B on B.userID = A.idUser WHERE B.hostname = :hostname";
 		const QString SelectById_ElementConfiguration = "SELECT * FROM elementconfiguration WHERE idElementConfiguration = :idElementConfiguration";
 		const QString SelectById_ElementType = "SELECT * FROM elementType WHERE idElementType = :idElementType";
 		const QString SelectById_Instruction = "SELECT * FROM Instruction WHERE idInstruction = :idInstruction";
@@ -104,8 +105,8 @@ namespace RW{
         const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";
         const QString SelectById_WorkstationSetting = "SELECT * FROM workstationsetting WHERE idWorkstationSetting=:idWorkstationSetting";
         const QString SelectById_PermanentLoginReason= "SELECT * FROM permanentloginreason WHERE idPermanentLoginReason=:idPermanentLoginReason";
-        const QString SelectById_UserSetting = "SELECT * FROM  usersettings WHERE idUserSettings=:idUserSettings";
-
+        const QString SelectById_UserSetting = "SELECT * FROM usersettings WHERE idUserSettings=:idUserSettings";
+        const QString SelectByUserId_UserSetting = "SELECT * FROM usersettings WHERE userID=:userID";
 
 		const QString SelectAll_Workstation = "SELECT * FROM workstation";
 		const QString SelectAll_User = "SELECT * FROM user";
@@ -1384,8 +1385,9 @@ namespace RW{
         {
             UserSettings d;
             QSqlQuery query;
-            query.prepare(SelectById_UserSetting);
-            query.bindValue(":idUserSetting", ID);
+            //ACHTUNG HIER WIRD MIT USERID GESUCHT
+            query.prepare(SelectByUserId_UserSetting);
+            query.bindValue(":userID", ID);
             bool res = query.exec();
 
             while (query.next())
@@ -1475,7 +1477,7 @@ namespace RW{
 				d.SetNotifiyDesktop(query.value("notifiyDesktop").toBool());
 				d.SetRole((RW::UserRole)query.value("role").toInt());
                 d.SetUserWorkstation(query.value("userWorkstation").toInt());
-                d.SetSettings(new UserSettings(FindByID<UserSettings>(query.value("userID").toInt())));
+                d.SetSettings(new UserSettings(FindByID<UserSettings>(query.value("idUser").toInt())));
 				list << d;
 			}
 
