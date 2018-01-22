@@ -99,7 +99,8 @@ namespace RW{
         const QString SelectByPeripheralID_PeripheralConditionMapping = "SELECT A.priority, A.peripheralID, A.port, A.pin, A.typeOfInformation, A.state, A.typeOfCondition, A.idPeripheralCondition, D.internalType, A.followUpCondition, A.followUpID FROM peripheralcondition A inner join peripheralmapping C on A.peripheralMappingID = C.idPeripheralMapping inner join peripheral D on A.peripheralID = D.idPeripheral WHERE C.peripheralID =:peripheralID AND C.workstationID =:workstationID";
         const QString SelectById_PeripheralCondition = "SELECT * FROM peripheralcondition WHERE idPeripheralCondition=:idPeripheralCondition";
         const QString SelectByPeripheralMappingID_PeripheralProperties = "SELECT * FROM peripheralproperties WHERE peripheralmappingID=:peripheralmappingID";
-
+        const QString SelectByComputerName_LogEntry = "SELECT * FROM log WHERE idLog=:idLog WHERE computerName=:computerName";
+        const QString SelectUnique_LogEntry = "SELECT DISTINCT computerName FROM log";
 
         const QString SelectByIdByHardwareID_Peripheral = "SELECT * FROM peripheral WHERE hardwareID1=:hardwareID1";
         const QString SelectById_GlobalSetting = "SELECT * FROM globalsetting WHERE idGlobalSetting=:idGlobalSetting";

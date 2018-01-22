@@ -159,6 +159,9 @@ namespace RW{
             bool UpdateWorkstation(Workstation& Workstation);
             bool UpdateWorkstationSetting(WorkstationSetting Setting);
             bool UpdatePeripheralState(quint64 WorkstationID, quint8 PeripheralID, bool IsProvided, bool IsRegistered, bool IsActive);
+
+            bool GetLogEntryByUsername(QString Hostname, QList<LogEntry>& R);
+            bool GetLogEntryListForEachHostname(QList<LogEntry>& R);
 		};
 	}
 }

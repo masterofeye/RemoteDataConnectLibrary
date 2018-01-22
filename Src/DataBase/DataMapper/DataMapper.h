@@ -20,6 +20,8 @@ namespace RW{
                 GetUserSettingByUserID,
                 GetPeripheralPropertiesbyMappingID,
                 GetUserByHostname,
+                GetLogEntryByComputerName,
+                GetUniqueLogEntry,
 
                 /*UpdateSection*/
                 UpdatePeripheralState,

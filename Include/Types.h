@@ -32,6 +32,13 @@ namespace spdlog
             WtsSession,
             WtsSessionMananger,
             PermanentLoginState,
+            UserName,
+            RemoteServiceShutdown,
+            WorkstationStateOff,
+            WorkstationStateOn,
+            WorkstationStateDefect,
+            WorkstationStateOccupy,
+            WorkstationStateFree,
             NON,
 
         };

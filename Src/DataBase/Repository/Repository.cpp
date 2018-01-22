@@ -1128,6 +1128,47 @@ namespace RW{
             return true;
         }
 
+        bool Repository::GetLogEntryByUsername(QString Hostname, QList<LogEntry>& R)
+        {
+            bool found = false;
+
+            try{
+                DataFactory d(m_logger);
+                DataMapper<LogEntry> *dm = d.GetMapper<LogEntry>(m_Source);
+                QVariantList list;
+                list << Hostname;
+                R = dm->FindBySpecifier(DataMapper<LogEntry>::Specifier::GetLogEntryByComputerName, list);
+
+                delete dm;
+            }
+            catch (...)
+            {
+                m_logger->error("GetLogEntryByUsername throwed a exception.");
+                return false;
+            }
+            return true;
+        }
+
+        bool Repository::GetLogEntryListForEachHostname(QList<LogEntry>& R)
+        {
+            bool found = false;
+
+            try{
+                DataFactory d(m_logger);
+                DataMapper<LogEntry> *dm = d.GetMapper<LogEntry>(m_Source);
+                QVariantList list;
+                list << "";
+                R = dm->FindBySpecifier(DataMapper<LogEntry>::Specifier::GetUniqueLogEntry, list);
+
+                delete dm;
+            }
+            catch (...)
+            {
+                m_logger->error("GetLogEntryListForEachHostname throwed a exception.");
+                return false;
+            }
+            return true;
+        }
 
 
 	}

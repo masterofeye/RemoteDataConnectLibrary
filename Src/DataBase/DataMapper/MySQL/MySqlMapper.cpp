@@ -10,11 +10,6 @@ namespace RW{
             QList<T> m; return std::move(m);
         }
 
-        template<> QList<LogEntry> MySqlMapper<LogEntry>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
-        {
-            QList<LogEntry> m; return std::move(m);
-        }
-
 
         template<> QList<ElementConfiguration> MySqlMapper<ElementConfiguration>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
         {
@@ -548,6 +543,41 @@ namespace RW{
             if (!res)
             {
                 m_logger->error("Tbl flashHistory FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
+            }
+            return list;
+        }
+
+        template<> QList<LogEntry> MySqlMapper<LogEntry>::FindBySpecifier(const Specifier Value, const QVariantList Parameter)
+        {
+            QList<LogEntry> list;
+            QSqlQuery query;
+            bool res = false;
+            if (Value == Specifier::GetLogEntryByComputerName)
+            {
+                QString hostname = Parameter.first().toString();
+                query.prepare(SelectByComputerName_LogEntry);
+                query.bindValue(":computerName", hostname);
+                res = query.exec();
+            }
+
+            if (Value == Specifier::GetUniqueLogEntry)
+            {
+                QString hostname = Parameter.first().toString();
+                query.prepare(SelectUnique_LogEntry);
+                res = query.exec();
+            }
+
+            while (query.next())
+            {
+                LogEntry d;
+                // \!todo unschöne Konvertierung  
+                d.SetComputerNameRW(query.value("computerName").toString());
+                list << d;
+            }
+
+            if (!res)
+            {
+                m_logger->error("Tbl LogEntry FindBySpecifier failed. Error:{}", query.lastError().text().toUtf8().constData());
             }
             return list;
         }
