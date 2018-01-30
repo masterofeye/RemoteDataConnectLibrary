@@ -313,6 +313,9 @@ namespace RW{
             m_ConfigCollection->insert(ConfigurationName::RwShutdownTimer, setting.RwShutdownTimer());
             m_ConfigCollection->insert(ConfigurationName::BeLogOutTimer, setting.BeLogOutTimer());
             m_ConfigCollection->insert(ConfigurationName::BeShutdownTimer, setting.BeShutdownTimer());
+            m_ConfigCollection->insert(ConfigurationName::UpdateStartTime, setting.UpdateStartTime());
+            m_ConfigCollection->insert(ConfigurationName::UpdateEndTime, setting.UpdateEndTime());
+
             return true;
         }
 

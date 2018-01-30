@@ -29,7 +29,7 @@ namespace RW{
         const QString Insert_WorkstationType = "INSERT INTO workstationtype (type) VALUES (type)";
         const QString Insert_PeripheralMapping = "INSERT INTO peripheralmapping (workstationID, peripheralID,isActivate,isRegistered) VALUES (:workstationID, :peripheralID,:isActivate,:isRegistered)";
         const QString Insert_Peripheral = "INSERT INTO peripheral (address, busGUID, busnummer, class, classGUID, compatibleID, description, deviceName , enumeratorName, friendlyName, hardwareID, installState, internalType,locationInformation,locationPath,manufacturer,serviceName,windowsDeviceType,provided) VALUES  (:address, :busGUID, :busnummer, :class, :classGUID, :compatibleID, :description, :deviceName , :enumeratorName, :friendlyName, :hardwareID, :installState, :internalType,:locationInformation,:locationPath,:manufacturer,:serviceName,:windowsDeviceType, :provided)";
-        const QString Insert_GlobalSetting = "INSERT INTO globalsetting ( rwShutdownTime, rwLogoutTime, beShutdownTime, beLogoutTime, logoutTimeStart, logoutTimeEnd ) VALUES ( :rwShutdownTime, :rwLogoutTime, :beShutdownTime, :beLogoutTime, :logoutTimeStart,:logoutTimeEnd)";
+        const QString Insert_GlobalSetting = "INSERT INTO globalsetting ( rwShutdownTime, rwLogoutTime, beShutdownTime, beLogoutTime, logoutTimeStart, logoutTimeEnd, updateStartTime, updateEndTime) VALUES ( :rwShutdownTime, :rwLogoutTime, :beShutdownTime, :beLogoutTime, :logoutTimeStart,:logoutTimeEnd,:updateStartTime,:updateEndTime)";
         const QString Insert_WorkstationSetting = "INSERT INTO workstationsetting() VALUES ()";
         const QString Insert_PermanentLoginReason = "INSERT INTO permanentloginreason(reason, description) VALUES (:reason,:description)";
         const QString Insert_UserSetting = "INSERT INTO usersettings ( logoutTimeStart, logoutTimeEnd ) VALUES ( :logoutTimeStart,:logoutTimeEnd)";
@@ -569,6 +569,8 @@ namespace RW{
             query.bindValue(":beShutdownTimer", d.BeShutdownTimer());
             query.bindValue(":rwLogOutTimerChanged", d.RwLogOutTimer());
             query.bindValue(":rwShutdownTimerChanged", d.RwShutdownTimer());
+            query.bindValue(":updateStartTime", d.UpdateStartTime());
+            query.bindValue(":updateEndTime", d.UpdateEndTime());
 
             bool res = query.exec();
             if (!res)
@@ -885,6 +887,8 @@ namespace RW{
             query.bindValue(":beShutdownTimer", d.BeShutdownTimer());
             query.bindValue(":rwLogOutTimerChanged", d.RwLogOutTimer());
             query.bindValue(":rwShutdownTimerChanged", d.RwShutdownTimer());
+            query.bindValue(":updateStartTime", d.UpdateStartTime());
+            query.bindValue(":updateEndTime", d.UpdateEndTime());
 
             bool res = query.exec();
             if (!res)
@@ -1296,6 +1300,8 @@ namespace RW{
                 d.SetRwShutdownTimer(query.value("rwShutdownTime").toInt());
                 d.SetBeLogOutTimer(query.value("beLogOutTime").toInt());
                 d.SetBeShutdownTimer(query.value("beShutdownTime").toInt());
+                d.SetUpdateStartTime(query.value("updateStartTime").toTime());
+                d.SetUpdateEndTime(query.value("updateEndTime").toTime());
             }
 
             if (!res)
@@ -1828,6 +1834,8 @@ namespace RW{
                 d.SetRwShutdownTimer(query.value("rwShutdownTimer").toInt());
                 d.SetBeLogOutTimer(query.value("beLogOutTimer").toInt());
                 d.SetBeShutdownTimer(query.value("beShutdownTimer").toInt());
+                d.SetUpdateStartTime(query.value("updateStartTime").toTime());
+                d.SetUpdateEndTime(query.value("updateEndTime").toTime());
                 list << d;
             }
 

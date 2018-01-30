@@ -113,5 +113,30 @@ namespace RW
         }
 
 
+        QTime GlobalSetting::UpdateStartTime()
+        {
+            Q_D(const GlobalSetting);
+            return d->m_UpdateStartTime;
+        }
+        void GlobalSetting::SetUpdateStartTime(QTime Time)
+        {
+            Q_D(GlobalSetting);
+
+            d->m_UpdateStartTime = Time;
+            emit UpdateStartTimeChanged();
+        }
+
+        QTime GlobalSetting::UpdateEndTime()
+        {
+            Q_D(const GlobalSetting);
+            return d->m_UpdateEndTime;
+        }
+        void GlobalSetting::SetUpdateEndTime(QTime Time)
+        {
+            Q_D(GlobalSetting);
+
+            d->m_UpdateEndTime = Time;
+            emit UpdateEndTimeChanged();
+        }
 	}
 }

@@ -41,6 +41,8 @@ namespace RW{
             BeLogOutTimer, 
             BeShutdownTimer,
             PermanentLogoutEnd,
+            UpdateStartTime,
+            UpdateEndTime,
             GlobalSettingsEnd,
             /*Project*/
             ProjectStart,
